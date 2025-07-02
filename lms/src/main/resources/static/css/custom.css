@@ -1,0 +1,10 @@
+/*
+login
+*/
+
+.card-body{
+    display: flex;           /*flexbox*/
+    flex-direction: column; /*요소들 세로배치*/
+    justify-content: center;/*세로방향 가운데 정렬*/
+    min-height: 600px;  /*최소높이*/
+}
