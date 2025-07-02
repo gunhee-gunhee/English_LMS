@@ -11,14 +11,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Component
-public class StudentLoginFailureHandler implements AuthenticationFailureHandler {
+public class TeacherLoginFailureHandler implements AuthenticationFailureHandler {
 
 	@Override
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
 			AuthenticationException exception) throws IOException, ServletException {
 		
-		response.sendRedirect("/student/login?error=ture");
+		response.sendRedirect("/teacher/login?error=true");
 		
 	}
 
+	
 }

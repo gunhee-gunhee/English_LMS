@@ -11,6 +11,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import com.english.lms.service.AdminUserDetailsService;
 import com.english.lms.service.StudentUserDetailsService;
+import com.english.lms.service.TeacherUserDetailsService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,14 +20,18 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor // finalフィールドはコンストラクタを通じて自動的に依存性注入されます
 public class SecurityConfig {
 	
-	
 	//フィールド
 	private final AdminUserDetailsService adminService;
 	private final AdminLoginSuccessHandler adminSuccessHandler;
 	private final AdminLoginFailureHandler adminFailureHandler;
+	
 	private final StudentUserDetailsService studentService;
 	private final StudentLoginSuccessHandler studentSuccessHandler;
 	private final StudentLoginFailureHandler studentFailureHandler;
+	
+	private final TeacherUserDetailsService teacherService;
+	private final TeacherLoginSuccessHandler teacherSuccessHandler;
+	private final TeacherLoginFailureHandler teacherFailureHandler;
 	
 	@Bean
     public PasswordEncoder passwordEncoder() {
@@ -89,5 +94,27 @@ public class SecurityConfig {
 
         return http.build();
     }
+	@Bean(name = "teacherSecurity")
+	@Order(3)
+	SecurityFilterChain teacherSecurity(HttpSecurity http) throws Exception{
+		
+		http
+			.securityMatcher("/teacher/**")
+			.authorizeHttpRequests(auth -> auth
+					.requestMatchers("/teacher/login").permitAll()
+					.anyRequest().hasRole("TEACHER")
+					)
+			.formLogin(form -> form
+					.loginPage("/teacher/login")
+					.loginProcessingUrl("/teacher/login")
+					.successHandler(teacherSuccessHandler)
+					.failureHandler(teacherFailureHandler)
+					)
+			.userDetailsService(teacherService);
+		
+		
+		return http.build();
+	}
+	
 
 }

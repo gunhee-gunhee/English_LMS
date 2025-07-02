@@ -8,11 +8,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @SpringBootApplication
 public class LmsApplication {
 
-    private final PasswordEncoder passwordEncoder;
-
-    LmsApplication(PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
 
 	public static void main(String[] args) {
 		SpringApplication.run(LmsApplication.class, args);
