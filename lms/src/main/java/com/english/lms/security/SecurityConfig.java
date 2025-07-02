@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor // finalフィールドはコンストラクタを通じて自動的に依存性注入されます
 public class SecurityConfig {
 	
+	
 	//フィールド
 	private final AdminUserDetailsService adminService;
 	private final AdminLoginSuccessHandler adminSuccessHandler;
@@ -58,30 +59,35 @@ public class SecurityConfig {
 		return http.build();
 	}
 	
-	@Bean(name = "studentSecurity")
-	 @Order(2)
-	SecurityFilterChain studentSecurity(HttpSecurity http) throws Exception{
-		
-		http
-			.securityMatcher("/student/**")
-			.authorizeHttpRequests(auth -> auth
-					.requestMatchers("/student/login","/student/css/**", "/student/js/**").permitAll()
-					.anyRequest().hasRole("STUDENT")
-			)
-			.formLogin(form -> form
-					.loginPage("/student/login")
-					.loginProcessingUrl("/student/login") //login処理
-					.successHandler(studentSuccessHandler)
-					.failureHandler(studentFailureHandler)
-					)
-			.logout(logout -> logout
-					.logoutUrl("/student/logout")
-					.logoutSuccessUrl("/student/login?logout")
-					)
-			.userDetailsService(studentService);
-			
-		return http.build();
-	}
-	
+    @Bean(name = "studentSecurity")
+    @Order(2)
+    SecurityFilterChain studentSecurity(HttpSecurity http) throws Exception {
+
+        http
+            .securityMatcher("/student/**")
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers(
+                    "/student/login",
+                    "/student/css/**",
+                    "/student/js/**",
+                    "/student/apply",    // ✅ GET/POST
+                    "/student/thanks"    // ✅ GET
+                ).permitAll()
+                .anyRequest().hasRole("STUDENT")
+            )
+            .formLogin(form -> form
+                .loginPage("/student/login")
+                .loginProcessingUrl("/student/login")
+                .successHandler(studentSuccessHandler)
+                .failureHandler(studentFailureHandler)
+            )
+            .logout(logout -> logout
+                .logoutUrl("/student/logout")
+                .logoutSuccessUrl("/student/login?logout")
+            )
+            .userDetailsService(studentService);
+
+        return http.build();
+    }
 
 }
