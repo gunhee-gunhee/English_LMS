@@ -29,7 +29,7 @@ public class StudentEntity {
 	private Integer studentNum;
 	
 	@Column(name="id", nullable = false, length = 40)
-	private String id;
+	private String studentId;
 	
 	@Column(name="password", nullable = false, length = 20)
 	private String password;

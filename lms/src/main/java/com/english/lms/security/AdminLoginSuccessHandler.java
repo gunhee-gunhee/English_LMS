@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 //ログイン成功後の処理をカスタムで制御する
-public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+public class AdminLoginSuccessHandler implements AuthenticationSuccessHandler {
     
 	// ログイン成功時に自動的に実行されるメソッド
 	@Override

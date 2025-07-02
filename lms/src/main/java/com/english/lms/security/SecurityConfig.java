@@ -2,6 +2,7 @@ package com.english.lms.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -9,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 import com.english.lms.service.AdminUserDetailsService;
+import com.english.lms.service.StudentUserDetailsService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,8 +21,11 @@ public class SecurityConfig {
 	
 	//フィールド
 	private final AdminUserDetailsService adminService;
-	private final CustomAuthenticationSuccessHandler successHandler;
-	private final CustomAuthenticationFailureHandler failureHandler;
+	private final AdminLoginSuccessHandler adminSuccessHandler;
+	private final AdminLoginFailureHandler adminFailureHandler;
+	private final StudentUserDetailsService studentService;
+	private final StudentLoginSuccessHandler studentSuccessHandler;
+	private final StudentLoginFailureHandler studentFailureHandler;
 	
 	@Bean
     public PasswordEncoder passwordEncoder() {
@@ -28,6 +33,7 @@ public class SecurityConfig {
     }
 	
 	@Bean(name = "adminSecurity")
+	@Order(1)
 	SecurityFilterChain adminSecurity(HttpSecurity http) throws Exception {
 		
 		http
@@ -40,8 +46,8 @@ public class SecurityConfig {
 	        .formLogin(form -> form
 	        		.loginPage("/admin/login") // カスタムログインページ
 	        		.loginProcessingUrl("/admin/login") // ログイン処理用URL（POST）
-	        		.successHandler(successHandler)  // ログイン成功時のハンドラー
-	        		.failureHandler(failureHandler)  // ログイン失敗時のハンドラー
+	        		.successHandler(adminSuccessHandler)  // ログイン成功時のハンドラー
+	        		.failureHandler(adminFailureHandler)  // ログイン失敗時のハンドラー
 	        		)
 	        .logout(logout -> logout
 	        		.logoutUrl("/admin/logout")     // ログアウト用URL
@@ -49,6 +55,31 @@ public class SecurityConfig {
 	        		)
 	        .userDetailsService(adminService);  // 管理者アカウントの取得サービス
 	        
+		return http.build();
+	}
+	
+	@Bean(name = "studentSecurity")
+	 @Order(2)
+	SecurityFilterChain studentSecurity(HttpSecurity http) throws Exception{
+		
+		http
+			.securityMatcher("/student/**")
+			.authorizeHttpRequests(auth -> auth
+					.requestMatchers("/student/login","/student/css/**", "/student/js/**").permitAll()
+					.anyRequest().hasRole("STUDENT")
+			)
+			.formLogin(form -> form
+					.loginPage("/student/login")
+					.loginProcessingUrl("/student/login") //login処理
+					.successHandler(studentSuccessHandler)
+					.failureHandler(studentFailureHandler)
+					)
+			.logout(logout -> logout
+					.logoutUrl("/student/logout")
+					.logoutSuccessUrl("/student/login?logout")
+					)
+			.userDetailsService(studentService);
+			
 		return http.build();
 	}
 	
