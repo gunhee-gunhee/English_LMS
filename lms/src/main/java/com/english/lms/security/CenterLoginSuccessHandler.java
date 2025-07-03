@@ -14,23 +14,21 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Component
-public class TeacherLoginSuccessHandler implements AuthenticationSuccessHandler{
+public class CenterLoginSuccessHandler implements AuthenticationSuccessHandler{
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 			Authentication authentication) throws IOException, ServletException {
-	
-	    CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
-
-	    if (!user.getRole().equals(Role.TEACHER)) {
-	        request.getSession().invalidate();
-	        response.sendRedirect("/teacher/login?error=role");
-	        return;
-	    }
 		
-		response.sendRedirect("/teacher/mypage");
+		CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
+		
+		if(!user.getRole().equals(Role.CENTER)) {
+			response.sendRedirect("/center/login?error=role");
+			return;
+		}
+		
+		response.sendRedirect("/admin/regular-class-list");
 		
 	}
 
-	
 }

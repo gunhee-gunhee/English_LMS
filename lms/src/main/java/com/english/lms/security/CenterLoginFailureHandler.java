@@ -11,21 +11,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Component
-public class TeacherLoginFailureHandler implements AuthenticationFailureHandler {
+public class CenterLoginFailureHandler implements AuthenticationFailureHandler {
 
 	@Override
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
 			AuthenticationException exception) throws IOException, ServletException {
-		
-//		if("権限なし".equals(exception.getMessage())) {
-//			response.sendRedirect("/teacher/login?error=role");
-//		}else {
-//			response.sendRedirect("/teacher/login?error=true");
-//		}
-		
-		response.sendRedirect("/teacher/login?error=true");
+	
+		response.sendRedirect("/center/login?error=true");
 		
 	}
 
+	
 	
 }

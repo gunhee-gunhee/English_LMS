@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 import com.english.lms.service.AdminUserDetailsService;
+import com.english.lms.service.CenterUserDetailsService;
 import com.english.lms.service.StudentUserDetailsService;
 import com.english.lms.service.TeacherUserDetailsService;
 
@@ -33,6 +34,10 @@ public class SecurityConfig {
 	private final TeacherLoginSuccessHandler teacherSuccessHandler;
 	private final TeacherLoginFailureHandler teacherFailureHandler;
 	
+	private final CenterUserDetailsService centerService;
+	private final CenterLoginSuccessHandler centerSuccessHandler;
+	private final CenterLoginFailureHandler centerFailureHandler;
+	
 	@Bean
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
@@ -47,7 +52,13 @@ public class SecurityConfig {
 		 	.securityMatcher("/admin/**") // 管理者　URLのみ適用
 	        .authorizeHttpRequests(auth -> auth
 	            .requestMatchers("/admin/login", "/admin/css/**", "/admin/js/**").permitAll()
-	            .anyRequest().hasRole("ADMIN")
+	            //管理者のみ
+	            .requestMatchers("/admin/lo").hasRole("ADMIN")
+	            
+	            //center + admin アクセス可能
+	            .requestMatchers("/admin/regular-class-list").hasAnyRole("ADMIN","CENTER")
+	            
+	            .anyRequest().denyAll()
 	            )
 	        .formLogin(form -> form
 	        		.loginPage("/admin/login") // カスタムログインページ
@@ -101,7 +112,7 @@ public class SecurityConfig {
 		http
 			.securityMatcher("/teacher/**")
 			.authorizeHttpRequests(auth -> auth
-					.requestMatchers("/teacher/login").permitAll()
+					.requestMatchers("/teacher/login","/teacher/auth-check").permitAll()
 					.anyRequest().hasRole("TEACHER")
 					)
 			.formLogin(form -> form
@@ -114,6 +125,29 @@ public class SecurityConfig {
 		
 		
 		return http.build();
+	}
+	
+	@Bean(name = "centerSecurity")
+	@Order(4)
+	SecurityFilterChain centerSecurity(HttpSecurity http) throws Exception{
+		
+		http
+			.securityMatcher("/center/**")
+			.authorizeHttpRequests(auth -> auth
+					.requestMatchers("/center/login").permitAll()
+					.anyRequest().hasRole("CENTER")
+					)
+			.formLogin(form -> form
+					.loginPage("/center/login")
+					.loginProcessingUrl("/center/login")
+					.successHandler(centerSuccessHandler)
+					.failureHandler(centerFailureHandler)
+					)
+			.userDetailsService(centerService);
+		
+		return http.build();
+		
+		
 	}
 	
 
