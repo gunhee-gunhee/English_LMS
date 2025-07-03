@@ -75,10 +75,10 @@ public class SecurityConfig {
 		return http.build();
 	}
 	
-    @Bean(name = "studentSecurity")
+	
+	@Bean(name = "studentSecurity")
     @Order(2)
     SecurityFilterChain studentSecurity(HttpSecurity http) throws Exception {
-
         http
             .securityMatcher("/student/**")
             .authorizeHttpRequests(auth -> auth
@@ -86,8 +86,8 @@ public class SecurityConfig {
                     "/student/login",
                     "/student/css/**",
                     "/student/js/**",
-                    "/student/apply",    // ✅ GET/POST
-                    "/student/thanks"    // ✅ GET
+                    "/student/apply",    // :チェックマーク_緑: GET/POST
+                    "/student/thanks"    // :チェックマーク_緑: GET
                 ).permitAll()
                 .anyRequest().hasRole("STUDENT")
             )
@@ -102,9 +102,10 @@ public class SecurityConfig {
                 .logoutSuccessUrl("/student/login?logout")
             )
             .userDetailsService(studentService);
-
         return http.build();
     }
+
+
 	@Bean(name = "teacherSecurity")
 	@Order(3)
 	SecurityFilterChain teacherSecurity(HttpSecurity http) throws Exception{
@@ -126,6 +127,7 @@ public class SecurityConfig {
 		
 		return http.build();
 	}
+
 	
 	@Bean(name = "centerSecurity")
 	@Order(4)
@@ -149,6 +151,18 @@ public class SecurityConfig {
 		
 		
 	}
+	
+	@Bean(name = "permitAllSecurity")
+	@Order(99) // 가장 마지막 순서로 등록되도록
+	public SecurityFilterChain permitAllSecurity(HttpSecurity http) throws Exception {
+	    http
+	        .authorizeHttpRequests(auth -> auth
+	            .anyRequest().permitAll() // 모든 요청 허용
+	        )
+	        .csrf().disable(); // (선택) CSRF도 비활성화
+	    return http.build();
+	}
+
 	
 
 }
