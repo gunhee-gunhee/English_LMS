@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>会員登録</title>
+    <!-- Custom fonts for this template-->
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+    <link th:href="@{/css/custom.css}" rel="stylesheet">
+    <style>
+        .radio-group label { display: block; margin-bottom: 6px; }
+    </style>
+</head>
+<body class="bg-gradient-danger">
+    <div class="container">
+        <div class="card o-hidden border-0 shadow-lg my-5">
+            <div class="card-body p-0">
+                <div class="row justify-content-center">
+                    <div class="col-lg-7">
+                        <div class="p-5">
+                            <div class="text-center">
+                                <h1 class="h4 text-gray-900 mb-4">会員登録</h1>
+                            </div>
+                            <!-- 에러 메시지 -->
+                            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+                            <form class="user" id="signupForm" th:action="@{/student/signup}" th:object="${studentDTO}" method="post"
+                                  onsubmit="return confirm('会員登録しますか？');">
+                                <!-- 아이디 -->
+                                <div class="form-group">
+                                    <label for="inputId">ユーザーID</label>
+                                    <input type="text" class="form-control form-control-user" id="inputId" th:field="*{id}" placeholder="ユーザーID" required>
+                                </div>
+                                <!-- 비밀번호 -->
+                                <div class="form-group">
+                                    <label for="inputPassword">パスワード</label>
+                                    <input type="password" class="form-control form-control-user" id="inputPassword" th:field="*{password}" placeholder="パスワード" required>
+                                </div>
+                                <!-- 비밀번호 확인 -->
+                                <div class="form-group">
+                                    <label for="inputPasswordCheck">パスワード確認</label>
+                                    <input type="password" class="form-control form-control-user" id="inputPasswordCheck" th:field="*{passwordCheck}" placeholder="パスワード確認" required>
+                                </div>
+                                <!-- 닉네임 -->
+                                <div class="form-group">
+                                    <label for="inputNickname">ニックネーム</label>
+                                    <input type="text" class="form-control form-control-user" id="inputNickname" th:field="*{nickname}" placeholder="ニックネーム">
+                                </div>
+                                <!-- 닉네임(후리가나) -->
+                                <div class="form-group">
+                                    <label for="inputNicknameJp">ニックネーム（ふりがな）</label>
+                                    <input type="text" class="form-control form-control-user" id="inputNicknameJp" th:field="*{nickname_jp}" placeholder="ニックネーム（ふりがな）">
+                                </div>
+                                <!-- 연령 라디오 그룹 -->
+                                <div class="form-group radio-group">
+                                    <label>年齢</label>
+                                    <label><input type="radio" th:field="*{age}" value="10歳未満" required> 10歳未満</label>
+                                    <label><input type="radio" th:field="*{age}" value="10代"> 10代</label>
+                                    <label><input type="radio" th:field="*{age}" value="20代"> 20代</label>
+                                    <label><input type="radio" th:field="*{age}" value="30代"> 30代</label>
+                                    <label><input type="radio" th:field="*{age}" value="40代"> 40代</label>
+                                    <label><input type="radio" th:field="*{age}" value="50代"> 50代</label>
+                                    <label><input type="radio" th:field="*{age}" value="60歳以上"> 60歳以上</label>
+                                </div>
+                                <!-- 영어레벨(1~10) 라디오 그룹 -->
+                                <div class="form-group radio-group">
+                                    <label>英語レベル</label>
+                                    <label><input type="radio" th:field="*{english_level}" value="1" required> 1レベル</label>
+                                    <label><input type="radio" th:field="*{english_level}" value="2"> 2レベル</label>
+                                    <label><input type="radio" th:field="*{english_level}" value="3"> 3レベル</label>
+                                    <label><input type="radio" th:field="*{english_level}" value="4"> 4レベル</label>
+                                    <label><input type="radio" th:field="*{english_level}" value="5"> 5レベル</label>
+                                    <label><input type="radio" th:field="*{english_level}" value="6"> 6レベル</label>
+                                    <label><input type="radio" th:field="*{english_level}" value="7"> 7レベル</label>
+                                    <label><input type="radio" th:field="*{english_level}" value="8"> 8レベル</label>
+                                    <label><input type="radio" th:field="*{english_level}" value="9"> 9レベル</label>
+                                    <label><input type="radio" th:field="*{english_level}" value="10"> 10レベル</label>
+                                </div>
+                                <!-- 영어 학습 목적 -->
+                                <div class="form-group radio-group">
+                                    <label>英語学習目的</label>
+                                    <label><input type="radio" th:field="*{english_purpose}" value="旅行" required> 旅行</label>
+                                    <label><input type="radio" th:field="*{english_purpose}" value="仕事"> 仕事</label>
+                                    <label><input type="radio" th:field="*{english_purpose}" value="留学"> 留学</label>
+                                    <label><input type="radio" th:field="*{english_purpose}" value="趣味"> 趣味</label>
+                                    <label><input type="radio" th:field="*{english_purpose}" value="その他"> その他</label>
+                                </div>
+                                <!-- instabiz 유입경로 -->
+                                <div class="form-group radio-group">
+                                    <label>instabizを知ったきっかけ</label>
+                                    <label><input type="radio" th:field="*{signup_path}" value="検索" required> 検索</label>
+                                    <label><input type="radio" th:field="*{signup_path}" value="SNS"> SNS</label>
+                                    <label><input type="radio" th:field="*{signup_path}" value="知人の紹介"> 知人の紹介</label>
+                                    <label><input type="radio" th:field="*{signup_path}" value="広告"> 広告</label>
+                                    <label><input type="radio" th:field="*{signup_path}" value="その他"> その他</label>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-user btn-block">
+                                    会員登録
+                                </button>
+                            </form>
+                            <hr>
+                            <div class="text-center">
+                                <a class="small" th:href="@{/student/login}">すでにアカウントをお持ちですか？ログイン！</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript-->
+    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+    <script th:src="@{/js/sb-admin-2.min.js}"></script>
+</body>
+</html>

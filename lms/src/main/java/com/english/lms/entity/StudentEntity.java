@@ -56,7 +56,7 @@ public class StudentEntity {
     private LocalDateTime joinDate;
 
     @Column(name = "enable", nullable = false)
-    private Boolean use;
+    private Integer enable;
 
     @Column(name = "point", nullable = false)
     private Integer point;

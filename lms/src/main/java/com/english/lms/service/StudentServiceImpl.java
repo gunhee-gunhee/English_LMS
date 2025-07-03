@@ -1,12 +1,45 @@
 package com.english.lms.service;
 
+import com.english.lms.dto.StudentDTO;
+import com.english.lms.entity.StudentEntity;
+import com.english.lms.enums.Role;
+import com.english.lms.repository.StudentRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import lombok.RequiredArgsConstructor;
-//실제 메서드 구현
 @Service
-@RequiredArgsConstructor //final 필드에 생성자 의존성 주입 
+@RequiredArgsConstructor
 public class StudentServiceImpl implements StudentService {
 
-	//Service인터페이스에서 정의 메서드를 이곳에서 구현 (Override)
+    private final StudentRepository studentRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    @Override
+    public void registerStudent(StudentDTO dto) {
+        StudentEntity student = new StudentEntity();
+        student.setStudentId(dto.getId());
+        student.setPassword(passwordEncoder.encode(dto.getPassword()));
+        student.setNickname(dto.getNickname());
+        student.setNicknameJp(dto.getNickname_jp());
+        student.setAge(dto.getAge());
+        student.setEnglishLevel(dto.getEnglish_level());
+        student.setEnglishPurpose(dto.getEnglish_purpose());
+        student.setSignupPath(dto.getSignup_path());
+
+        // --- point 기본값 세팅 (꼭 필요) ---
+        student.setPoint(0);
+        student.setEnable(1);
+        student.setRole(Role.STUDENT);
+
+        // --- joinDate, use, role 등은 @PrePersist에서 자동 처리하면 좋음 ---
+
+        studentRepository.save(student);
+    }
+
+    @Override
+    public boolean existsById(String id) {
+        // StudentRepository에서 studentId로 중복 체크
+        return studentRepository.findByStudentId(id).isPresent();
+    }
 }

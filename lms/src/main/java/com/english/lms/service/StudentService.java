@@ -1,5 +1,8 @@
 package com.english.lms.service;
-//메서드만 정의
-public interface StudentService {
 
+import com.english.lms.dto.StudentDTO;
+
+public interface StudentService {
+    void registerStudent(StudentDTO dto);
+    boolean existsById(String id);
 }

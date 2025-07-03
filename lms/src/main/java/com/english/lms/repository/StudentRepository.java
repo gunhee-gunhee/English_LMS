@@ -9,4 +9,5 @@ import com.english.lms.entity.StudentEntity;
 public interface StudentRepository extends JpaRepository<StudentEntity, Integer> {
  
 	Optional<StudentEntity> findByStudentId(String studentId); 
+	boolean existsByStudentId(String studentId);
 }
