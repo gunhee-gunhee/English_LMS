@@ -298,94 +298,101 @@
                             
                                 <h1 class="mb-4 text-dark fw-bold">日時選択</h1>
 
-                                <!-- 1. 시작일 선택 -->
-						<form th:action="@{/student/apply}" method="post">
-							
-							<input type="hidden" name="student_id" value="testuser123">
-							
-                                <div class="mb-4">
-                                    <h5 class="fw-bold mb-2">1. 開始日選択</h5>
-                                    <input type="date" class="form-control w-50" id="start-date" name="start-date">
-                                </div>
+                               	<div class="container mt-5">
+								    <h2 class="mb-4">学生詳細</h2>
+								    <form>
+								      <div class="mb-3">
+								        <label for="id" class="form-label">ID：</label>
+								        <input type="email" class="form-control" id="id" value="xxxxx@interline.co.jp" readonly>
+								      </div>
+								      <div class="mb-3">
+								        <label for="password" class="form-label">パスワード：</label>
+								        <input type="password" class="form-control" id="password">
+								      </div>
+								      <div class="mb-3">
+								        <label for="passwordConfirm" class="form-label">パスワードの確認：</label>
+								        <input type="password" class="form-control" id="passwordConfirm">
+								      </div>
+								      <div class="mb-3">
+								        <label for="nickname" class="form-label">ニックネーム：</label>
+								        <input type="text" class="form-control" id="nickname">
+								      </div>
+								      <div class="mb-3">
+								        <label for="age" class="form-label">年齢：</label>
+								        <select class="form-select" id="age">
+								          <option selected>選択</option>
+								        </select>
+								      </div>
+								      <div class="mb-3">
+								        <label for="affiliation" class="form-label">所属：</label>
+								        <input type="text" class="form-control" id="affiliation">
+								      </div>
+								      <div class="mb-3">
+								        <label for="englishLevel" class="form-label">英語レベル：</label>
+								        <select class="form-select" id="englishLevel">
+								          <option selected>選択</option>
+								        </select>
+								      </div>
+								      <div class="mb-3">
+								        <label for="teacher" class="form-label">講師：</label>
+								        <select class="form-select" id="teacher">
+								          <option selected>選択</option>
+								        </select>
+								      </div>
+								      <div class="mb-3">
+								        <label for="membershipType" class="form-label">会員種類：</label>
+								        <select class="form-select" id="membershipType">
+								          <option>本会員</option>
+								          <option>体験会員</option>
+								        </select>
+								      </div>
+									  <div class="mb-3">
+									    <label class="form-label">受講曜日：</label><br>
+									    <div class="btn-group" role="group" aria-label="受講曜日" style="flex-wrap: wrap;">
+									      <input type="checkbox" class="d-none" id="sun" name="days" value="日" checked>
+									      <label class="btn btn-outline-primary" for="sun">日</label>
 
-                                <!-- 2. 요일 선택 -->
-                                <div class="mb-4">
-                                    <h5 class="fw-bold mb-2">2. 定期授業コース選択</h5>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="course" id="tue-thu"
-                                            value="tue-thu">
-                                        <label class="form-check-label" for="tue-thu">（週2回）火曜日、木曜日</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="course" id="mon-wed-fri"
-                                            value="mon-wed-fri">
-                                        <label class="form-check-label" for="mon-wed-fri">（週3回）月曜日、水曜日、金曜日</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="course" id="mon-fri"
-                                            value="mon-fri">
-                                        <label class="form-check-label" for="mon-fri">（週5回）月〜金曜日</label>
-                                    </div>
-                                </div>
+									      <input type="checkbox" class="d-none" id="mon" name="days" value="月">
+									      <label class="btn btn-outline-primary" for="mon">月</label>
 
-                                <!-- 3. 희망 시간대 -->
-                                <div class="mb-4">
-                                    <h5 class="fw-bold mb-3">3. 希望時間帯</h5>
+									      <input type="checkbox" class="d-none" id="tue" name="days" value="火">
+									      <label class="btn btn-outline-primary" for="tue">火</label>
 
-                                    <div class="row mb-2 align-items-center">
-                                        <div class="col-sm-2">第1希望:</div>
-                                        <div class="col-sm-4">
-                                            <select class="form-select" name="time1">
-                                                <option value="">-- 選択 --</option>
-                                                <option>10時〜11時</option>
-                                                <option>11時〜12時</option>
-                                                <option>12時〜13時</option>
-                                                <option>13時〜14時</option>
-                                                <option>14時〜15時</option>
-                                                <option>15時〜16時</option>
-                                                <option>16時〜17時</option>
-                                            </select>
-                                        </div>
-                                    </div>
+									      <input type="checkbox" class="d-none" id="wed" name="days" value="水">
+									      <label class="btn btn-outline-primary" for="wed">水</label>
 
-                                    <div class="row mb-2 align-items-center">
-                                        <div class="col-sm-2">第2希望:</div>
-                                        <div class="col-sm-4">
-                                            <select class="form-select" name="time2">
-                                                <option value="">-- 選択 --</option>
-                                                <option>10時〜11時</option>
-                                                <option>11時〜12時</option>
-                                                <option>12時〜13時</option>
-                                                <option>13時〜14時</option>
-                                                <option>14時〜15時</option>
-                                                <option>15時〜16時</option>
-                                                <option>16時〜17時</option>
-                                            </select>
-                                        </div>
-                                    </div>
+									      <input type="checkbox" class="d-none" id="thu" name="days" value="木" checked>
+									      <label class="btn btn-outline-primary" for="thu">木</label>
 
-                                    <div class="row mb-2 align-items-center">
-                                        <div class="col-sm-2">第3希望:</div>
-                                        <div class="col-sm-4">
-                                            <select class="form-select" name="time3">
-                                                <option value="">-- 選択 --</option>
-                                                <option>10時〜11時</option>
-                                                <option>11時〜12時</option>
-                                                <option>12時〜13時</option>
-                                                <option>13時〜14時</option>
-                                                <option>14時〜15時</option>
-                                                <option>15時〜16時</option>
-                                                <option>16時〜17時</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
+									      <input type="checkbox" class="d-none" id="fri" name="days" value="金">
+									      <label class="btn btn-outline-primary" for="fri">金</label>
 
-                                <!-- 4. 신청 버튼 -->
-                                <div class="text-center">
-                                    <button type="submit" class="btn btn-primary px-4">お申込み</button>
-                                </div>
-						</form>
+									      <input type="checkbox" class="d-none" id="sat" name="days" value="土">
+									      <label class="btn btn-outline-primary" for="sat">土</label>
+									    </div>
+									  </div>
+
+								      <div class="mb-3">
+								        <label class="form-label">受講時間：</label>
+								        <div class="d-flex gap-2">
+								          <select class="form-select">
+								            <option>--</option>
+								          </select>
+								          <span class="align-self-center">〜</span>
+								          <select class="form-select">
+								            <option>--</option>
+								          </select>
+								        </div>
+								      </div>
+								      <div class="mb-3 form-check">
+								        <input type="radio" class="form-check-input" id="disabled" name="status">
+								        <label class="form-check-label" for="disabled">無効化（現在、授業を行っていません。）</label>
+								      </div>
+								      <div class="d-flex justify-content-between">
+								        <button type="submit" class="btn btn-primary">修正</button>
+								        <button type="button" class="btn btn-danger">削除</button>
+								      </div>
+								    </form>
 
                         </div>
                     </div>
@@ -453,6 +460,29 @@
 
 	<!-- Page level custom scripts -->
 	<script th:src="@{/js/demo/datatables-demo.js}"></script>
+	
+	<script>
+	  document.addEventListener('DOMContentLoaded', function () {
+	    const dayInputs = document.querySelectorAll("input[name='days']");
+
+	    dayInputs.forEach(input => {
+	      const label = document.querySelector("label[for='" + input.id + "']");
+
+	      // 처음부터 체크되어 있으면 active 적용
+	      if (input.checked) {
+	        label.classList.add('active');
+	      }
+
+	      // 클릭 시 active 토글 + checked 상태도 반전
+	      label.addEventListener('click', function (e) {
+	        e.preventDefault(); // 기본 체크박스 클릭 방지
+	        input.checked = !input.checked;
+	        label.classList.toggle('active', input.checked);
+	      });
+	    });
+	  });
+	</script>
+
 
 </body>
 
