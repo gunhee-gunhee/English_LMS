@@ -51,14 +51,10 @@
                                             <input type="password" class="form-control form-control-user"
                                                 id="InputPassword" name="password" placeholder="Password">
                                         </div>
-                                        <!-- <div class="form-group">
-                                            <div class="custom-control custom-checkbox small">
-                                                <input type="checkbox" class="custom-control-input" id="customCheck">
-                                                <label class="custom-control-label" for="customCheck">Remember
-                                                    Me</label>
-                                            </div>
-                                        </div> -->
-                                        <button type="submit" class="btn btn-primary btn-user btn-block">
+										<div th:if="${param.error}" style="color:red;font-weight:bold;">
+										  IDまたはパスワードが正しくありません。
+										</div>
+                                        <button type="submit" class="btn btn-outline-primary btn-user btn-block">
                                             Login
                                         </button>
                                        
@@ -68,7 +64,7 @@
                                         <a class="small" href="forgot-password.html">Forgot Password?</a>
                                     </div> -->
                                     <div class="text-center">
-                                        <a class="small" href="register.html">Create an Account!</a>
+                                        <a class="small" href="register.html">新規登録</a>
                                     </div>
                                 </div>
                             </div>

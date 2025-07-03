@@ -1,11 +1,13 @@
 package com.english.lms.service;
 
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import com.english.lms.dto.CustomUserDetails;
 import com.english.lms.entity.TeacherEntity;
+import com.english.lms.enums.Role;
 import com.english.lms.repository.TeacherRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -28,6 +30,7 @@ public class TeacherUserDetailsService implements UserDetailsService{
 		});
 		System.out.println("dB에서 가져온 객체 : " + teacher);
 		
+			
 		return new CustomUserDetails(
 				teacher.getTeacherId(),
 				teacher.getPassword(),
