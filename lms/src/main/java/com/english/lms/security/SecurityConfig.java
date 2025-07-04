@@ -84,6 +84,9 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
                     "/student/login",
+                    "/student/email-check",      
+                    "/student/signup",             
+                    "/student/signup-complete",
                     "/student/css/**",
                     "/student/js/**",
                     "/student/apply",    // :チェックマーク_緑: GET/POST
