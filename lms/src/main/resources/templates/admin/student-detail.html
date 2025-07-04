@@ -40,7 +40,7 @@
 		<!-- Main Content -->
 		<div id="content">
 
-			<div th:replace="~{fragments/topbar :: topbar}"></div>
+			<div th:replace="~{fragments/topbar :: topbar('学生詳細')}"></div>
 
 			<!-- Begin Page Content -->
 			<div class="container-fluid">
@@ -50,7 +50,7 @@
 					<div class="card-body">
 
 						<div class="container mt-5">
-							<h2 class="mb-4">学生詳細</h2>
+							
 							<form>
 								<div class="mb-3">
 									<label for="id" class="form-label">ID：</label>

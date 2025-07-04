@@ -2,12 +2,9 @@
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
 
 <body>
-	<div th:fragment="topbar">
-
-		<!-- Topbar -->
-		<nav class="navbar navbar-expand navbar-light bg-white topbar static-top shadow">
-
-			<h4 class="m-4 ml-0 font-weight-bold text-primary">DataTables Example</h4>
+	<div th:fragment="topbar(title)">
+	    <nav class="navbar navbar-expand navbar-light bg-white topbar static-top shadow">
+	        <h4 class="m-4 ml-0 font-weight-bold text-primary" th:text="${title}">페이지 제목</h4>
 
 			<!-- Sidebar Toggle (Topbar) -->
 			<form class="form-inline">

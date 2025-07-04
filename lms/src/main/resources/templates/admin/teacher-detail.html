@@ -1,0 +1,180 @@
+<!--<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>講師詳細</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+      .week-btn.active { background: #90caf9; color: #000; }
+      .schedule-item { background: #e3f2fd; margin: 4px 0; padding: 6px 10px; border-radius: 4px; }
+      .remove-btn { color: #e53935; cursor: pointer; }
+    </style>
+</head>
+<body>
+<div class="container" style="max-width:350px;">
+    <h2 class="text-center my-4">講師詳細</h2>
+
+    <form th:action="@{/teacher/update}" method="post">
+        <div class="form-group">
+            <label>ID</label>
+            <input class="form-control" name="id" value="1">
+        </div>
+        <div class="form-group">
+            <label>パスワード</label>
+            <input class="form-control" name="password" type="password" value="2">
+        </div>
+        <div class="form-group">
+            <label>パスワードの確認</label>
+            <input class="form-control" name="passwordConfirm" type="password" value="2">
+        </div>
+        <div class="form-group">
+            <label>ニックネーム</label>
+            <input class="form-control" name="nickname" value="5">
+        </div>
+        <div class="form-group">
+            <label>ZOOM ID</label>
+            <select class="form-control" name="zoomId">
+                <option>6</option>
+                 기타 Zoom ID 옵션들 
+            </select>
+        </div>
+        
+         3. 요일 선택 
+        <div class="form-group" id="weekday-area">
+            <label>受講曜日</label>
+            <div>
+                <button type="button" class="btn btn-sm week-btn" data-day="日">日</button>
+                <button type="button" class="btn btn-sm week-btn" data-day="月">月</button>
+                <button type="button" class="btn btn-sm week-btn" data-day="火">火</button>
+                <button type="button" class="btn btn-sm week-btn" data-day="水">水</button>
+                <button type="button" class="btn btn-sm week-btn" data-day="木">木</button>
+                <button type="button" class="btn btn-sm week-btn" data-day="金">金</button>
+                <button type="button" class="btn btn-sm week-btn" data-day="土">土</button>
+            </div>
+        </div>
+
+         4. 시간 선택 
+        <div class="form-group" id="time-area">
+            <label>受講時間</label>
+            <div class="d-flex align-items-center">
+                <select class="form-control mr-2" style="width: 70px;" id="startHour">
+                  <option>9</option><option>10</option><option>11</option>
+                   ... 
+                </select>
+                時〜
+                <select class="form-control ml-2" style="width: 70px;" id="endHour">
+                  <option>10</option><option>11</option><option>12</option>
+                   ... 
+                </select>
+                時
+            </div>
+        </div>
+        
+         7. 스케줄 추가 
+        <button type="button" id="addScheduleBtn" class="btn btn-info btn-sm mb-2">スケジュール追加 ＋</button>
+        
+         8. 스케줄 리스트 
+        <div id="schedule-list">
+             JS로 스케줄이 여기 들어감 
+        </div>
+        
+        <div class="form-group mt-2">
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="inactive" name="inactive">
+            <label class="form-check-label" for="inactive">◎無効化 (現在、授業を行っていません。)</label>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-between mt-3">
+            <button type="submit" class="btn btn-primary flex-fill mr-2">修正</button>
+            <button type="button" class="btn btn-danger flex-fill ml-2" onclick="confirmDelete()">削除</button>
+        </div>
+    </form>
+</div>
+
+<script>
+let selectedDays = [];
+let scheduleList = [];
+
+// 요일 버튼 토글
+document.querySelectorAll('.week-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    this.classList.toggle('active');
+    const day = this.getAttribute('data-day');
+    if (this.classList.contains('active')) {
+      if (!selectedDays.includes(day)) selectedDays.push(day);
+    } else {
+      selectedDays = selectedDays.filter(d => d !== day);
+    }
+  });
+});
+
+// 스케줄 추가
+document.getElementById('addScheduleBtn').onclick = function() {
+  const days = [...selectedDays];
+  const start = document.getElementById('startHour').value;
+  const end = document.getElementById('endHour').value;
+  if (!days.length) {
+    alert("曜日を選択してください。");
+    return;
+  }
+  if (start >= end) {
+    alert("時間を正しく選択してください。");
+    return;
+  }
+  days.forEach(day => {
+    const schedule = { day, start, end };
+    scheduleList.push(schedule);
+    renderSchedules();
+  });
+};
+
+// 스케줄 렌더링
+function renderSchedules() {
+  const list = document.getElementById('schedule-list');
+  list.innerHTML = '';
+  scheduleList.forEach((s, i) => {
+    const el = document.createElement('div');
+    el.className = 'schedule-item d-flex align-items-center justify-content-between';
+    el.innerHTML = `${s.day}　${s.start}時〜${s.end}時
+      <span class="remove-btn ml-2" onclick="removeSchedule(${i})">✕</span>
+      <input type="hidden" name="schedules[${i}].day" value="${s.day}">
+      <input type="hidden" name="schedules[${i}].start" value="${s.start}">
+      <input type="hidden" name="schedules[${i}].end" value="${s.end}">
+    `;
+    list.appendChild(el);
+  });
+}
+
+// 스케줄 삭제
+function removeSchedule(idx) {
+  scheduleList.splice(idx, 1);
+  renderSchedules();
+}
+
+// 삭제 버튼
+function confirmDelete() {
+  if (confirm("本当に削除しますか？")) {
+    // 실제 삭제 로직 필요 (예: form submit or ajax)
+    alert("삭제 요청 (연결 필요)");
+  }
+}
+
+// ★ 페이지 진입 시, DB에서 스케줄 불러오기 (Thymeleaf 예시)
+window.onload = function() {
+  /* 
+  예시:
+  /*[# th:each="sch, i : ${teacher.schedules}"]*/
+  scheduleList.push({
+    day: '/*[[${sch.day}]]*/',
+    start: '/*[[${sch.start}]]*/',
+    end: '/*[[${sch.end}]]*/'
+  });
+  
+  /*[/]*/
+  renderSchedules();
+}
+</script>
+</body>
+</html>
+-->
