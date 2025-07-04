@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <title>不定期授業申請</title>
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+    <link th:href="@{/css/custom.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .calendar-box {
+            width: 100%;
+            min-height: 350px;
+            max-height: 480px;
+            background: #f7f7f7;
+            border-radius: 16px;
+            margin-bottom: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2em;
+            color: #bbb;
+        }
+        .flatpickr-calendar.inline {
+            box-shadow: none;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+        }
+        .available-time-label {
+            font-size: 1.18em;
+            font-weight: bold;
+            color: #e74a3b;
+            margin-bottom: 12px;
+            margin-top: 10px;
+        }
+        .time-buttons-wrap {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 13px;
+            margin-bottom: 30px;
+            justify-items: start;
+            min-width: 340px;
+            overflow-x: auto;
+        }
+        .time-btn {
+            padding: 13px 0;
+            border-radius: 7px;
+            border: 1px solid #e74a3b;
+            background: #fff0f0;
+            color: #e74a3b;
+            font-size: 1.12em;
+            cursor: pointer;
+            transition: background .2s, color .2s;
+            margin-bottom: 0;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .time-btn.selected, .time-btn:hover {
+            background: #e74a3b;
+            color: #fff;
+        }
+        .apply-btn {
+            display: block;
+            width: 180px;
+            margin: 0 auto;
+            padding: 15px 0;
+            font-size: 1.15em;
+            border-radius: 7px;
+            background: #e74a3b;
+            color: #fff;
+            border: none;
+            box-shadow: 0 2px 8px rgba(231,74,59,0.1);
+            transition: background .2s;
+        }
+        .apply-btn:hover {
+            background: #c82333;
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-danger">
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-10 col-lg-12 col-md-9" style="height: 650px;">
+                <div class="card o-hidden border-0 shadow-lg my-5">
+                    <div class="card-body p-0" style="height: 650px;">
+                        <div class="row d-flex justify-content-center">
+                            <div class="col-lg-10">
+                                <div class="p-5">
+                                    <!-- フォーム開始 -->
+                                    <form id="applyForm" method="post" action="/irregular-class/apply" autocomplete="off">
+                                        <!-- カレンダー -->
+                                        <div class="calendar-box">
+                                            <div id="calendar"></div>
+                                        </div>
+                                        <!-- 選択した日付を格納するhidden input -->
+                                        <input type="hidden" name="selectedDate" id="selectedDate">
+                                        <!-- 申請可能時間 -->
+                                        <div class="available-time-label">申請可能時間</div>
+                                        <div class="time-buttons-wrap">
+                                            <button type="button" class="time-btn">10:00</button>
+                                            <button type="button" class="time-btn">11:30</button>
+                                            <button type="button" class="time-btn">14:00</button>
+                                            <button type="button" class="time-btn">15:30</button>
+                                            <button type="button" class="time-btn">18:00</button>
+                                            <button type="button" class="time-btn">19:30</button>
+                                            <button type="button" class="time-btn">21:00</button>
+                                        </div>
+                                        <!-- 選択した時間を格納するhidden input -->
+                                        <input type="hidden" name="selectedTime" id="selectedTime">
+                                        <!-- 申請ボタン -->
+                                        <button type="button" class="apply-btn" id="applyBtn">申請</button>
+                                    </form>
+                                    <!-- フォーム終了 -->
+                                </div>
+                            </div>
+                       </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Flatpickr JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
+    <script>
+        let selectedDate = null;
+        let selectedTime = null;
+        flatpickr("#calendar", {
+            locale: "ja",
+            dateFormat: "Y-m-d",
+            inline: true,
+            onChange: function(selectedDates, dateStr) {
+                selectedDate = dateStr;
+                document.getElementById('selectedDate').value = dateStr;
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // 時間選択ボタン：単一選択
+            document.querySelectorAll('.time-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedTime = this.innerText;
+                    document.getElementById('selectedTime').value = selectedTime;
+                });
+            });
+
+            // 申請ボタンをクリックしたときにシステムconfirmウィンドウを使用
+            const applyBtn = document.getElementById("applyBtn");
+            const applyForm = document.getElementById("applyForm");
+
+            applyBtn.addEventListener('click', function() {
+                if (!document.getElementById('selectedDate').value) {
+                    alert("日付を選択してください。");
+                    return;
+                }
+                if (!document.getElementById('selectedTime').value) {
+                    alert("時間を選択してください。");
+                    return;
+                }
+                if (confirm("申請しますか？")) {
+                    applyForm.submit();
+					window.location.href = '/student/thanks';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

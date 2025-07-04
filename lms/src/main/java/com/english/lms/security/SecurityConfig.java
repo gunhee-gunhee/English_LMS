@@ -87,6 +87,8 @@ public class SecurityConfig {
                     "/student/email-check",      
                     "/student/signup",             
                     "/student/signup-complete",
+                    "/student/irregular-class-apply",
+                    "/student/thanks",
                     "/student/css/**",
                     "/student/js/**",
                     "/student/apply",    // :チェックマーク_緑: GET/POST
