@@ -5,6 +5,7 @@ import com.english.lms.service.ClassApplyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +28,7 @@ public class ClassApplyController {
 
     @PostMapping("/apply")
     public String applyTrial(
-            @RequestParam("student_id") String studentId,
+    		@AuthenticationPrincipal(expression = "username") String studentId,
             @RequestParam("start-date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam("course") String course,
             @RequestParam(value = "time1", required = false) String firstChoice,

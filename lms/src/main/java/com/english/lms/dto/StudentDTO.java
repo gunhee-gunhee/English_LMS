@@ -9,7 +9,7 @@ import lombok.*;
 public class StudentDTO {
     private String id;
     private String password;
-    private String passwordCheck; // 폼에서 입력 받음
+    private String passwordCheck; 
     private String nickname;
     private String nickname_jp;
     private String age;
