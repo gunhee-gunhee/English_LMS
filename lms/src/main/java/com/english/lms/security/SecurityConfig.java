@@ -88,6 +88,8 @@ public class SecurityConfig {
                     "/student/signup",             
                     "/student/signup-complete",
                     "/student/irregular-class-apply",
+                    "/student/myinfo",
+                    "/student/myinfocheck",
                     "/student/thanks",
                     "/student/css/**",
                     "/student/js/**",

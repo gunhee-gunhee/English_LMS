@@ -11,8 +11,4 @@ public class StudentLoginController {
 		return "student/login";
 	}
 	
-	@GetMapping("/student/mypage")
-	public String loginSuccessPage() {
-		return "student/mypage";
-	}
 }
