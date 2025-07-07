@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>本人情報確認</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+    <link th:href="@{/css/custom.css}" rel="stylesheet">
+    <style>
+        .container-fluid {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+        }
+        .form-section {
+            min-width: 320px;
+            max-width: 380px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 2px 16px rgba(50,50,50,0.13);
+            padding: 38px 28px 32px 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .form-title {
+            margin-bottom: 24px;
+            font-size: 1.22em;
+            color: #e74a3b;
+            font-weight: bold;
+            text-align: center;
+            letter-spacing: 0.02em;
+        }
+        .form-group {
+            width: 100%;
+        }
+        .btn-block {
+            width: 100%;
+        }
+        @media (max-width: 480px) {
+            .form-section {
+                min-width: 0;
+                width: 97vw;
+                padding: 24px 4vw 20px 4vw;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-danger">
+<div id="wrapper">
+    <div th:replace="~{fragments/sidebar-student :: sidebar-student}"></div>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <div th:replace="~{fragments/topbar-student :: topbar('本人情報確認')}"></div>
+            <div class="container-fluid">
+                <div class="form-section">
+                    <div class="form-title">本人情報確認</div>
+                    <form th:action="@{/student/myinfocheck}" method="post" style="width:100%;">
+                        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+                        <div class="form-group">
+                            <label class="form-label" for="password">パスワードを入力してください</label>
+                            <input type="password" name="password" class="form-control" id="password" placeholder="パスワード" required>
+                        </div>
+                        <button type="submit" class="btn btn-danger btn-block mt-4">確認</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <footer class="sticky-footer bg-white">
+            <div class="container my-auto">
+                <div class="copyright text-center my-auto">
+                    <span>Copyright &copy; Your Website 2020</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+<script th:src="@{/js/sb-admin-2.min.js}"></script>
+</body>
+</html>

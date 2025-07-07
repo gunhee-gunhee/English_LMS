@@ -1,0 +1,63 @@
+<!-- src/main/resources/templates/fragments/sidebar-student.html -->
+
+<div th:fragment="sidebar-student">
+    <!-- サイドバー -->
+    <ul class="navbar-nav bg-gradient-danger sidebar sidebar-dark accordion" id="accordionSidebar">
+
+        <!-- サイドバー - ブランド -->
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/student/mypage">
+            <div class="sidebar-brand-icon rotate-n-15">
+                <i class="fas fa-laugh-wink"></i>
+            </div>
+            <div class="sidebar-brand-text mx-3"> InstaBiz <sup>2</sup></div>
+        </a>
+
+        <hr class="sidebar-divider my-0">
+
+        <!-- 講義申請 セクション -->
+        <hr class="sidebar-divider">
+        <div class="sidebar-heading">
+            講義申請
+        </div>
+        <li class="nav-item">
+            <a class="nav-link" href="/student/class-apply">
+                <i class="fas fa-fw fa-calendar-plus"></i>
+                <span>定期授業申請</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/student/irregular-class-apply">
+                <i class="fas fa-fw fa-clock"></i>
+                <span>補講申請</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/student/irregular-class-apply">
+                <i class="fas fa-fw fa-gift"></i>
+                <span>無料授業申請</span>
+            </a>
+        </li>
+
+        <!-- 学生情報 セクション -->
+        <hr class="sidebar-divider">
+        <div class="sidebar-heading">
+            学生情報
+        </div>
+        <li class="nav-item">
+            <a class="nav-link" href="/student/myinfocheck">
+                <i class="fas fa-fw fa-user"></i>
+                <span>本人情報</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/student/bookinfo">
+                <i class="fas fa-fw fa-book"></i>
+                <span>教材情報</span>
+            </a>
+        </li>
+
+        <hr class="sidebar-divider d-none d-md-block">
+
+    </ul>
+    <!-- サイドバー終了 -->
+</div>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>本人情報</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- SB Admin 2 CSS/JS 리소스 -->
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+    <link th:href="@{/css/custom.css}" rel="stylesheet">
+    <style>
+        .form-section {
+            max-width: 100%;
+            margin: 48px auto;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 2px 12px rgba(50,50,50,0.07);
+            padding: 42px 36px 36px 36px;
+        }
+        .form-title {
+            margin-bottom: 28px;
+            font-size: 1.5em;
+            color: #e74a3b;
+            font-weight: bold;
+            text-align: center;
+        }
+        .form-label {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="bg-gradient-danger" id="page-top">
+<div id="wrapper">
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebar-student :: sidebar-student}"></div>
+    <!-- End Sidebar -->
+
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+
+            <!-- Topbar -->
+            <div th:replace="~{fragments/topbar-student :: topbar('本人情報')}"></div>
+            <!-- End Topbar -->
+
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+                <div class="form-section">
+					<div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+					<div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+                    <form th:action="@{/student/myinfo}" method="post" th:object="${student}">
+                        <!-- 아이디(변경불가) -->
+                        <div class="form-group">
+                            <label class="form-label" for="studentId">学生ID</label>
+                            <input type="text" th:field="*{studentId}" class="form-control" id="studentId" readonly>
+                        </div>
+                        <!-- 비밀번호 변경 -->
+                        <div class="form-group">
+                            <label class="form-label" for="password">新しいパスワード</label>
+                            <input type="password" name="password" class="form-control" id="password" placeholder="パスワードを入力" autocomplete="new-password">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="passwordConfirm">新しいパスワード(確認)</label>
+                            <input type="password" name="passwordConfirm" class="form-control" id="passwordConfirm" placeholder="もう一度入力" autocomplete="new-password">
+                        </div>
+                        <!-- 닉네임 -->
+                        <div class="form-group">
+                            <label class="form-label" for="nickname">ニックネーム</label>
+                            <input type="text" th:field="*{nickname}" class="form-control" id="nickname" placeholder="ニックネーム">
+                        </div>
+                        <!-- 후리가나 -->
+                        <div class="form-group">
+                            <label class="form-label" for="nicknameJp">ふりがな</label>
+                            <input type="text" th:field="*{nicknameJp}" class="form-control" id="nicknameJp" placeholder="ふりがな">
+                        </div>
+                        <!-- 영어레벨(수정부분) -->
+                        <div class="form-group">
+                            <label class="form-label" for="englishLevel">英語レベル</label>
+                            <select th:field="*{englishLevel}" class="form-control" id="englishLevel">
+                                <th:block th:each="level : ${#numbers.sequence(1,10)}">
+                                    <option th:value="${level}" th:text="${level} + 'レベル'"></option>
+                                </th:block>
+                            </select>
+                        </div>
+                        <!-- // 영어레벨 끝 -->
+                        <button type="submit" class="btn btn-danger btn-block mt-4">保存</button>
+                    </form>
+                </div>
+            </div>
+            <!-- End Page Content -->
+
+        </div>
+
+        <!-- Footer -->
+        <footer class="sticky-footer bg-white">
+            <div class="container my-auto">
+                <div class="copyright text-center my-auto">
+                    <span>Copyright &copy; Your Website 2020</span>
+                </div>
+            </div>
+        </footer>
+        <!-- End of Footer -->
+
+    </div>
+</div>
+
+<!-- SB Admin 2 및 공통 JS -->
+<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+<script th:src="@{/js/sb-admin-2.min.js}"></script>
+</body>
+</html>
