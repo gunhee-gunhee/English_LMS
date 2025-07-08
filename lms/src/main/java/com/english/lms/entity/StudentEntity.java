@@ -42,6 +42,9 @@ public class StudentEntity {
 
     @Column(name = "age", length = 10)
     private String age;
+    
+    @Column(name = "company", length = 20)
+    private String company;
 
     @Column(name = "english_level")
     private Integer englishLevel;
@@ -65,8 +68,7 @@ public class StudentEntity {
     @Column(name = "role", nullable = false)
     private Role role;
     
-    @Column(name = "company", length = 20)
-    private String company;
+
 	
 	
 }

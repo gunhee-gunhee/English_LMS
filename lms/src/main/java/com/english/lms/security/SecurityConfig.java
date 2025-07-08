@@ -56,7 +56,7 @@ public class SecurityConfig {
 	            .requestMatchers("/admin/lo").hasRole("ADMIN")
 	            
 	            //center + admin アクセス可能
-	            .requestMatchers("/admin/regular-class-list","/admin/register").hasAnyRole("ADMIN","CENTER")
+	            .requestMatchers("/admin/regular-class-list","/admin/register","/admin/student/**").hasAnyRole("ADMIN","CENTER")
 	            
 	            .anyRequest().denyAll()
 	            )

@@ -12,7 +12,7 @@ public class StudentDTO {
     private String passwordCheck; 
     private String nickname;
     private String nickname_jp;
-    private String inputGroup;
+    private String company;
     private String age;
     private Integer english_level;
     private String english_purpose;
