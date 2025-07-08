@@ -64,6 +64,9 @@ public class StudentEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
     private Role role;
+    
+    @Column(name = "company", length = 20)
+    private String company;
 	
 	
 }
