@@ -12,6 +12,7 @@ public class StudentDTO {
     private String passwordCheck; // 폼에서 입력 받음
     private String nickname;
     private String nickname_jp;
+    private String inputGroup;
     private String age;
     private Integer english_level;
     private String english_purpose;

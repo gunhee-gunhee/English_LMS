@@ -27,7 +27,7 @@ public class TeacherEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "teacher_num")
-	private Integer studentNum;
+	private Integer teacherNum;
 	
 	//講師ID
 	@Column(name="id", nullable = false, length = 40)
