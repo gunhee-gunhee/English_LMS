@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import lombok.*;
 
 @Getter @Setter
@@ -19,13 +21,14 @@ public class TeacherDTO {
     private String zoomId;
     private LocalDateTime join_date;
     private List<String> weekdays;
-    private String startDate;
-    private String endDate;
-    private String startHour;
-    private String endHour;
-    private String startMinute;
-    private String endMinute;
-    private Integer enable;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private int startHour;
+    private int endHour;
+    private int startMinute;
+    private int endMinute;
+    private Integer nullity;
     
  
 }

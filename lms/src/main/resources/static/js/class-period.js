@@ -8,26 +8,37 @@
  */
 
 
-document.addEventListener("DOMContentLoaded", function() {
+window.addEventListener("DOMContentLoaded", function() {
   const startDate = document.getElementById("inputStartDate");
   const endDate = document.getElementById("inputEndDate");
 
+  //// 指定された日付の月末日を返す関数
+  function calculateLastDay(dateStr){
+	// 選択された授業開始日
+	const date = new Date(startDate.value);
+	// 翌月の1日
+	const nextMonth = new Date(date.getFullYear(), date.getMonth() + 1, 1);
+    // 翌月の1日 - 一日 = 該当月の最後の日
+	const lastDayOfMonth = new Date(nextMonth - 1);  
+	
+	// yyyy-MM-dd形式にフォーマットする
+	const yyyy = lastDayOfMonth.getFullYear();
+	const mm = String(lastDayOfMonth.getMonth() + 1).padStart(2, '0');
+	const dd = String(lastDayOfMonth.getDate()).padStart(2, '0');		             
+  
+	return `${yyyy}-${mm}-${dd}`;
+}
+  
+  
+  //初期ロード時に値が入ってたら終了日も自動入力
   if (startDate && endDate) {
-    startDate.addEventListener("change", function() {
-      if (startDate.value) {
-        // 選択された授業開始日
-        const date = new Date(startDate.value);
-        // 翌月の1日
-        const nextMonth = new Date(date.getFullYear(), date.getMonth() + 1, 1);
-        // 翌月の1日 - 一日 = 該当月の最後の日
-        const lastDayOfMonth = new Date(nextMonth - 1);
-
-        // yyyy-MM-dd形式にフォーマットする
-        const yyyy = lastDayOfMonth.getFullYear();
-        const mm = String(lastDayOfMonth.getMonth() + 1).padStart(2, '0');
-        const dd = String(lastDayOfMonth.getDate()).padStart(2, '0');
-        endDate.value = `${yyyy}-${mm}-${dd}`;
-      }
-    });
+ 	endDate.value = calculateLastDay(startDate.value);
   }
+  
+  //授業開始日を変更した時の処理
+  startDate.addEventListener("change", function() {
+	if(startDate.value) {
+		endDate.value = calculateLastDay(startDate.value);
+	}
+  })
 });

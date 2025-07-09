@@ -46,8 +46,8 @@ public class TeacherEntity {
 	private LocalDateTime joinDate;
 	
 	//利用状態
-	@Column(name = "enable", nullable = true)
-	private  Boolean enable;
+	@Column(name = "nullity", nullable = true)
+	private  Boolean nullity;
 	
 	//権限
 	@Enumerated(EnumType.STRING)

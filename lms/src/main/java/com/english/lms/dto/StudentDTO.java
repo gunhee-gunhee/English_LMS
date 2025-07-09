@@ -11,11 +11,11 @@ public class StudentDTO {
     private String password;
     private String passwordCheck; 
     private String nickname;
-    private String nickname_jp;
+    private String nicknameJp;
     private String company;
     private String age;
-    private Integer english_level;
-    private String english_purpose;
-    private String signup_path;
-    private Integer enable;
+    private Integer englishLevel;
+    private String englishPurpose;
+    private String signupPath;
+    private Integer nullity;
 }

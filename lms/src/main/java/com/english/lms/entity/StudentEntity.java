@@ -58,8 +58,8 @@ public class StudentEntity {
     @Column(name = "join_date")
     private LocalDateTime joinDate;
 
-    @Column(name = "enable", nullable = false)
-    private Integer enable;
+    @Column(name = "nullity", nullable = false)
+    private Integer nullity;
 
     @Column(name = "point", nullable = false)
     private Integer point;

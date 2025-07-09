@@ -21,7 +21,7 @@ public class StudentDetailDto {
     private String englishPurpose;
     private String signupPath;
     private String joinDate;
-    private Integer enable;
+    private Integer nullity;
     private Integer point;
     private String role;
     private String company;

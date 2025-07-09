@@ -26,7 +26,14 @@
 
     <style>
         .radio-group label { display: block; margin-bottom: 6px; }
-    </style>
+    
+		button[aria-expanded="true"] {
+		  background-color: #007bff;
+		  color: white;
+		  font-weight: bold;
+		}
+	
+	</style>
 </head>
 
 <body id="page-top">
@@ -86,9 +93,9 @@
 
                                         <div class="card-body">
 
-                                         <!-- 에러 메시지 -->
+                                         <!-- エラーメッセージ -->
                                             <div th:if="${studentError != null}" class="alert alert-danger" th:text="${studentError}"></div>
-											<div th:if="${success != null}" class="alert alert-success" th:text="${success}"></div>
+											<div th:if="${studentSuccess != null}" class="alert alert-success" th:text="${studentSuccess}"></div>
 											<form class="user" id="studentSignupForm" th:action="@{/admin/student/register}" th:object="${studentDTO}" method="post"
                                                 onsubmit="return confirm('会員登録しますか？');">
                                                 <!-- 아이디 -->
@@ -114,7 +121,7 @@
                                                 <!-- 닉네임(후리가나) -->
                                                 <div class="form-group">
                                                     <label for="inputNicknameJp">ニックネーム（ふりがな）</label>
-                                                    <input type="text" class="form-control form-control-user" id="studentNicknameJp" th:field="*{nickname_jp}" placeholder="ニックネーム（ふりがな）">
+                                                    <input type="text" class="form-control form-control-user" id="studentNicknameJp" th:field="*{nicknameJp}" placeholder="ニックネーム（ふりがな）">
                                                 </div>
                                                 <!-- 所属 -->
                                                 <div class="form-group">
@@ -135,34 +142,34 @@
                                                 <!-- 영어레벨(1~10) 라디오 그룹 -->
                                                 <div class="form-group radio-group">
                                                     <label>英語レベル</label>
-                                                    <label><input type="radio" th:field="*{english_level}" value="1" required> 1レベル</label>
-                                                    <label><input type="radio" th:field="*{english_level}" value="2"> 2レベル</label>
-                                                    <label><input type="radio" th:field="*{english_level}" value="3"> 3レベル</label>
-                                                    <label><input type="radio" th:field="*{english_level}" value="4"> 4レベル</label>
-                                                    <label><input type="radio" th:field="*{english_level}" value="5"> 5レベル</label>
-                                                    <label><input type="radio" th:field="*{english_level}" value="6"> 6レベル</label>
-                                                    <label><input type="radio" th:field="*{english_level}" value="7"> 7レベル</label>
-                                                    <label><input type="radio" th:field="*{english_level}" value="8"> 8レベル</label>
-                                                    <label><input type="radio" th:field="*{english_level}" value="9"> 9レベル</label>
-                                                    <label><input type="radio" th:field="*{english_level}" value="10"> 10レベル</label>
+                                                    <label><input type="radio" th:field="*{englishLevel}" value="1" required> 1レベル</label>
+                                                    <label><input type="radio" th:field="*{englishLevel}" value="2"> 2レベル</label>
+                                                    <label><input type="radio" th:field="*{englishLevel}" value="3"> 3レベル</label>
+                                                    <label><input type="radio" th:field="*{englishLevel}" value="4"> 4レベル</label>
+                                                    <label><input type="radio" th:field="*{englishLevel}" value="5"> 5レベル</label>
+                                                    <label><input type="radio" th:field="*{englishLevel}" value="6"> 6レベル</label>
+                                                    <label><input type="radio" th:field="*{englishLevel}" value="7"> 7レベル</label>
+                                                    <label><input type="radio" th:field="*{englishLevel}" value="8"> 8レベル</label>
+                                                    <label><input type="radio" th:field="*{englishLevel}" value="9"> 9レベル</label>
+                                                    <label><input type="radio" th:field="*{englishLevel}" value="10"> 10レベル</label>
                                                 </div>
                                                 <!-- 영어 학습 목적 -->
                                                 <div class="form-group radio-group">
                                                     <label>英語学習目的</label>
-                                                    <label><input type="radio" th:field="*{english_purpose}" value="旅行" required> 旅行</label>
-                                                    <label><input type="radio" th:field="*{english_purpose}" value="仕事"> 仕事</label>
-                                                    <label><input type="radio" th:field="*{english_purpose}" value="留学"> 留学</label>
-                                                    <label><input type="radio" th:field="*{english_purpose}" value="趣味"> 趣味</label>
-                                                    <label><input type="radio" th:field="*{english_purpose}" value="その他"> その他</label>
+                                                    <label><input type="radio" th:field="*{englishPurpose}" value="旅行" required> 旅行</label>
+                                                    <label><input type="radio" th:field="*{englishPurpose}" value="仕事"> 仕事</label>
+                                                    <label><input type="radio" th:field="*{englishPurpose}" value="留学"> 留学</label>
+                                                    <label><input type="radio" th:field="*{englishPurpose}" value="趣味"> 趣味</label>
+                                                    <label><input type="radio" th:field="*{englishPurpose}" value="その他"> その他</label>
                                                 </div>
                                                 <!-- instabiz 유입경로 -->
                                                 <div class="form-group radio-group">
                                                     <label>instabizを知ったきっかけ</label>
-                                                    <label><input type="radio" th:field="*{signup_path}" value="検索" required> 検索</label>
-                                                    <label><input type="radio" th:field="*{signup_path}" value="SNS"> SNS</label>
-                                                    <label><input type="radio" th:field="*{signup_path}" value="知人の紹介"> 知人の紹介</label>
-                                                    <label><input type="radio" th:field="*{signup_path}" value="広告"> 広告</label>
-                                                    <label><input type="radio" th:field="*{signup_path}" value="その他"> その他</label>
+                                                    <label><input type="radio" th:field="*{signupPath}" value="検索" required> 検索</label>
+                                                    <label><input type="radio" th:field="*{signupPath}" value="SNS"> SNS</label>
+                                                    <label><input type="radio" th:field="*{signupPath}" value="知人の紹介"> 知人の紹介</label>
+                                                    <label><input type="radio" th:field="*{signupPath}" value="広告"> 広告</label>
+                                                    <label><input type="radio" th:field="*{signupPath}" value="その他"> その他</label>
                                                 </div>
                                                 <button type="submit" class="btn btn-outline-danger btn-user btn-block">
                                                     登録
@@ -178,7 +185,8 @@
 
                                          <!-- 에러 메시지 -->
                                             <div th:if="${teacherError}" class="alert alert-danger" th:text="${teacherError}"></div>
-                                            <form class="user" id="teacherSignupForm" th:action="@{/teacher/signup}" th:object="${teacherDTO}" method="post"
+											<div th:if="${teacherSuccess != null}" class="alert alert-success" th:text="${teacherSuccess}"></div>
+                                            <form class="user" id="teacherSignupForm" th:action="@{/admin/teacher/register}" th:object="${teacherDTO}" method="post"
                                                 onsubmit="return confirm('会員登録しますか？');">
                                                 <!-- 아이디 -->
                                                 <div class="form-group">
@@ -203,9 +211,9 @@
                                                 <!-- Zoom ID -->
                                                 <div class="form-group">
                                                     <label for="inputZoomId">Zoom ID</label>
-                                                    <select class="form-control form-control-user" th:if="${zoomIdList != null}" id="inputZoomId" th:field="*{zoomId}">
-                                                        <option value="" disabled selected>Zoom ID</option>
-                                                        <option th:each="id : ${zoomIdList}" th:value="${id}" th:text="${id}"></option>
+                                                    <select class="form-control"  id="inputZoomId" th:field="*{zoomId}">
+                                                        <option value="" th:selected="*{zoomId} == null or *{zoomId} == ''">Zoom ID</option>
+                                                        <option th:each="id : ${zoomIdList}" th:value="${id}" th:selected="${id} == *{zoomId}">[[${id}]]</option>
                                                     </select>
                                                 </div>
                                                 <!-- 授業月日 -->
@@ -327,9 +335,10 @@
 
                                         <div class="card-body">
 
-                                         <!-- 에러 메시지 -->
+                                         <!-- エラーメッセージ -->
                                             <div th:if="${centerError}" class="alert alert-danger" th:text="${centerError}"></div>
-                                            <form class="user" id="centerSignupForm" th:action="@{/center/signup}" th:object="${adminDTO}" method="post"
+											<div th:if="${centerSuccess != null}" class="alert alert-success" th:text="${centerSuccess}"></div>
+											<form class="user" id="centerSignupForm" th:action="@{/admin/center/register}" th:object="${adminDTO}" method="post"
                                                 onsubmit="return confirm('会員登録しますか？');">
                                                 <!-- 아이디 -->
                                                 <div class="form-group">
@@ -361,7 +370,8 @@
 
                                          <!-- 에러 메시지 -->
                                             <div th:if="${adminError}" class="alert alert-danger" th:text="${adminError}"></div>
-                                            <form class="user" id="adminSignupForm" th:action="@{/admin/signup}" th:object="${adminDTO}" method="post"
+											<div th:if="${adminSuccess != null}" class="alert alert-success" th:text="${adminSuccess}"></div>
+                                            <form class="user" id="adminSignupForm" th:action="@{/admin/register}" th:object="${adminDTO}" method="post"
                                                 onsubmit="return confirm('会員登録しますか？');">
                                                 <!-- 아이디 -->
                                                 <div class="form-group">
@@ -455,14 +465,9 @@
         </div>
     </div>
 	
-	<script th:if="${openForm} == 'student'">
-	    document.addEventListener('DOMContentLoaded', function () {
-	        const studentCollapse = document.getElementById('studentRegister');
-	        if (studentCollapse) {
-	            new bootstrap.Collapse(studentCollapse, { toggle: true });
-	        }
-	    });
-	</script>
+	<!--登録した後、自動でcollapseを開くdiv-->
+	<div id="formOpenTarget" th:data-target="${openForm}" style="display:none;"></div>
+	
 	
 	
     <!-- Bootstrap core JavaScript-->
@@ -483,6 +488,9 @@
 	    
   		<!--授業終了の時間を自動設定-->
 	    <!-- <script src="js/class-endtime.js"></script> -->
-</body>
+
+	<!--自動でcollapseを開く-->
+	<script th:src="@{/js/auto-open-collapse.js}"></script>
+	</body>
 
 </html>

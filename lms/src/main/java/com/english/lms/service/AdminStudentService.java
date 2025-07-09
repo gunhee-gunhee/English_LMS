@@ -80,7 +80,7 @@ public class AdminStudentService {
                 .englishPurpose(student.getEnglishPurpose())
                 .signupPath(student.getSignupPath())
                 .joinDate(student.getJoinDate() != null ? student.getJoinDate().toString() : null)
-                .enable(student.getEnable())
+                .nullity(student.getNullity())
                 .point(student.getPoint())
                 .role(student.getRole() != null ? student.getRole().name() : null) // Enum→String
                 .company(student.getCompany())
@@ -147,7 +147,7 @@ public class AdminStudentService {
         student.setEnglishLevel(dto.getEnglishLevel());
         student.setEnglishPurpose(dto.getEnglishPurpose());
         student.setSignupPath(dto.getSignupPath());
-        student.setEnable(dto.getEnable());
+        student.setNullity(dto.getNullity());
         student.setPoint(dto.getPoint());
         // 役割(Role)はString→Enum変換して設定
         if (dto.getRole() != null) {

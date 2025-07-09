@@ -51,7 +51,7 @@
                                 <!-- 닉네임(후리가나) -->
                                 <div class="form-group">
                                     <label for="inputNicknameJp">ニックネーム（ふりがな）</label>
-                                    <input type="text" class="form-control form-control-user" id="inputNicknameJp" th:field="*{nickname_jp}" placeholder="ニックネーム（ふりがな）">
+                                    <input type="text" class="form-control form-control-user" id="inputNicknameJp" th:field="*{nicknameJp}" placeholder="ニックネーム（ふりがな）">
                                 </div>
                                 <!-- 연령 라디오 그룹 -->
                                 <div class="form-group radio-group">
@@ -67,34 +67,34 @@
                                 <!-- 영어레벨(1~10) 라디오 그룹 -->
                                 <div class="form-group radio-group">
                                     <label>英語レベル</label>
-                                    <label><input type="radio" th:field="*{english_level}" value="1" required> 1レベル</label>
-                                    <label><input type="radio" th:field="*{english_level}" value="2"> 2レベル</label>
-                                    <label><input type="radio" th:field="*{english_level}" value="3"> 3レベル</label>
-                                    <label><input type="radio" th:field="*{english_level}" value="4"> 4レベル</label>
-                                    <label><input type="radio" th:field="*{english_level}" value="5"> 5レベル</label>
-                                    <label><input type="radio" th:field="*{english_level}" value="6"> 6レベル</label>
-                                    <label><input type="radio" th:field="*{english_level}" value="7"> 7レベル</label>
-                                    <label><input type="radio" th:field="*{english_level}" value="8"> 8レベル</label>
-                                    <label><input type="radio" th:field="*{english_level}" value="9"> 9レベル</label>
-                                    <label><input type="radio" th:field="*{english_level}" value="10"> 10レベル</label>
+                                    <label><input type="radio" th:field="*{englishLevel}" value="1" required> 1レベル</label>
+                                    <label><input type="radio" th:field="*{englishLevel}" value="2"> 2レベル</label>
+                                    <label><input type="radio" th:field="*{englishLevel}" value="3"> 3レベル</label>
+                                    <label><input type="radio" th:field="*{englishLevel}" value="4"> 4レベル</label>
+                                    <label><input type="radio" th:field="*{englishLevel}" value="5"> 5レベル</label>
+                                    <label><input type="radio" th:field="*{englishLevel}" value="6"> 6レベル</label>
+                                    <label><input type="radio" th:field="*{englishLevel}" value="7"> 7レベル</label>
+                                    <label><input type="radio" th:field="*{englishLevel}" value="8"> 8レベル</label>
+                                    <label><input type="radio" th:field="*{englishLevel}" value="9"> 9レベル</label>
+                                    <label><input type="radio" th:field="*{englishLevel}" value="10"> 10レベル</label>
                                 </div>
                                 <!-- 영어 학습 목적 -->
                                 <div class="form-group radio-group">
                                     <label>英語学習目的</label>
-                                    <label><input type="radio" th:field="*{english_purpose}" value="旅行" required> 旅行</label>
-                                    <label><input type="radio" th:field="*{english_purpose}" value="仕事"> 仕事</label>
-                                    <label><input type="radio" th:field="*{english_purpose}" value="留学"> 留学</label>
-                                    <label><input type="radio" th:field="*{english_purpose}" value="趣味"> 趣味</label>
-                                    <label><input type="radio" th:field="*{english_purpose}" value="その他"> その他</label>
+                                    <label><input type="radio" th:field="*{englishPurpose}" value="旅行" required> 旅行</label>
+                                    <label><input type="radio" th:field="*{englishPurpose}" value="仕事"> 仕事</label>
+                                    <label><input type="radio" th:field="*{englishPurpose}" value="留学"> 留学</label>
+                                    <label><input type="radio" th:field="*{englishPurpose}" value="趣味"> 趣味</label>
+                                    <label><input type="radio" th:field="*{englishPurpose}" value="その他"> その他</label>
                                 </div>
                                 <!-- instabiz 유입경로 -->
                                 <div class="form-group radio-group">
                                     <label>instabizを知ったきっかけ</label>
-                                    <label><input type="radio" th:field="*{signup_path}" value="検索" required> 検索</label>
-                                    <label><input type="radio" th:field="*{signup_path}" value="SNS"> SNS</label>
-                                    <label><input type="radio" th:field="*{signup_path}" value="知人の紹介"> 知人の紹介</label>
-                                    <label><input type="radio" th:field="*{signup_path}" value="広告"> 広告</label>
-                                    <label><input type="radio" th:field="*{signup_path}" value="その他"> その他</label>
+                                    <label><input type="radio" th:field="*{signupPath}" value="検索" required> 検索</label>
+                                    <label><input type="radio" th:field="*{signupPath}" value="SNS"> SNS</label>
+                                    <label><input type="radio" th:field="*{signupPath}" value="知人の紹介"> 知人の紹介</label>
+                                    <label><input type="radio" th:field="*{signupPath}" value="広告"> 広告</label>
+                                    <label><input type="radio" th:field="*{signupPath}" value="その他"> その他</label>
                                 </div>
                                 <button type="submit" class="btn btn-outline-danger btn-user btn-block">
                                     会員登録
