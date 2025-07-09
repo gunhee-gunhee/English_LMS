@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.english.lms.dto.StudentDetailDto;
+import com.english.lms.dto.StudentDTO;
+import com.english.lms.repository.ClassRepository;
 import com.english.lms.service.AdminStudentService;
 
 /**
@@ -23,24 +24,28 @@ import com.english.lms.service.AdminStudentService;
 public class DetailController {
 
     private final AdminStudentService adminStudentService;
+    private final ClassRepository classRepository;
 
     /**
      * 学生詳細画面を表示するGET
      */
     @GetMapping("/student/detail/{studentNum}")
-    public String showStudentDetail(@PathVariable Integer studentNum, Model model) {
+    public String showStudentDetail(@PathVariable("studentNum") Integer studentNum, Model model) {
         log.info("学生詳細ページを表示: {}", studentNum);
-
-        // 学生詳細情報を取得
-        StudentDetailDto student = adminStudentService.getStudentDetail(studentNum);
-        model.addAttribute("student", student);
 
         // 年齢・英語レベル・講師・曜日・時間などの選択肢
         model.addAttribute("ageList", adminStudentService.getAgeOptions());
         model.addAttribute("englishLevelList", adminStudentService.getEnglishLevelOptions());
-        model.addAttribute("teacherList", adminStudentService.getTeacherOptions());
-        model.addAttribute("dayList", adminStudentService.getWeekDayOptions());
-        model.addAttribute("timeList", adminStudentService.getTimeOptions(studentNum));
+        
+        Integer teacherNum = classRepository.findTeacherNumByStudentNum(studentNum); // 수업에서 담당 강사 번호 얻기
+        String teacherNickname = null;
+        if (teacherNum != null) {
+            teacherNickname = adminStudentService.getTeacherNickname(teacherNum);
+        }
+        model.addAttribute("teacherNickname", teacherNickname);
+        
+        StudentDTO student = adminStudentService.getStudent(studentNum);
+        model.addAttribute("student", student);
 
         return "admin/student-detail";
     }
@@ -49,11 +54,12 @@ public class DetailController {
      * 学生情報を修正するPOST
      */
     @PostMapping("/student/detail/{studentNum}")
-    public String updateStudent(@PathVariable Integer studentNum,
-                                @ModelAttribute StudentDetailDto dto,
-                                Model model) {
+    public String updateStudent(
+        @PathVariable("studentNum") Integer studentNum,
+        @ModelAttribute("student") StudentDTO dto,
+        Model model) {
         adminStudentService.updateStudent(studentNum, dto);
-        return "redirect:/admin/student/detail/" + studentNum + "?success";
+        return "redirect:/admin/student/detail/" + studentNum;
     }
 
     /**

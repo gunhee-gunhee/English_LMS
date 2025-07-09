@@ -21,15 +21,15 @@ public class StudentServiceImpl implements StudentService {
         student.setStudentId(dto.getId());
         student.setPassword(passwordEncoder.encode(dto.getPassword()));
         student.setNickname(dto.getNickname());
-        student.setNicknameJp(dto.getNickname_jp());
+        student.setNicknameJp(dto.getNicknameJp());
         student.setAge(dto.getAge());
-        student.setEnglishLevel(dto.getEnglish_level());
-        student.setEnglishPurpose(dto.getEnglish_purpose());
-        student.setSignupPath(dto.getSignup_path());
+        student.setEnglishLevel(dto.getEnglishLevel());
+        student.setEnglishPurpose(dto.getEnglishPurpose());
+        student.setSignupPath(dto.getSignupPath());
 
         // --- point 기본값 세팅 (꼭 필요) ---
         student.setPoint(0);
-        student.setEnable(1);
+        student.setNullity(false);
         student.setRole(Role.STUDENT);
 
         // --- joinDate, use, role 등은 @PrePersist에서 자동 처리하면 좋음 ---

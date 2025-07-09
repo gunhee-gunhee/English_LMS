@@ -1,11 +1,7 @@
 <!DOCTYPE html>
 <html lang="ja" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-</html>
-
 <head>
-
-	<head>
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -25,10 +21,9 @@
 
 		<!-- Custom styles for this page -->
 		<link th:href="@{/vendor/datatables/dataTables.bootstrap4.min.css}" rel="stylesheet">
-	</head>
-
 
 </head>
+<body>
 <!-- Page Wrapper -->
 <div id="wrapper">
 
@@ -92,14 +87,10 @@
 										</option>
 									</select>
 								</div>
-								<!-- 講師選択 -->
-								<div class="mb-3">
-									<label class="form-label">講師：</label>
-									<select class="form-select" name="teacher">
-										<option th:each="t : ${teacherList}" th:value="${t.teacherNum}"
-											th:text="${t.teacherName}"
-											th:selected="${student.teacherNum == t.teacherNum}"></option>
-									</select>
+									<div class="mb-3">
+									    <label class="form-label">担当講師：</label>
+									    <input type="text" class="form-control" th:value="${teacherNickname}" readonly>
+									</div>
 								</div>
 								<!-- 会員種類（학생, 강사, 센터관리자, 본사관리자） -->
 								<div class="mb-3">
@@ -115,54 +106,11 @@
 										</option>
 									</select>
 								</div>
-								<!-- 受講曜日（複数選択可能） -->
-								<div class="mb-3">
-									<label class="form-label">受講曜日：</label><br>
-									<div class="btn-group" role="group" aria-label="受講曜日" style="flex-wrap: wrap;">
-										<input type="checkbox" class="d-none" id="sun" name="days" value="日"
-											th:checked="${#lists.contains(student.days, '日')}">
-										<label class="btn btn-outline-primary" for="sun">日</label>
-										<input type="checkbox" class="d-none" id="mon" name="days" value="月"
-											th:checked="${#lists.contains(student.days, '月')}">
-										<label class="btn btn-outline-primary" for="mon">月</label>
-										<input type="checkbox" class="d-none" id="tue" name="days" value="火"
-											th:checked="${#lists.contains(student.days, '火')}">
-										<label class="btn btn-outline-primary" for="tue">火</label>
-										<input type="checkbox" class="d-none" id="wed" name="days" value="水"
-											th:checked="${#lists.contains(student.days, '水')}">
-										<label class="btn btn-outline-primary" for="wed">水</label>
-										<input type="checkbox" class="d-none" id="thu" name="days" value="木"
-											th:checked="${#lists.contains(student.days, '木')}">
-										<label class="btn btn-outline-primary" for="thu">木</label>
-										<input type="checkbox" class="d-none" id="fri" name="days" value="金"
-											th:checked="${#lists.contains(student.days, '金')}">
-										<label class="btn btn-outline-primary" for="fri">金</label>
-										<input type="checkbox" class="d-none" id="sat" name="days" value="土"
-											th:checked="${#lists.contains(student.days, '土')}">
-										<label class="btn btn-outline-primary" for="sat">土</label>
-									</div>
-								</div>
-								<!-- 受講時間 -->
-								<div class="mb-3">
-									<label class="form-label">受講時間：</label>
-									<div class="d-flex gap-2">
-										<select class="form-select" name="startTime">
-											<option th:each="time : ${timeList}" th:value="${time.startTime}"
-												th:text="${time.startTime}"
-												th:selected="${student.startTime == time.startTime}"></option>
-										</select>
-										<span class="align-self-center">〜</span>
-										<select class="form-select" name="endTime">
-											<option th:each="time : ${timeList}" th:value="${time.endTime}"
-												th:text="${time.endTime}"
-												th:selected="${student.endTime == time.endTime}"></option>
-										</select>
-									</div>
-								</div>
+
 								<!-- 有効/無効（チェック시 無効化） -->
 								<div class="mb-3 form-check">
-									<input type="checkbox" class="form-check-input" id="disabled" name="enable"
-										th:checked="${student.enable == 0}">
+									<input type="checkbox" class="form-check-input" id="disabled" name="nullity"
+									    th:checked="${student.nullity}" th:value="true"/>
 									<label class="form-check-label" for="disabled">無効化（現在、授業を行っていません。）</label>
 								</div>
 								<div class="d-flex justify-content-between">
