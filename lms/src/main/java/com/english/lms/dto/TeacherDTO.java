@@ -25,7 +25,7 @@ public class TeacherDTO {
     private String endHour;
     private String startMinute;
     private String endMinute;
-    private Integer enable;
+    private Boolean nullity;
     
  
 }
