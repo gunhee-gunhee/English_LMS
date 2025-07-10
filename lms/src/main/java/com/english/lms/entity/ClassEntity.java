@@ -28,7 +28,7 @@ public class ClassEntity {
     private Integer teacherNum;
 
     @Column(name = "week_days")
-    private Integer weekDays; // 2진법 플래그 등으로 요일을 저장하는 경우 (예: 0110010)
+    private Integer weekDays; 
 
     @Column(name = "text_num")
     private Integer textNum;

@@ -16,6 +16,7 @@ import com.english.lms.dto.StudentDTO;
 import com.english.lms.dto.TeacherDTO;
 import com.english.lms.service.AdminService;
 import com.english.lms.service.StudentService;
+import com.english.lms.service.TeacherService;
 import com.english.lms.service.ZoomAccountService;
 
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ public class AdminRegisterController {
 	private final ZoomAccountService zoomAccountService;
 	private final StudentService studentService;
 	private final AdminService adminService;
+	private final TeacherService teacherService;
 	
 	//Page移動
 	@GetMapping("/admin/register")
@@ -141,15 +143,27 @@ public class AdminRegisterController {
 	@PostMapping("/admin/teacher/register")
 	public String teacherRegister(@ModelAttribute TeacherDTO teacherDTO, RedirectAttributes redirectAttributes ) {
 		
-		// 時間（時と分）を結合してLocalTimeを作成
-		//LocalTime.of（hour, minute) 
-		LocalTime startTime = LocalTime.of(teacherDTO.getStartHour(),teacherDTO.getStartMinute());
-		LocalTime endTime = LocalTime.of(teacherDTO.getEndHour(), teacherDTO.getEndMinute());
+		//重複のIDをチェック
+		if(teacherService.existsById(teacherDTO.getId())) {
+			redirectAttributes.addFlashAttribute("teacherError", "このIDは既に登録されています。" );
+			redirectAttributes.addFlashAttribute("teacherDTO", teacherDTO);
+			redirectAttributes.addFlashAttribute("openForm", "teacher");
+			return "redirect:/admin/register?open=teacher";
+		}		
+				
+		//パスワードのチェック
+		if(!teacherDTO.getPassword().equals(teacherDTO.getPasswordCheck())) {
+			redirectAttributes.addFlashAttribute("teacherError", "パスワードが一致しません。" );
+			redirectAttributes.addFlashAttribute("teacherDTO", teacherDTO);
+			redirectAttributes.addFlashAttribute("openForm", "teacher");
+			return "redirect:/admin/register?open=teacher";
+		}	
 		
-		// 曜日ごとにタイムスロットを保存
-		for(String weekday : teacherDTO.getWeekdays()) {
-			
-		}
-		return "";
+		teacherService.registerTeacher(teacherDTO);
+		
+		//メッセージ
+		redirectAttributes.addFlashAttribute("teacherSuccess", "会員登録が完了しました。");
+		redirectAttributes.addFlashAttribute("openForm","teacher");
+		return "redirect:/admin/register?open=teacher";
 	}
 }

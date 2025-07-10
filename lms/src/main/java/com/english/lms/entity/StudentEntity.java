@@ -59,7 +59,7 @@ public class StudentEntity {
     private LocalDateTime joinDate;
 
     @Column(name = "nullity", nullable = false)
-    private Integer nullity;
+    private Boolean nullity;
 
     @Column(name = "point", nullable = false)
     private Integer point;

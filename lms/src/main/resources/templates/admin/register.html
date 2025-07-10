@@ -184,7 +184,7 @@
                                         <div class="card-body">
 
                                          <!-- 에러 메시지 -->
-                                            <div th:if="${teacherError}" class="alert alert-danger" th:text="${teacherError}"></div>
+                                            <div th:if="${teacherError != null}" class="alert alert-danger" th:text="${teacherError}"></div>
 											<div th:if="${teacherSuccess != null}" class="alert alert-success" th:text="${teacherSuccess}"></div>
                                             <form class="user" id="teacherSignupForm" th:action="@{/admin/teacher/register}" th:object="${teacherDTO}" method="post"
                                                 onsubmit="return confirm('会員登録しますか？');">
@@ -244,31 +244,31 @@
                                                                 
                                                                 <!--日曜日-->
                                                                 <label class="btn btn-outline-primary m-1">
-                                                                    <input type="checkbox" th:field="*{weekdays}" value="日" autocomplete="off">日
+                                                                    <input type="checkbox" th:field="*{schedules[0].weekdays}" value="日" autocomplete="off">日
                                                                 </label>
                                                                 <!--月曜日-->
                                                                 <label class="btn btn-outline-primary m-1">
-                                                                    <input type="checkbox" th:field="*{weekdays}" value="月" autocomplete="off">月
+                                                                    <input type="checkbox" th:field="*{schedules[0].weekdays}" value="月" autocomplete="off">月
                                                                 </label>
                                                                 <!--火曜日-->
                                                                 <label class="btn btn-outline-primary m-1">
-                                                                    <input type="checkbox" th:field="*{weekdays}" value="火" autocomplete="off">火
+                                                                    <input type="checkbox" th:field="*{schedules[0].weekdays}" value="火" autocomplete="off">火
                                                                 </label>
                                                                 <!--水曜日-->
                                                                 <label class="btn btn-outline-primary m-1">
-                                                                    <input type="checkbox" th:field="*{weekdays}" value="水" autocomplete="off">水
+                                                                    <input type="checkbox" th:field="*{schedules[0].weekdays}" value="水" autocomplete="off">水
                                                                 </label>
                                                                 <!--木曜日-->
                                                                 <label class="btn btn-outline-primary m-1">
-                                                                    <input type="checkbox" th:field="*{weekdays}" value="木" autocomplete="off">木
+                                                                    <input type="checkbox" th:field="*{schedules[0].weekdays}" value="木" autocomplete="off">木
                                                                 </label>
                                                                 <!--金曜日-->
                                                                 <label class="btn btn-outline-primary m-1">
-                                                                    <input type="checkbox" th:field="*{weekdays}" value="金" autocomplete="off">金
+                                                                    <input type="checkbox" th:field="*{schedules[0].weekdays}" value="金" autocomplete="off">金
                                                                 </label>
                                                                 <!--土曜日-->
                                                                 <label class="btn btn-outline-primary m-1">
-                                                                    <input type="checkbox" th:field="*{weekdays}" value="土" autocomplete="off">土
+                                                                    <input type="checkbox" th:field="*{schedules[0].weekdays}" value="土" autocomplete="off">土
                                                                 </label>
                                                             </div>
                                                         </div>
@@ -279,7 +279,7 @@
                                                             <div class="d-flex align-items-center flex-wrap">
 
                                                                 	<!--授業開始の時を選択-->
-                                                                <select class="form-control mx-1" style="width: 80px;" id="startHour" th:field="*{startHour}" required>
+                                                                <select class="form-control mx-1" style="width: 80px;" id="startHour" th:field="*{schedules[0].startHour}" required>
                                                                      <option value="">--</option>  
                                                                      <!--#numbers：Thymeleafテンプレート内で自由に数値のリストを生成できる組み込みオブジェクト--> 
                                                                      <!--#numbers.sequence(開始, 終了, 増分)-->
@@ -290,7 +290,7 @@
                                                                 </select>時
 
                                                                 	<!--授業開始の分を選択-->
-                                                                <select class="form-control mx-1" style="width: 80px;" id="startMinute" th:field="*{startMinute}" required>
+                                                                <select class="form-control mx-1" style="width: 80px;" id="startMinute" th:field="*{schedules[0].startMinute}" required>
                                                                     <option value="">--</option>
                                                                     <option th:each="m : ${#numbers.sequence(0,50,10)}"
                                                                             th:value="${m}" th:text="${m == 0 ? '00' : m}"></option>
@@ -299,14 +299,14 @@
                                                                 <span>  ~  </span>
 
                                                                 <!--授業終了の時を選択-->
-                                                                <select class="form-control mx-1" style="width: 80px;" id="endHour" th:field="*{endHour}" required>
+                                                                <select class="form-control mx-1" style="width: 80px;" id="endHour" th:field="*{schedules[0].endHour}" required>
                                                                     <option value="">--</option>
                                                                     <option th:each="h: ${#numbers.sequence(0,23)}"
                                                                             th:value="${h}" th:text="${h == 0? '00' : h}"></option>
                                                                 </select>時
 
                                                                 <!--授業終了の分を選択-->
-                                                                <select class="form-control mx-1" style="width: 80px;" id="endMinute" th:field="*{endMinute}" required>
+                                                                <select class="form-control mx-1" style="width: 80px;" id="endMinute" th:field="*{schedules[0].endMinute}" required>
                                                                     <option value="">--</option>
                                                                     <option th:each="m: ${#numbers.sequence(0,50,10)}"
                                                                             th:value="${m}" th:text="${m == 0 ? '00' : m}"></option>

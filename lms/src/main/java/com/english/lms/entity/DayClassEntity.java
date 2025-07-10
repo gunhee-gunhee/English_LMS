@@ -17,7 +17,11 @@ import java.time.LocalTime;
 
 @Entity
 @Table(name = "lms_day_class")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Getter 
+@Setter 
+@NoArgsConstructor
+@AllArgsConstructor 
+@Builder
 public class DayClassEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
