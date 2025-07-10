@@ -51,12 +51,12 @@ public class SecurityConfig {
 			//URLごとのアクセス制御を設定
 		 	.securityMatcher("/admin/**") // 管理者　URLのみ適用
 	        .authorizeHttpRequests(auth -> auth
-	            .requestMatchers("/admin/login", "/admin/css/**", "/admin/js/**").permitAll()
+	            .requestMatchers("/admin/login", "/admin/css/**", "/admin/js/**","/admin/vendor/**").permitAll()
 	            //管理者のみ
 	            .requestMatchers("/admin/lo").hasRole("ADMIN")
 	            
 	            //center + admin アクセス可能
-	            .requestMatchers("/admin/regular-class-list").hasAnyRole("ADMIN","CENTER")
+	            .requestMatchers("/admin/regular-class-list","/admin/register","/admin/student/**").hasAnyRole("ADMIN","CENTER")
 	            
 	            .anyRequest().denyAll()
 	            )

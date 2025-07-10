@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>SB Admin 2 - Tables</title>
+
+    <!-- Custom fonts for this template -->
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+    
+    <!-- Custom styles for this page -->
+    <link th:href="@{/vendor/datatables/dataTables.bootstrap4.min.css}" rel="stylesheet">
+    
+
+    <style>
+        .radio-group label { display: block; margin-bottom: 6px; }
+    </style>
+</head>
+
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+		<div th:replace="~{fragments/sidebar-admin :: sidebar-admin}"></div>
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+				<div th:replace="~{fragments/topbar :: topbar('学生詳細')}"></div>
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- DataTales Example -->
+                    <div class="card shadow mb-4">
+                        <div class="card-body">
+                            
+                            <!--button collapseのplace-->
+                            <div id="btnAccordion">
+                                
+                            <!--学生登録のボタン-->
+                             <div class="card">
+                                <!--accordion-header : ボタンを包むdiv-->
+                                <div class="card-header" id="registerBtn"> 
+                                    <h2 class="mb-0" >
+
+                                        <!--学生ボタン-->
+                                        <button class="btn btn-outline-primary" data-toggle="collapse" data-target="#studentRegister" aria-expanded="false" aria-controls="studentRegister">
+                                            学生
+                                        </button>
+
+                                        <!--講師ボタン-->
+                                        <button class="btn btn-outline-primary" data-toggle="collapse" data-target="#teacherRegister" aria-expanded="false" aria-controls="teacherRegister">
+                                            講師
+                                        </button>
+                                        
+                                        <!--センターボタン-->
+                                        <button sec:authorize="hasRole('ADMIN')" class="btn btn-outline-primary" data-toggle="collapse" data-target="#centerRegister" aria-expanded="false" aria-controls="centerRegister">
+                                            センター管理者
+                                        </button>
+
+                                         <!--本社管理者ボタン-->
+                                        <button sec:authorize="hasRole('ADMIN')" class="btn btn-outline-primary" data-toggle="collapse" data-target="#adminRegister" aria-expanded="false" aria-controls="adminRegister">
+                                            本社管理者
+                                        </button>
+                                    </h2>
+                                </div>
+                                    <!--学生登録　:　ボタンを押す時に出る入力フォーム-->
+                                    <div class="collapse" id="studentRegister"  aria-labelledby="registerBtn" data-parent="#btnAccordion">
+
+                                        <div class="card-body">
+
+                                         <!-- 에러 메시지 -->
+                                            <div th:if="${studentError != null}" class="alert alert-danger" th:text="${studentError}"></div>
+											<div th:if="${success != null}" class="alert alert-success" th:text="${success}"></div>
+											<form class="user" id="studentSignupForm" th:action="@{/admin/student/register}" th:object="${studentDTO}" method="post"
+                                                onsubmit="return confirm('会員登録しますか？');">
+                                                <!-- 아이디 -->
+                                                <div class="form-group">
+                                                    <label for="inputId">ユーザーID</label>
+                                                    <input type="text" class="form-control form-control-user" id="studentId" th:field="*{id}" placeholder="ユーザーID" required>
+                                                </div>
+                                                <!-- 비밀번호 -->
+                                                <div class="form-group">
+                                                    <label for="inputPassword">パスワード</label>
+                                                    <input type="password" class="form-control form-control-user" id="studentPassword" th:field="*{password}" placeholder="パスワード" required>
+                                                </div>
+                                                <!-- 비밀번호 확인 -->
+                                                <div class="form-group">
+                                                    <label for="inputPasswordCheck">パスワード確認</label>
+                                                    <input type="password" class="form-control form-control-user" id="studentPasswordCheck" th:field="*{passwordCheck}" placeholder="パスワード確認" required>
+                                                </div>
+                                                <!-- 닉네임 -->
+                                                <div class="form-group">
+                                                    <label for="inputNickname">ニックネーム</label>
+                                                    <input type="text" class="form-control form-control-user" id="studentNickname" th:field="*{nickname}" placeholder="ニックネーム">
+                                                </div>
+                                                <!-- 닉네임(후리가나) -->
+                                                <div class="form-group">
+                                                    <label for="inputNicknameJp">ニックネーム（ふりがな）</label>
+                                                    <input type="text" class="form-control form-control-user" id="studentNicknameJp" th:field="*{nickname_jp}" placeholder="ニックネーム（ふりがな）">
+                                                </div>
+                                                <!-- 所属 -->
+                                                <div class="form-group">
+                                                    <label for="inputGroup">所属</label>
+                                                    <input type="text" class="form-control form-control-user" id="studentGroup" th:field="*{company}" placeholder="所属">
+                                                </div>
+                                                <!-- 연령 라디오 그룹 -->
+                                                <div class="form-group radio-group">
+                                                    <label>年齢</label>
+                                                    <label><input type="radio" th:field="*{age}" value="10歳未満" required> 10歳未満</label>
+                                                    <label><input type="radio" th:field="*{age}" value="10代"> 10代</label>
+                                                    <label><input type="radio" th:field="*{age}" value="20代"> 20代</label>
+                                                    <label><input type="radio" th:field="*{age}" value="30代"> 30代</label>
+                                                    <label><input type="radio" th:field="*{age}" value="40代"> 40代</label>
+                                                    <label><input type="radio" th:field="*{age}" value="50代"> 50代</label>
+                                                    <label><input type="radio" th:field="*{age}" value="60歳以上"> 60歳以上</label>
+                                                </div>
+                                                <!-- 영어레벨(1~10) 라디오 그룹 -->
+                                                <div class="form-group radio-group">
+                                                    <label>英語レベル</label>
+                                                    <label><input type="radio" th:field="*{english_level}" value="1" required> 1レベル</label>
+                                                    <label><input type="radio" th:field="*{english_level}" value="2"> 2レベル</label>
+                                                    <label><input type="radio" th:field="*{english_level}" value="3"> 3レベル</label>
+                                                    <label><input type="radio" th:field="*{english_level}" value="4"> 4レベル</label>
+                                                    <label><input type="radio" th:field="*{english_level}" value="5"> 5レベル</label>
+                                                    <label><input type="radio" th:field="*{english_level}" value="6"> 6レベル</label>
+                                                    <label><input type="radio" th:field="*{english_level}" value="7"> 7レベル</label>
+                                                    <label><input type="radio" th:field="*{english_level}" value="8"> 8レベル</label>
+                                                    <label><input type="radio" th:field="*{english_level}" value="9"> 9レベル</label>
+                                                    <label><input type="radio" th:field="*{english_level}" value="10"> 10レベル</label>
+                                                </div>
+                                                <!-- 영어 학습 목적 -->
+                                                <div class="form-group radio-group">
+                                                    <label>英語学習目的</label>
+                                                    <label><input type="radio" th:field="*{english_purpose}" value="旅行" required> 旅行</label>
+                                                    <label><input type="radio" th:field="*{english_purpose}" value="仕事"> 仕事</label>
+                                                    <label><input type="radio" th:field="*{english_purpose}" value="留学"> 留学</label>
+                                                    <label><input type="radio" th:field="*{english_purpose}" value="趣味"> 趣味</label>
+                                                    <label><input type="radio" th:field="*{english_purpose}" value="その他"> その他</label>
+                                                </div>
+                                                <!-- instabiz 유입경로 -->
+                                                <div class="form-group radio-group">
+                                                    <label>instabizを知ったきっかけ</label>
+                                                    <label><input type="radio" th:field="*{signup_path}" value="検索" required> 検索</label>
+                                                    <label><input type="radio" th:field="*{signup_path}" value="SNS"> SNS</label>
+                                                    <label><input type="radio" th:field="*{signup_path}" value="知人の紹介"> 知人の紹介</label>
+                                                    <label><input type="radio" th:field="*{signup_path}" value="広告"> 広告</label>
+                                                    <label><input type="radio" th:field="*{signup_path}" value="その他"> その他</label>
+                                                </div>
+                                                <button type="submit" class="btn btn-outline-danger btn-user btn-block">
+                                                    登録
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div> <!--学生登録　End-->
+
+                                       <!--講師登録　:　ボタンを押す時に出る入力フォーム-->
+                                    <div class="collapse" id="teacherRegister"  aria-labelledby="registerBtn" data-parent="#btnAccordion">
+
+                                        <div class="card-body">
+
+                                         <!-- 에러 메시지 -->
+                                            <div th:if="${teacherError}" class="alert alert-danger" th:text="${teacherError}"></div>
+                                            <form class="user" id="teacherSignupForm" th:action="@{/teacher/signup}" th:object="${teacherDTO}" method="post"
+                                                onsubmit="return confirm('会員登録しますか？');">
+                                                <!-- 아이디 -->
+                                                <div class="form-group">
+                                                    <label for="inputId">ユーザーID</label>
+                                                    <input type="text" class="form-control form-control-user" id="teacherId" th:field="*{id}" placeholder="ユーザーID" required>
+                                                </div>
+                                                <!-- 비밀번호 -->
+                                                <div class="form-group">
+                                                    <label for="inputPassword">パスワード</label>
+                                                    <input type="password" class="form-control form-control-user" id="teacherPassword" th:field="*{password}" placeholder="パスワード" required>
+                                                </div>
+                                                <!-- 비밀번호 확인 -->
+                                                <div class="form-group">
+                                                    <label for="inputPasswordCheck">パスワード確認</label>
+                                                    <input type="password" class="form-control form-control-user" id="teacherPasswordCheck" th:field="*{passwordCheck}" placeholder="パスワード確認" required>
+                                                </div>
+                                                <!-- 닉네임 -->
+                                                <div class="form-group">
+                                                    <label for="inputNickname">ニックネーム</label>
+                                                    <input type="text" class="form-control form-control-user" id="teacherNickname" th:field="*{nickname}" placeholder="ニックネーム">
+                                                </div>
+                                                <!-- Zoom ID -->
+                                                <div class="form-group">
+                                                    <label for="inputZoomId">Zoom ID</label>
+                                                    <select class="form-control form-control-user" th:if="${zoomIdList != null}" id="inputZoomId" th:field="*{zoomId}">
+                                                        <option value="" disabled selected>Zoom ID</option>
+                                                        <option th:each="id : ${zoomIdList}" th:value="${id}" th:text="${id}"></option>
+                                                    </select>
+                                                </div>
+                                                <!-- 授業月日 -->
+                                                <div class="card mb-3">
+                                                    <div class="card-body">
+                                                         <!-- 授業開始日 -->
+                                                          <!-- Controllerで今日の年月日が出力される作業が必要-->
+                                                        <div class="form-group">
+                                                            <label for="inputStartDate">授業開始日</label>
+                                                            <input type="date" class="form-control form-control-user" id="inputStartDate" th:field="*{startDate}" >
+                                                        </div>
+                                                        <!-- 授業終了日 -->
+                                                        <div class="form-group">
+                                                            <label for="inputEndDate">授業終了日</label>
+                                                            <input type="date" class="form-control form-control-user" id="inputEndDate" th:field="*{endDate}" >
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- 授業の曜日 -->
+                                                <div id="scheduleBoxList">
+                                                 <!-- スケジュール　1-->
+                                                 <div class="card mb-3 schedule-item">
+                                                    <div class="card-body">
+                                                        <div class="form-group">
+                                                            <label for="weekdays">授業曜日</label>
+                                                            <!-- 曜日のボタン -->
+                                                            <div class="btn-group btn-group-toggle d-flex flex-wrap" data-toggle="buttons" id="weekdays" >
+                                                                
+                                                                <!--日曜日-->
+                                                                <label class="btn btn-outline-primary m-1">
+                                                                    <input type="checkbox" th:field="*{weekdays}" value="日" autocomplete="off">日
+                                                                </label>
+                                                                <!--月曜日-->
+                                                                <label class="btn btn-outline-primary m-1">
+                                                                    <input type="checkbox" th:field="*{weekdays}" value="月" autocomplete="off">月
+                                                                </label>
+                                                                <!--火曜日-->
+                                                                <label class="btn btn-outline-primary m-1">
+                                                                    <input type="checkbox" th:field="*{weekdays}" value="火" autocomplete="off">火
+                                                                </label>
+                                                                <!--水曜日-->
+                                                                <label class="btn btn-outline-primary m-1">
+                                                                    <input type="checkbox" th:field="*{weekdays}" value="水" autocomplete="off">水
+                                                                </label>
+                                                                <!--木曜日-->
+                                                                <label class="btn btn-outline-primary m-1">
+                                                                    <input type="checkbox" th:field="*{weekdays}" value="木" autocomplete="off">木
+                                                                </label>
+                                                                <!--金曜日-->
+                                                                <label class="btn btn-outline-primary m-1">
+                                                                    <input type="checkbox" th:field="*{weekdays}" value="金" autocomplete="off">金
+                                                                </label>
+                                                                <!--土曜日-->
+                                                                <label class="btn btn-outline-primary m-1">
+                                                                    <input type="checkbox" th:field="*{weekdays}" value="土" autocomplete="off">土
+                                                                </label>
+                                                            </div>
+                                                        </div>
+
+                                                        <!--授業時間-->
+                                                        <div class="form-group">
+                                                            <label for="startHour">授業時間</label>
+                                                            <div class="d-flex align-items-center flex-wrap">
+
+                                                                	<!--授業開始の時を選択-->
+                                                                <select class="form-control mx-1" style="width: 80px;" id="startHour" th:field="*{startHour}" required>
+                                                                     <option value="">--</option>  
+                                                                     <!--#numbers：Thymeleafテンプレート内で自由に数値のリストを生成できる組み込みオブジェクト--> 
+                                                                     <!--#numbers.sequence(開始, 終了, 増分)-->
+                                                                     <!--例：#numbers.sequence(0, 50, 10) → [0, 10, 20, 30, 40, 50]-->
+                                                                     <!-- 増分（ステップ）を省略した場合、1ずつ増加する-->
+                                                                     <option th:each="h : ${#numbers.sequence(0,23)}"
+                                                                             th:value="${h}" th:text="${h == 0 ? '00' : h}"></option>
+                                                                </select>時
+
+                                                                	<!--授業開始の分を選択-->
+                                                                <select class="form-control mx-1" style="width: 80px;" id="startMinute" th:field="*{startMinute}" required>
+                                                                    <option value="">--</option>
+                                                                    <option th:each="m : ${#numbers.sequence(0,50,10)}"
+                                                                            th:value="${m}" th:text="${m == 0 ? '00' : m}"></option>
+                                                                </select>分
+
+                                                                <span>  ~  </span>
+
+                                                                <!--授業終了の時を選択-->
+                                                                <select class="form-control mx-1" style="width: 80px;" id="endHour" th:field="*{endHour}" required>
+                                                                    <option value="">--</option>
+                                                                    <option th:each="h: ${#numbers.sequence(0,23)}"
+                                                                            th:value="${h}" th:text="${h == 0? '00' : h}"></option>
+                                                                </select>時
+
+                                                                <!--授業終了の分を選択-->
+                                                                <select class="form-control mx-1" style="width: 80px;" id="endMinute" th:field="*{endMinute}" required>
+                                                                    <option value="">--</option>
+                                                                    <option th:each="m: ${#numbers.sequence(0,50,10)}"
+                                                                            th:value="${m}" th:text="${m == 0 ? '00' : m}"></option>
+                                                                </select>分
+                                                            </div>
+                                                        </div>
+                                                        
+                                                    </div>
+                                                 </div>
+                                                 </div>
+                        
+                                                  <!--スケジュールの追加ボタン-->
+                                                    <button type="button" id="addScheduleBtn" class="btn btn-primary btn-user" style="margin-bottom: 20px;">
+                                                        スケジュール追加
+                                                    </button>
+                                                            
+                                                <button type="submit" class="btn btn-outline-danger btn-user btn-block">
+                                                    登録
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div> <!--講師登録　End-->
+
+                                       <!--センター管理者登録　:　ボタンを押す時に出る入力フォーム-->
+                                    <div class="collapse" id="centerRegister"  aria-labelledby="registerBtn" data-parent="#btnAccordion">
+
+                                        <div class="card-body">
+
+                                         <!-- 에러 메시지 -->
+                                            <div th:if="${centerError}" class="alert alert-danger" th:text="${centerError}"></div>
+                                            <form class="user" id="centerSignupForm" th:action="@{/center/signup}" th:object="${adminDTO}" method="post"
+                                                onsubmit="return confirm('会員登録しますか？');">
+                                                <!-- 아이디 -->
+                                                <div class="form-group">
+                                                    <label for="inputId">ユーザーID</label>
+                                                    <input type="text" class="form-control form-control-user" id="centerId" th:field="*{id}" placeholder="ユーザーID" required>
+                                                </div>
+                                                <!-- 비밀번호 -->
+                                                <div class="form-group">
+                                                    <label for="inputPassword">パスワード</label>
+                                                    <input type="password" class="form-control form-control-user" id="centerPassword" th:field="*{password}" placeholder="パスワード" required>
+                                                </div>
+                                                <!-- 비밀번호 확인 -->
+                                                <div class="form-group">
+                                                    <label for="inputPasswordCheck">パスワード確認</label>
+                                                    <input type="password" class="form-control form-control-user" id="centerPasswordCheck" th:field="*{passwordCheck}" placeholder="パスワード確認" required>
+                                                </div>
+                                        
+                                                <button type="submit" class="btn btn-outline-danger btn-user btn-block">
+                                                    登録
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div> <!--センター管理者登録　End-->
+
+                                       <!--本社管理者登録　:　ボタンを押す時に出る入力フォーム-->
+                                    <div class="collapse" id="adminRegister"  aria-labelledby="registerBtn" data-parent="#btnAccordion">
+
+                                        <div class="card-body">
+
+                                         <!-- 에러 메시지 -->
+                                            <div th:if="${adminError}" class="alert alert-danger" th:text="${adminError}"></div>
+                                            <form class="user" id="adminSignupForm" th:action="@{/admin/signup}" th:object="${adminDTO}" method="post"
+                                                onsubmit="return confirm('会員登録しますか？');">
+                                                <!-- 아이디 -->
+                                                <div class="form-group">
+                                                    <label for="inputId">ユーザーID</label>
+                                                    <input type="text" class="form-control form-control-user" id="adminId" th:field="*{id}" placeholder="ユーザーID" required>
+                                                </div>
+                                                <!-- 비밀번호 -->
+                                                <div class="form-group">
+                                                    <label for="inputPassword">パスワード</label>
+                                                    <input type="password" class="form-control form-control-user" id="adminPassword" th:field="*{password}" placeholder="パスワード" required>
+                                                </div>
+                                                <!-- 비밀번호 확인 -->
+                                                <div class="form-group">
+                                                    <label for="inputPasswordCheck">パスワード確認</label>
+                                                    <input type="password" class="form-control form-control-user" id="adminPasswordCheck" th:field="*{passwordCheck}" placeholder="パスワード確認" required>
+                                                </div>
+                                        
+                                                <button type="submit" class="btn btn-outline-danger btn-user btn-block">
+                                                    登録
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div> <!--本社管理者登録　End-->
+
+                                  
+                                </div>
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            </div>
+                          <!--button collapseのplace  End-->
+
+
+
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /.container-fluid -->
+
+            </div>
+            <!-- End of Main Content -->
+
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; Your Website 2020</span>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
+
+        </div>
+        <!-- End of Content Wrapper -->
+
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="login.html">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+	
+	<script th:if="${openForm} == 'student'">
+	    document.addEventListener('DOMContentLoaded', function () {
+	        const studentCollapse = document.getElementById('studentRegister');
+	        if (studentCollapse) {
+	            new bootstrap.Collapse(studentCollapse, { toggle: true });
+	        }
+	    });
+	</script>
+	
+	
+    <!-- Bootstrap core JavaScript-->
+    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script th:src="@{/js/sb-admin-2.min.js}"></script>
+
+   <!--授業年月日JS-->
+　　<script th:src="@{/js/class-period.js}"></script>
+
+   <!--講師スケジュールの追加-->
+　　<script th:src="@{/js/add-schedule.js}"></script>
+	    
+  		<!--授業終了の時間を自動設定-->
+	    <!-- <script src="js/class-endtime.js"></script> -->
+</body>
+
+</html>

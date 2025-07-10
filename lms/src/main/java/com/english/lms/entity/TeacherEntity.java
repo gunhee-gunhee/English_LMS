@@ -27,7 +27,7 @@ public class TeacherEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "teacher_num")
-	private Integer studentNum;
+	private Integer teacherNum;
 	
 	//講師ID
 	@Column(name="id", nullable = false, length = 40)
@@ -46,8 +46,8 @@ public class TeacherEntity {
 	private LocalDateTime joinDate;
 	
 	//利用状態
-	@Column(name = "enable", nullable = true)
-	private  Boolean enable;
+    @Column(name = "nullity", nullable = false)
+    private Boolean nullity;
 	
 	//権限
 	@Enumerated(EnumType.STRING)

@@ -17,24 +17,29 @@ public class StudentSignupController {
     // GET: 회원가입 폼
     @GetMapping("/student/signup")
     public String signupPage(
-            @RequestParam(value = "email", required = false) String email,
+            @RequestParam(value = "id", required = false) String id, // <-- 여기 수정 (email → id)
             Model model
     ) {
-        StudentDTO studentDTO;
         // 기존에 에러 등으로 넘어온 값이 있으면 사용
+        StudentDTO studentDTO;
         if (model.containsAttribute("studentDTO")) {
             studentDTO = (StudentDTO) model.asMap().get("studentDTO");
         } else {
             studentDTO = new StudentDTO();
         }
-        // email 파라미터가 있으면 id에 세팅 (readonly로 입력됨)
-        if (email != null && !email.isEmpty()) {
-            studentDTO.setId(email);
+        // id 파라미터가 있으면 id에 세팅 (readonly로 입력됨)
+        if (id != null && !id.isEmpty()) {
+            studentDTO.setId(id);
         }
         model.addAttribute("studentDTO", studentDTO);
+
+        if (model.containsAttribute("error")) {
+            model.addAttribute("error", model.asMap().get("error"));
+        }
         return "student/signup";
     }
 
+    // 회원가입 완료 페이지
     @GetMapping("/student/signup-complete")
     public String signupCompletePage(Model model) {
         return "student/signup-complete";
@@ -47,13 +52,14 @@ public class StudentSignupController {
         if (!studentDTO.getPassword().equals(studentDTO.getPasswordCheck())) {
             redirectAttributes.addFlashAttribute("error", "パスワードが一致しません。");
             redirectAttributes.addFlashAttribute("studentDTO", studentDTO);
-            return "redirect:/student/signup";
+            // 다시 signup으로 리다이렉트, id가 유지되게 파라미터로 전달
+            return "redirect:/student/signup?id=" + studentDTO.getId();
         }
         // 중복 ID 체크
         if (studentService.existsById(studentDTO.getId())) {
             redirectAttributes.addFlashAttribute("error", "このIDは既に登録されています。");
             redirectAttributes.addFlashAttribute("studentDTO", studentDTO);
-            return "redirect:/student/signup";
+            return "redirect:/student/signup?id=" + studentDTO.getId();
         }
         // 실제 등록
         studentService.registerStudent(studentDTO);

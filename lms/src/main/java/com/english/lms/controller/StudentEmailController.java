@@ -20,7 +20,7 @@ public class StudentEmailController {
     private JavaMailSender mailSender;
 
     @Autowired
-    private StudentService studentService;  // <-- 서비스 주입
+    private StudentService studentService;
 
     // 인증번호, 발송 이메일 임시 저장 (실제 서비스는 세션/DB 사용 권장)
     private String authCode = null;
@@ -36,14 +36,14 @@ public class StudentEmailController {
             @RequestParam("email") String email,
             Model model
     ) {
-        // 1. DB에서 이미 등록된 아이디(이메일)인지 체크
+        // 1. 이미 등록된 이메일(아이디)인지 체크
         if (studentService.existsById(email)) {
             model.addAttribute("email", email);
             model.addAttribute("alreadyRegistered", true);
             return "student/email-check";
         }
 
-        // 2. 등록 안 되어 있으면 인증코드 발송
+        // 2. 미등록이면 인증코드 발송
         String code = generateAuthCode();
         this.authCode = code;
         this.sentEmail = email;
@@ -71,9 +71,10 @@ public class StudentEmailController {
         boolean match = sentEmail != null && sentEmail.equals(email) && authCode != null && authCode.equals(inputCode);
 
         if (match) {
-            // 인증 성공 시, 회원가입 화면으로 리다이렉트(이메일을 파라미터로 전달)
+            // 인증 성공 시, 회원가입 화면으로 리다이렉트(이메일을 id 파라미터로 전달)
             String encodedEmail = URLEncoder.encode(email, StandardCharsets.UTF_8);
-            return "redirect:/student/signup?email=" + encodedEmail;
+            return "redirect:/student/signup?id=" + encodedEmail;
+            // ※ StudentController에서 @RequestParam("id")로 받을 것
         } else {
             // 인증 실패 시, 인증 실패 안내문구와 함께 인증화면 다시 표시
             model.addAttribute("email", email);

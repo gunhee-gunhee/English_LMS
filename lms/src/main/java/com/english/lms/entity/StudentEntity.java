@@ -42,6 +42,9 @@ public class StudentEntity {
 
     @Column(name = "age", length = 10)
     private String age;
+    
+    @Column(name = "company", length = 20)
+    private String company;
 
     @Column(name = "english_level")
     private Integer englishLevel;
@@ -55,8 +58,8 @@ public class StudentEntity {
     @Column(name = "join_date")
     private LocalDateTime joinDate;
 
-    @Column(name = "enable", nullable = false)
-    private Integer enable;
+    @Column(name = "nullity", nullable = false)
+    private Boolean nullity;
 
     @Column(name = "point", nullable = false)
     private Integer point;
@@ -64,6 +67,8 @@ public class StudentEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
     private Role role;
+    
+
 	
 	
 }

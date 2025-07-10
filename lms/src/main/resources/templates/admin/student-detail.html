@@ -1,11 +1,7 @@
 <!DOCTYPE html>
 <html lang="ja" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-</html>
-
 <head>
-
-	<head>
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -25,10 +21,9 @@
 
 		<!-- Custom styles for this page -->
 		<link th:href="@{/vendor/datatables/dataTables.bootstrap4.min.css}" rel="stylesheet">
-	</head>
-
 
 </head>
+<body>
 <!-- Page Wrapper -->
 <div id="wrapper">
 
@@ -50,100 +45,81 @@
 					<div class="card-body">
 
 						<div class="container mt-5">
-							
-							<form>
+
+							<form th:action="@{|/admin/student/detail/${student.studentNum}|}" method="post">
+								<!-- ID（メール形式でなくても良い） -->
 								<div class="mb-3">
-									<label for="id" class="form-label">ID：</label>
-									<input type="email" class="form-control" id="id" value="xxxxx@interline.co.jp"
-										readonly>
+									<label class="form-label">ID：</label>
+									<input type="text" class="form-control" name="id" th:value="${student.id}" readonly>
 								</div>
+								<!-- パスワード -->
 								<div class="mb-3">
-									<label for="password" class="form-label">パスワード：</label>
-									<input type="password" class="form-control" id="password">
+									<label class="form-label">パスワード：</label>
+									<input type="password" class="form-control" name="password"
+										th:value="${student.password}">
 								</div>
+								<!-- ニックネーム -->
 								<div class="mb-3">
-									<label for="passwordConfirm" class="form-label">パスワードの確認：</label>
-									<input type="password" class="form-control" id="passwordConfirm">
+									<label class="form-label">ニックネーム：</label>
+									<input type="text" class="form-control" name="nickname"
+										th:value="${student.nickname}">
 								</div>
+								<!-- 年齢選択 -->
 								<div class="mb-3">
-									<label for="nickname" class="form-label">ニックネーム：</label>
-									<input type="text" class="form-control" id="nickname">
-								</div>
-								<div class="mb-3">
-									<label for="age" class="form-label">年齢：</label>
-									<select class="form-select" id="age">
-										<option selected>選択</option>
+									<label class="form-label">年齢：</label>
+									<select class="form-select" name="age">
+										<option th:each="age : ${ageList}" th:value="${age}" th:text="${age}"
+											th:selected="${student.age == age}">選択</option>
 									</select>
 								</div>
+								<!-- 所属（会社名） -->
 								<div class="mb-3">
-									<label for="affiliation" class="form-label">所属：</label>
-									<input type="text" class="form-control" id="affiliation">
+									<label class="form-label">所属：</label>
+									<input type="text" class="form-control" name="company"
+										th:value="${student.company}">
 								</div>
+								<!-- 英語レベル -->
 								<div class="mb-3">
-									<label for="englishLevel" class="form-label">英語レベル：</label>
-									<select class="form-select" id="englishLevel">
-										<option selected>選択</option>
+									<label class="form-label">英語レベル：</label>
+									<select class="form-select" name="englishLevel">
+										<option th:each="level : ${englishLevelList}" th:value="${level}"
+											th:text="${level}" th:selected="${student.englishLevel == level}">選択
+										</option>
 									</select>
 								</div>
-								<div class="mb-3">
-									<label for="teacher" class="form-label">講師：</label>
-									<select class="form-select" id="teacher">
-										<option selected>選択</option>
-									</select>
-								</div>
-								<div class="mb-3">
-									<label for="membershipType" class="form-label">会員種類：</label>
-									<select class="form-select" id="membershipType">
-										<option>本会員</option>
-										<option>体験会員</option>
-									</select>
-								</div>
-								<div class="mb-3">
-									<label class="form-label">受講曜日：</label><br>
-									<div class="btn-group" role="group" aria-label="受講曜日" style="flex-wrap: wrap;">
-										<input type="checkbox" class="d-none" id="sun" name="days" value="日" checked>
-										<label class="btn btn-outline-primary" for="sun">日</label>
-
-										<input type="checkbox" class="d-none" id="mon" name="days" value="月">
-										<label class="btn btn-outline-primary" for="mon">月</label>
-
-										<input type="checkbox" class="d-none" id="tue" name="days" value="火">
-										<label class="btn btn-outline-primary" for="tue">火</label>
-
-										<input type="checkbox" class="d-none" id="wed" name="days" value="水">
-										<label class="btn btn-outline-primary" for="wed">水</label>
-
-										<input type="checkbox" class="d-none" id="thu" name="days" value="木" checked>
-										<label class="btn btn-outline-primary" for="thu">木</label>
-
-										<input type="checkbox" class="d-none" id="fri" name="days" value="金">
-										<label class="btn btn-outline-primary" for="fri">金</label>
-
-										<input type="checkbox" class="d-none" id="sat" name="days" value="土">
-										<label class="btn btn-outline-primary" for="sat">土</label>
+									<div class="mb-3">
+									    <label class="form-label">担当講師：</label>
+									    <input type="text" class="form-control" th:value="${teacherNickname}" readonly>
 									</div>
 								</div>
-
+								<!-- 会員種類（학생, 강사, 센터관리자, 본사관리자） -->
 								<div class="mb-3">
-									<label class="form-label">受講時間：</label>
-									<div class="d-flex gap-2">
-										<select class="form-select">
-											<option>--</option>
-										</select>
-										<span class="align-self-center">〜</span>
-										<select class="form-select">
-											<option>--</option>
-										</select>
-									</div>
+									<label class="form-label">会員種類：</label>
+									<select class="form-select" name="role">
+										<option th:value="student" th:selected="${student.role == 'student'}">学生
+										</option>
+										<option th:value="teacher" th:selected="${student.role == 'teacher'}">講師
+										</option>
+										<option th:value="center_admin" th:selected="${student.role == 'center_admin'}">
+											センター管理者</option>
+										<option th:value="hq_admin" th:selected="${student.role == 'hq_admin'}">本社管理者
+										</option>
+									</select>
 								</div>
+
+								<!-- 有効/無効（チェック시 無効化） -->
 								<div class="mb-3 form-check">
-									<input type="radio" class="form-check-input" id="disabled" name="status">
+									<input type="checkbox" class="form-check-input" id="disabled" name="nullity"
+									    th:checked="${student.nullity}" th:value="true"/>
 									<label class="form-check-label" for="disabled">無効化（現在、授業を行っていません。）</label>
 								</div>
 								<div class="d-flex justify-content-between">
 									<button type="submit" class="btn btn-primary">修正</button>
-									<button type="button" class="btn btn-danger">削除</button>
-								</div>
+							</form>
+							<!-- 削除ボタンは別フォームでPOST -->
+							<form th:action="@{|/admin/student/detail/${student.studentNum}/delete|}" method="post">
+								<button type="submit" class="btn btn-danger"
+									onclick="return confirm('本当に削除しますか？');">削除</button>
 							</form>
 
 						</div>
