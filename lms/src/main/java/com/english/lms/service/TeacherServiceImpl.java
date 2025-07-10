@@ -2,6 +2,7 @@ package com.english.lms.service;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Optional;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -10,9 +11,11 @@ import com.english.lms.dto.TeacherDTO;
 import com.english.lms.dto.TeacherScheduleDTO;
 import com.english.lms.entity.TeacherEntity;
 import com.english.lms.entity.TeacherScheduleEntity;
+import com.english.lms.entity.ZoomAccountEntity;
 import com.english.lms.enums.Role;
 import com.english.lms.repository.TeacherRepository;
 import com.english.lms.repository.TeacherScheduleRepository;
+import com.english.lms.repository.ZoomAccountRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +27,7 @@ public class TeacherServiceImpl implements TeacherService {
 	private final TeacherRepository teacherRepository;
 	private final TeacherScheduleRepository teacherScheduleRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final ZoomAccountRepository zoomAccountRepository;
 	
 	@Override
 	public boolean existsById(String id) {
@@ -35,16 +39,32 @@ public class TeacherServiceImpl implements TeacherService {
 	@Transactional // 講師とスケジュールの登録が両方成功したら保存完了
 	public void registerTeacher(TeacherDTO teacherDTO) {
 		
+		//zoom_idでZoomAccountEntityを探す。
+		Optional<ZoomAccountEntity> optionalZoom = zoomAccountRepository.findByZoomId(teacherDTO.getZoomId());
+		
+		//exception
+		if(!optionalZoom.isPresent()) {
+			throw new RuntimeException("Zoomアカウントが存在しません。");
+		}
+		
+		//zoomNum
+		ZoomAccountEntity zoomEntity = optionalZoom.get();
+		Integer zoomNum = zoomEntity.getZoomNum();
+		
 		//基本情報を保存する。
-		  // 1. 기본 정보 저장
+		  // 1. teacher Entity 
         TeacherEntity teacher = TeacherEntity.builder()
                 .teacherId(teacherDTO.getId())
                 .password(passwordEncoder.encode(teacherDTO.getPassword()))
                 .nickname(teacherDTO.getNickname())
+                .zoomNum(zoomNum)
                 .joinDate(LocalDateTime.now())
                 .nullity(false)
                 .role(Role.TEACHER)
                 .build();
+        	
+         // 2. lms_zoom_accountの　linked -> true(1) 
+        zoomEntity.setLinked(true);
         
         //登録
         TeacherEntity entity = teacherRepository.save(teacher);

@@ -45,6 +45,10 @@ public class TeacherEntity {
 	@Column(name = "nickname", nullable = true, length = 20)
 	private String nickname;
 	
+	//ZoomNum
+	@Column(name = "zoom_num", nullable = true)
+	private Integer zoomNum;
+	
 	//登録日
 	@Column(name = "join_date", nullable = false)
 	private LocalDateTime joinDate;

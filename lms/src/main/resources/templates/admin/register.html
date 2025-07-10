@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>SB Admin 2 - Tables</title>
+    <title>Instabiz_ADMIM:会員登録</title>
 
     <!-- Custom fonts for this template -->
     <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
@@ -49,7 +49,7 @@
             <!-- Main Content -->
             <div id="content">
 
-				<div th:replace="~{fragments/topbar :: topbar('学生詳細')}"></div>
+				<div th:replace="~{fragments/topbar :: topbar('会員登録')}"></div>
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
@@ -186,8 +186,9 @@
                                          <!-- 에러 메시지 -->
                                             <div th:if="${teacherError != null}" class="alert alert-danger" th:text="${teacherError}"></div>
 											<div th:if="${teacherSuccess != null}" class="alert alert-success" th:text="${teacherSuccess}"></div>
-                                            <form class="user" id="teacherSignupForm" th:action="@{/admin/teacher/register}" th:object="${teacherDTO}" method="post"
-                                                onsubmit="return confirm('会員登録しますか？');">
+											<div id="timeError" class="alert alert-danger" style="display: none;"></div>
+											<form class="user" id="teacherSignupForm" th:action="@{/admin/teacher/register}" th:object="${teacherDTO}" method="post"
+                                                onsubmit="return validateAndConfirm();">
                                                 <!-- 아이디 -->
                                                 <div class="form-group">
                                                     <label for="inputId">ユーザーID</label>
@@ -491,6 +492,9 @@
 
 	<!--自動でcollapseを開く-->
 	<script th:src="@{/js/auto-open-collapse.js}"></script>
+	
+	<!--時間関連エラーメッセージ-->
+	<script th:src="@{/js/time-error.js}"></script>
 	</body>
 
 </html>
