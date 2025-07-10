@@ -1,15 +1,91 @@
 package com.english.lms.controller;
 
+import com.english.lms.service.StudentService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 
 @Controller
+@RequestMapping("/student")
 public class StudentEmailController {
 
-    // 여기 추가! email-check.html로 이동시켜주는 메서드
-    @GetMapping("/student/email-check")
-    public String emailCheckPage() {
+    @Autowired
+    private JavaMailSender mailSender;
+
+    @Autowired
+    private StudentService studentService;  // <-- 서비스 주입
+
+    // 인증번호, 발송 이메일 임시 저장 (실제 서비스는 세션/DB 사용 권장)
+    private String authCode = null;
+    private String sentEmail = null;
+
+    @GetMapping("/email-check")
+    public String showEmailCheckPage(Model model) {
         return "student/email-check";
-        // 즉, templates/student/email-check.html 파일을 렌더링
+    }
+
+    @PostMapping("/email-check")
+    public String sendEmail(
+            @RequestParam("email") String email,
+            Model model
+    ) {
+        // 1. DB에서 이미 등록된 아이디(이메일)인지 체크
+        if (studentService.existsById(email)) {
+            model.addAttribute("email", email);
+            model.addAttribute("alreadyRegistered", true);
+            return "student/email-check";
+        }
+
+        // 2. 등록 안 되어 있으면 인증코드 발송
+        String code = generateAuthCode();
+        this.authCode = code;
+        this.sentEmail = email;
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("メール認証コード");
+        message.setText("認証コード: " + code + "\n\nこのコードを画面に入力してください。");
+        message.setFrom("system@instabiz.jp");
+
+        mailSender.send(message);
+
+        model.addAttribute("email", email);
+        model.addAttribute("sent", true);
+        return "student/email-check";
+    }
+
+    // 인증번호 확인 후, 성공 시 회원가입으로 이동(이메일 파라미터 전달)/실패 시 안내문
+    @PostMapping("/email-check/verify")
+    public String verifyAuthCode(
+            @RequestParam("email") String email,
+            @RequestParam("authCode") String inputCode,
+            Model model
+    ) {
+        boolean match = sentEmail != null && sentEmail.equals(email) && authCode != null && authCode.equals(inputCode);
+
+        if (match) {
+            // 인증 성공 시, 회원가입 화면으로 리다이렉트(이메일을 파라미터로 전달)
+            String encodedEmail = URLEncoder.encode(email, StandardCharsets.UTF_8);
+            return "redirect:/student/signup?email=" + encodedEmail;
+        } else {
+            // 인증 실패 시, 인증 실패 안내문구와 함께 인증화면 다시 표시
+            model.addAttribute("email", email);
+            model.addAttribute("sent", true);
+            model.addAttribute("authFailed", true);
+            return "student/email-check";
+        }
+    }
+
+    private String generateAuthCode() {
+        SecureRandom random = new SecureRandom();
+        int code = 100000 + random.nextInt(900000);
+        return String.valueOf(code);
     }
 }

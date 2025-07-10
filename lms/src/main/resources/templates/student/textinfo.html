@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>教科書情報</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- SB Admin 2 CSS/JS 리소스 -->
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+    <link th:href="@{/css/custom.css}" rel="stylesheet">
+    <style>
+        .form-section {
+            max-width: 100%;
+            margin: 48px auto;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 2px 12px rgba(50,50,50,0.07);
+            padding: 42px 36px 36px 36px;
+        }
+        .form-title {
+            margin-bottom: 28px;
+            font-size: 1.5em;
+            color: #e74a3b;
+            font-weight: bold;
+            text-align: center;
+        }
+        .book-list-title {
+            font-size: 1.15em;
+            font-weight: bold;
+            margin-bottom: 18px;
+            color: #333;
+            text-align: center;
+        }
+        .book-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        .book-list li {
+            padding: 16px 18px;
+            margin-bottom: 10px;
+            background: #faf3f3;
+            border-radius: 9px;
+            font-size: 1.15em;
+            font-weight: 500;
+            color: #e74a3b;
+            text-align: center;
+        }
+        .no-book {
+            text-align: center;
+            color: #888;
+            margin-top: 32px;
+        }
+    </style>
+</head>
+<body class="bg-gradient-danger" id="page-top">
+<div id="wrapper">
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebar-student :: sidebar-student}"></div>
+    <!-- End Sidebar -->
+
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+
+            <!-- Topbar -->
+            <div th:replace="~{fragments/topbar-student :: topbar('教科書情報')}"></div>
+            <!-- End Topbar -->
+
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+                <div class="form-section">
+                    <div class="form-title">登録された教科書情報</div>
+                    
+                    <!-- 알림/에러 메시지 -->
+                    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+                    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+                    
+                    <div class="book-list-title">あなたの教科書リスト</div>
+                    <ul class="book-list" th:if="${textbookList != null and #lists.size(textbookList) > 0}">
+                        <li th:each="book : ${textbookList}" th:text="${book}"></li>
+                    </ul>
+                    <div class="no-book" th:if="${textbookList == null or #lists.isEmpty(textbookList)}">
+                        登録された教科書がありません。
+                    </div>
+                </div>
+            </div>
+            <!-- End Page Content -->
+
+        </div>
+
+        <!-- Footer -->
+        <footer class="sticky-footer bg-white">
+            <div class="container my-auto">
+                <div class="copyright text-center my-auto">
+                    <span>Copyright &copy; Your Website 2020</span>
+                </div>
+            </div>
+        </footer>
+        <!-- End of Footer -->
+
+    </div>
+</div>
+
+<!-- SB Admin 2 및 공통 JS -->
+<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+<script th:src="@{/js/sb-admin-2.min.js}"></script>
+</body>
+</html>

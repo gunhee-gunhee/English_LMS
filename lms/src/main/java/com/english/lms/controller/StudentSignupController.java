@@ -16,13 +16,25 @@ public class StudentSignupController {
 
     // GET: 회원가입 폼
     @GetMapping("/student/signup")
-    public String signupPage(Model model) {
-        if (!model.containsAttribute("studentDTO")) {
-            model.addAttribute("studentDTO", new StudentDTO());
+    public String signupPage(
+            @RequestParam(value = "email", required = false) String email,
+            Model model
+    ) {
+        StudentDTO studentDTO;
+        // 기존에 에러 등으로 넘어온 값이 있으면 사용
+        if (model.containsAttribute("studentDTO")) {
+            studentDTO = (StudentDTO) model.asMap().get("studentDTO");
+        } else {
+            studentDTO = new StudentDTO();
         }
+        // email 파라미터가 있으면 id에 세팅 (readonly로 입력됨)
+        if (email != null && !email.isEmpty()) {
+            studentDTO.setId(email);
+        }
+        model.addAttribute("studentDTO", studentDTO);
         return "student/signup";
     }
-    
+
     @GetMapping("/student/signup-complete")
     public String signupCompletePage(Model model) {
         return "student/signup-complete";
@@ -46,7 +58,7 @@ public class StudentSignupController {
         // 실제 등록
         studentService.registerStudent(studentDTO);
 
-        // 성공 시 메시지 없이 로그인 페이지로 이동
+        // 성공 시 메시지 없이 완료 페이지로 이동
         return "redirect:/student/signup-complete";
     }
 }

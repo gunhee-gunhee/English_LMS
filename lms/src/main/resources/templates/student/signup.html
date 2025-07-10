@@ -28,10 +28,17 @@
                             <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
                             <form class="user" id="signupForm" th:action="@{/student/signup}" th:object="${studentDTO}" method="post"
                                   onsubmit="return confirm('会員登録しますか？');">
-                                <!-- 아이디 -->
+                                <!-- 아이디 (readonly) -->
                                 <div class="form-group">
-                                    <label for="inputId">ユーザーID</label>
-                                    <input type="text" class="form-control form-control-user" id="inputId" th:field="*{id}" placeholder="ユーザーID" required>
+                                    <label for="inputId">ユーザーID（メールアドレス）</label>
+                                    <input type="email"
+                                           class="form-control form-control-user"
+                                           id="inputId"
+                                           th:field="*{id}"
+                                           placeholder="メールアドレス"
+                                           th:value="${studentDTO.id}"
+                                           th:readonly="true"
+                                           required>
                                 </div>
                                 <!-- 비밀번호 -->
                                 <div class="form-group">

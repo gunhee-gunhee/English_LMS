@@ -15,7 +15,7 @@ import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/student")
-public class StudentMyInfoController {
+public class StudentInfoController {
 
     @Autowired
     private StudentRepository studentRepository;
