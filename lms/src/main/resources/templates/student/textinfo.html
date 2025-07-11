@@ -2,96 +2,110 @@
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
-    <title>教科書情報</title>
+    <title>教材情報</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <!-- SB Admin 2 CSS/JS 리소스 -->
     <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
     <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
     <link th:href="@{/css/custom.css}" rel="stylesheet">
     <style>
         .form-section {
-            max-width: 100%;
-            margin: 48px auto;
+            max-width: 480px;
+            margin: 68px auto 0 auto;
             background: #fff;
             border-radius: 18px;
-            box-shadow: 0 2px 12px rgba(50,50,50,0.07);
-            padding: 42px 36px 36px 36px;
+            box-shadow: 0 2px 20px rgba(231, 74, 59, 0.15);
+            padding: 48px 36px 36px 36px;
+            min-height: 340px;
         }
         .form-title {
-            margin-bottom: 28px;
-            font-size: 1.5em;
+            margin-bottom: 36px;
+            font-size: 1.35em;
             color: #e74a3b;
             font-weight: bold;
             text-align: center;
+            letter-spacing: 2px;
         }
-        .book-list-title {
-            font-size: 1.15em;
-            font-weight: bold;
-            margin-bottom: 18px;
-            color: #333;
-            text-align: center;
+        .book-card {
+            border-radius: 16px;
+            box-shadow: 0 3px 20px rgba(231,74,59,0.12);
+            background: linear-gradient(90deg, #ffe7e7 0%, #fff 100%);
+            padding: 34px 24px 28px 24px;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            gap: 15px;
+            margin: 0 auto;
+            max-width: 320px;
+            min-height: 130px;
         }
-        .book-list {
-            list-style: none;
-            padding-left: 0;
-        }
-        .book-list li {
-            padding: 16px 18px;
-            margin-bottom: 10px;
-            background: #faf3f3;
-            border-radius: 9px;
-            font-size: 1.15em;
-            font-weight: 500;
+        .book-icon {
+            font-size: 2.5em;
             color: #e74a3b;
-            text-align: center;
+        }
+        .book-name {
+            font-size: 1.28em;
+            font-weight: 600;
+            color: #b9381e;
+            margin-bottom: 5px;
+        }
+        .book-label {
+            font-size: 1em;
+            color: #444;
+            margin-bottom: 2px;
         }
         .no-book {
             text-align: center;
             color: #888;
             margin-top: 32px;
+            font-size: 1.08em;
         }
     </style>
 </head>
 <body class="bg-gradient-danger" id="page-top">
 <div id="wrapper">
 
-    <!-- Sidebar -->
+    <!-- サイドバー -->
     <div th:replace="~{fragments/sidebar-student :: sidebar-student}"></div>
-    <!-- End Sidebar -->
+    <!-- サイドバー終了 -->
 
     <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">
 
-            <!-- Topbar -->
-            <div th:replace="~{fragments/topbar-student :: topbar('教科書情報')}"></div>
-            <!-- End Topbar -->
+            <!-- トップバー -->
+            <div th:replace="~{fragments/topbar-student :: topbar('教材情報')}"></div>
+            <!-- トップバー終了 -->
 
-            <!-- Begin Page Content -->
+            <!-- メインコンテンツ開始 -->
             <div class="container-fluid">
                 <div class="form-section">
-                    <div class="form-title">登録された教科書情報</div>
-                    
-                    <!-- 알림/에러 메시지 -->
+                    <div class="form-title">私の教材情報</div>
+
+                    <!-- 通知/エラーメッセージ -->
                     <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
                     <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
-                    
-                    <div class="book-list-title">あなたの教科書リスト</div>
-                    <ul class="book-list" th:if="${textbookList != null and #lists.size(textbookList) > 0}">
-                        <li th:each="book : ${textbookList}" th:text="${book}"></li>
-                    </ul>
+
+                    <div th:if="${textbookList != null and #lists.size(textbookList) > 0}">
+                        <div class="book-card">
+                            <div class="book-icon">
+                                <i class="fas fa-book-open"></i>
+                            </div>
+                            <div class="book-name" th:text="${textbookList[0]}"></div>
+                            <!-- 必要であれば追加情報（担当講師、登録日など）を表示可能 -->
+                        </div>
+                    </div>
                     <div class="no-book" th:if="${textbookList == null or #lists.isEmpty(textbookList)}">
-                        登録された教科書がありません。
+                        登録された教材がありません。
                     </div>
                 </div>
             </div>
-            <!-- End Page Content -->
+            <!-- メインコンテンツ終了 -->
 
         </div>
 
-        <!-- Footer -->
+        <!-- フッター -->
         <footer class="sticky-footer bg-white">
             <div class="container my-auto">
                 <div class="copyright text-center my-auto">
@@ -99,12 +113,12 @@
                 </div>
             </div>
         </footer>
-        <!-- End of Footer -->
+        <!-- フッター終了 -->
 
     </div>
 </div>
 
-<!-- SB Admin 2 및 공통 JS -->
+<!-- JSリソース -->
 <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
 <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>

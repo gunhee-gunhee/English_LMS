@@ -2,6 +2,7 @@ package com.english.lms.controller;
 
 import com.english.lms.entity.StudentEntity;
 import com.english.lms.repository.StudentRepository;
+import com.english.lms.repository.InfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,6 +13,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpSession;
+import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/student")
@@ -21,14 +24,16 @@ public class StudentInfoController {
     private StudentRepository studentRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private InfoRepository infoRepository;
 
-    // 1) GET: 비밀번호 확인 페이지
+    // 1) GET: パスワード確認ページ
     @GetMapping("/myinfocheck")
     public String myinfocheck() {
         return "student/myinfocheck";
     }
 
-    // 2) POST: 비밀번호 확인 처리
+    // 2) POST: パスワード確認処理
     @PostMapping("/myinfocheck")
     public String myinfocheckProcess(@RequestParam("password") String password, Model model, HttpSession session) {
         String loginId = getLoginId();
@@ -37,46 +42,50 @@ public class StudentInfoController {
             model.addAttribute("error", "パスワードが正しくありません。");
             return "student/myinfocheck";
         }
-        // 비번 맞으면 세션에 인증 표시 후 myinfo로 리다이렉트
+        // パスワード一致の場合、セッションに認証マークを付けて myinfo へリダイレクト
         session.setAttribute("infoVerified", true);
         return "redirect:/student/myinfo";
     }
 
-    // 3) GET: 본인 정보 화면 (비밀번호 인증 확인 필요)
+    // 3) GET: 本人情報ページ（パスワード認証が必要）
     @GetMapping("/myinfo")
     public String myinfo(Model model, HttpSession session) {
-        // 비번 인증 확인 (없으면 myinfocheck로 이동)
+        // パスワード認証が無ければ myinfocheck へ
         Boolean verified = (Boolean) session.getAttribute("infoVerified");
         if (verified == null || !verified) {
             return "redirect:/student/myinfocheck";
         }
         String loginId = getLoginId();
-        StudentEntity student = studentRepository.findByStudentId(loginId).orElse(new StudentEntity());
+        Optional<StudentEntity> optStudent = studentRepository.findByStudentId(loginId);
+        if (optStudent.isEmpty()) {
+            return "redirect:/student/login"; // 学生情報が無い場合はログインページへ
+        }
+        StudentEntity student = optStudent.get();
         model.addAttribute("student", student);
         return "student/myinfo";
     }
 
-    // 4) POST: 정보 변경 (수정/저장)
+    // 4) POST: 情報更新（修正/保存）
     @PostMapping("/myinfo")
     public String updateMyinfo(@ModelAttribute("student") StudentEntity formStudent,
                                @RequestParam(name = "password", required = false) String password,
                                @RequestParam(name = "passwordConfirm", required = false) String passwordConfirm,
                                Model model,
                                HttpSession session) {
-        // (옵션) 비번인증 체크
+        // （オプション）パスワード認証チェック
         Boolean verified = (Boolean) session.getAttribute("infoVerified");
         if (verified == null || !verified) {
             return "redirect:/student/myinfocheck";
         }
 
         String loginId = getLoginId();
-        StudentEntity student = studentRepository.findByStudentId(loginId).orElse(null);
-        if (student == null) {
-            model.addAttribute("error", "학생 정보가 존재하지 않습니다.");
-            return "student/myinfo";
+        Optional<StudentEntity> optStudent = studentRepository.findByStudentId(loginId);
+        if (optStudent.isEmpty()) {
+            return "redirect:/student/login"; // 学生情報が無い場合はログインページへ
         }
+        StudentEntity student = optStudent.get();
 
-        // 비밀번호 변경
+        // パスワード変更
         if (password != null && !password.isBlank() && password.equals(passwordConfirm)) {
             student.setPassword(passwordEncoder.encode(password));
         } else if (password != null && !password.isBlank()) {
@@ -85,14 +94,14 @@ public class StudentInfoController {
             return "student/myinfo";
         }
 
-        // 나머지 정보 수정
+        // その他の情報修正
         student.setNickname(formStudent.getNickname());
         student.setNicknameJp(formStudent.getNicknameJp());
         student.setEnglishLevel(formStudent.getEnglishLevel());
 
         studentRepository.save(student);
 
-        // 정보 수정 후 세션 인증값 삭제(다시 비밀번호 확인 필요하게)
+        // 情報修正後、セッション認証値削除（再度パスワード確認が必要に）
         session.removeAttribute("infoVerified");
 
         model.addAttribute("student", student);
@@ -100,7 +109,24 @@ public class StudentInfoController {
         return "student/myinfo";
     }
 
-    // 로그인한 아이디 가져오기 공통 메서드
+    // ---------- textinfo.html マッピングおよび教材情報の取得 ----------
+    @GetMapping("/textinfo")
+    public String textInfoPage(Model model) {
+        // ログイン中の学生の student_num を取得
+        String loginId = getLoginId();
+        Optional<StudentEntity> optStudent = studentRepository.findByStudentId(loginId);
+        if (optStudent.isEmpty()) {
+            return "redirect:/student/login"; // 学生情報が無い場合はログインページへ
+        }
+        StudentEntity student = optStudent.get();
+
+        // 教材リスト（名前のみ）を取得
+        List<String> textbookList = infoRepository.findTextNamesByStudentNum(student.getStudentNum());
+        model.addAttribute("textbookList", textbookList);
+        return "student/textinfo";
+    }
+
+    // ログインしているユーザーIDの取得用共通メソッド
     private String getLoginId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication.getPrincipal() instanceof UserDetails) {
