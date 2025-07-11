@@ -1,5 +1,7 @@
 package com.english.lms.controller;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
@@ -12,7 +14,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.english.lms.dto.AdminDTO;
 import com.english.lms.dto.StudentDTO;
 import com.english.lms.dto.TeacherDTO;
+import com.english.lms.service.AdminService;
 import com.english.lms.service.StudentService;
+import com.english.lms.service.TeacherService;
 import com.english.lms.service.ZoomAccountService;
 
 import lombok.RequiredArgsConstructor;
@@ -23,12 +27,19 @@ public class AdminRegisterController {
 	
 	private final ZoomAccountService zoomAccountService;
 	private final StudentService studentService;
+	private final AdminService adminService;
+	private final TeacherService teacherService;
 	
 	//Page移動
 	@GetMapping("/admin/register")
 	public String showPage(Model model) {
+		
+		//講師フォームの授業開始日設定
+		TeacherDTO teacherDTO = new TeacherDTO();
+		teacherDTO.setStartDate(LocalDate.now()); // 今日に設定する
+		
 		model.addAttribute("studentDTO", new StudentDTO());
-		model.addAttribute("teacherDTO", new TeacherDTO());
+		model.addAttribute("teacherDTO",  teacherDTO);
 		model.addAttribute("adminDTO", new AdminDTO());	
 		
 		List<String> zoomIdList = zoomAccountService.getAllZoomIds();
@@ -61,10 +72,98 @@ public class AdminRegisterController {
 		 studentService.registerStudent(studentDTO);
 		
 		//メッセージ
-		 redirectAttributes.addFlashAttribute("success", "会員登録が完了しました。");
+		 redirectAttributes.addFlashAttribute("studentSuccess", "会員登録が完了しました。");
 		 redirectAttributes.addFlashAttribute("openForm", "student");
 		return  "redirect:/admin/register?open=student";
 	}
 	
+	//center 会員登録
+	@PostMapping("/admin/center/register")
+	public String centerRegister(@ModelAttribute AdminDTO adminDTO, RedirectAttributes redirectAttributes) {
+		
+		//重複のIDをチェック
+		if(adminService.existsById(adminDTO.getId())) {
+			redirectAttributes.addFlashAttribute("centerError", "このIDは既に登録されています。" );
+			redirectAttributes.addFlashAttribute("adminDTO", adminDTO);
+			redirectAttributes.addFlashAttribute("openForm", "center");
+			return "redirect:/admin/register?open=center";
+		}
+		
+		//パスワードのチェック
+		if(!adminDTO.getPassword().equals(adminDTO.getPasswordCheck())) {
+			redirectAttributes.addFlashAttribute("centerError", "パスワードが一致しません。" );
+			redirectAttributes.addFlashAttribute("adminDTO", adminDTO);
+			redirectAttributes.addFlashAttribute("openForm", "center");
+			return "redirect:/admin/register?open=center";
+		}
+		
+
+		//登録
+		adminService.registerCenter(adminDTO);
+		
+		//メッセージ
+		redirectAttributes.addFlashAttribute("centerSuccess", "会員登録が完了しました。");
+		redirectAttributes.addFlashAttribute("openForm","center");
+		return "redirect:/admin/register?open=center";
+		
+	}
 	
+	//admin会員登録
+	@PostMapping("/admin/register")
+	public String adminRegister(@ModelAttribute AdminDTO adminDTO, RedirectAttributes redirectAttributes) {
+		
+		//重複のIDをチェック
+		if(adminService.existsById(adminDTO.getId())) {
+			redirectAttributes.addFlashAttribute("adminError", "このIDは既に登録されています。" );
+			redirectAttributes.addFlashAttribute("adminDTO", adminDTO);
+			redirectAttributes.addFlashAttribute("openForm", "admin");
+			return "redirect:/admin/register?open=admin";
+		}		
+				
+		//パスワードのチェック
+		if(!adminDTO.getPassword().equals(adminDTO.getPasswordCheck())) {
+			redirectAttributes.addFlashAttribute("adminError", "パスワードが一致しません。" );
+			redirectAttributes.addFlashAttribute("adminDTO", adminDTO);
+			redirectAttributes.addFlashAttribute("openForm", "admin");
+			return "redirect:/admin/register?open=admin";
+		}		
+				
+
+		//登録
+		adminService.registerAdmin(adminDTO);
+		
+		//メッセージ
+		redirectAttributes.addFlashAttribute("adminSuccess", "会員登録が完了しました。");
+		redirectAttributes.addFlashAttribute("openForm","admin");
+		return "redirect:/admin/register?open=admin";		
+		
+		}
+	
+	//teacher会員登録
+	@PostMapping("/admin/teacher/register")
+	public String teacherRegister(@ModelAttribute TeacherDTO teacherDTO, RedirectAttributes redirectAttributes ) {
+		
+		//重複のIDをチェック
+		if(teacherService.existsById(teacherDTO.getId())) {
+			redirectAttributes.addFlashAttribute("teacherError", "このIDは既に登録されています。" );
+			redirectAttributes.addFlashAttribute("teacherDTO", teacherDTO);
+			redirectAttributes.addFlashAttribute("openForm", "teacher");
+			return "redirect:/admin/register?open=teacher";
+		}		
+				
+		//パスワードのチェック
+		if(!teacherDTO.getPassword().equals(teacherDTO.getPasswordCheck())) {
+			redirectAttributes.addFlashAttribute("teacherError", "パスワードが一致しません。" );
+			redirectAttributes.addFlashAttribute("teacherDTO", teacherDTO);
+			redirectAttributes.addFlashAttribute("openForm", "teacher");
+			return "redirect:/admin/register?open=teacher";
+		}	
+		
+		teacherService.registerTeacher(teacherDTO);
+		
+		//メッセージ
+		redirectAttributes.addFlashAttribute("teacherSuccess", "会員登録が完了しました。");
+		redirectAttributes.addFlashAttribute("openForm","teacher");
+		return "redirect:/admin/register?open=teacher";
+	}
 }

@@ -26,6 +26,8 @@ public class StudentServiceImpl implements StudentService {
         student.setEnglishLevel(dto.getEnglishLevel());
         student.setEnglishPurpose(dto.getEnglishPurpose());
         student.setSignupPath(dto.getSignupPath());
+        student.setCompany(dto.getCompany());
+
 
         // --- point 기본값 세팅 (꼭 필요) ---
         student.setPoint(0);

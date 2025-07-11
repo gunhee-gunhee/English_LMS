@@ -13,7 +13,7 @@ public class StudentDTO {
     private String password;
     private String passwordCheck;      // PasswordCheck → passwordCheck
     private String nickname;
-    private String nicknameJp;         // Nickname_jp /English_LMS
+    private String nicknameJp;
     private String age;
     private Integer englishLevel;      // English_level → englishLevel
     private String englishPurpose;     // English_purpose → englishPurpose
@@ -23,4 +23,5 @@ public class StudentDTO {
     private Integer point;
     private String role;
     private String company;
+
 }
