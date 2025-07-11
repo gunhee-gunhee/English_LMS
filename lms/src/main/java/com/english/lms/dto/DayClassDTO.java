@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Data
-public class DayClassDto {
+public class DayClassDTO {
     private Integer dayClassNum;
     private Integer studentNum;
     private Integer teacherNum;
@@ -24,9 +24,12 @@ public class DayClassDto {
     private String comment;
     private String progress;
 
-    // ★★ Entity → DTO 변환 메서드
-    public static DayClassDto from(DayClassEntity entity) {
-        DayClassDto dto = new DayClassDto();
+    // ★ 추가
+    private String teacherNickname;
+
+    // 기존 엔티티 → DTO 변환 (닉네임 포함)
+    public static DayClassDTO from(DayClassEntity entity, String teacherNickname) {
+        DayClassDTO dto = new DayClassDTO();
         dto.setDayClassNum(entity.getDayClassNum());
         dto.setStudentNum(entity.getStudentNum());
         dto.setTeacherNum(entity.getTeacherNum());
@@ -42,6 +45,12 @@ public class DayClassDto {
         dto.setAbsent(entity.getAbsent());
         dto.setComment(entity.getComment());
         dto.setProgress(entity.getProgress());
+        dto.setTeacherNickname(teacherNickname); // 추가
         return dto;
+    }
+
+    // (기존의 from(entity) 메서드는 아래와 같이 유지 또는 삭제 가능)
+    public static DayClassDTO from(DayClassEntity entity) {
+        return from(entity, "");
     }
 }
