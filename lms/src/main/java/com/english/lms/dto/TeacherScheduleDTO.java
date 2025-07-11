@@ -25,4 +25,9 @@ public class TeacherScheduleDTO {
     private Integer endHour;
     private Integer endMinute;
     
+    @Override
+    public String toString() {
+        return String.format("[요일: %s, %02d:%02d ~ %02d:%02d]", weekdays, startHour, startMinute, endHour, endMinute);
+    }
+    
 }

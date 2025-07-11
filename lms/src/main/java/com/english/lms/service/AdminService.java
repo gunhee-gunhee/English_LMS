@@ -8,4 +8,8 @@ public interface AdminService {
     boolean existsById(String id);
 	
     void registerAdmin(AdminDTO adminDTO);
+    
+    AdminDTO getAdmin(Integer adminNum);        
+    void updateAdmin(Integer adminNum, AdminDTO dto); 
+    void deleteAdmin(Integer adminNum);
 }

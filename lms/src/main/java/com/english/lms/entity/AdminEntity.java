@@ -29,7 +29,7 @@ public class AdminEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "admin_num")
-	private Integer studentNum;
+	private Integer adminNum;
 	
 	//管理者ID
 	@Column(name="id", nullable = false, length = 40)
