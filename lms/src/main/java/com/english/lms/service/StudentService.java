@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 
 import com.english.lms.dto.StudentDTO;
 
+
 public interface StudentService {
     void registerStudent(StudentDTO dto);
     boolean existsById(String id);

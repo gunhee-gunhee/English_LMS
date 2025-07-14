@@ -7,9 +7,11 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class AdminDTO {
+	private Integer adminNum;
     private String id;
     private String password;
-    private String passwordCheck; // 폼에서 입력 받음
+    private String passwordCheck; 
+    private String role;
 
     
  

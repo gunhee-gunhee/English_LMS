@@ -2,7 +2,7 @@ package com.english.lms.dto;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -26,8 +26,6 @@ public class TeacherDTO {
     private LocalDate startDate;
     private LocalDate endDate;
     
-    private List<TeacherScheduleDTO> schedules;
-
-
+    private List<TeacherScheduleDTO> schedules= new ArrayList<>();
  
 }

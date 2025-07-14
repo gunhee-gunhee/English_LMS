@@ -1,90 +1,101 @@
 <!DOCTYPE html>
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>管理者詳細</title>
-    <!-- Bootstrap 4 CSS CDN -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.6.2/css/bootstrap.min.css">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>管理者詳細・修正</title>
+
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+    <link th:href="@{/vendor/datatables/dataTables.bootstrap4.min.css}" rel="stylesheet">
+
     <style>
-        body {
-            background: #f4f6fa;
-        }
-        .admin-detail-container {
-            max-width: 430px;
-            margin: 60px auto 0 auto;
-            background: #fff;
-            border-radius: 14px;
-            box-shadow: 0 6px 24px #0002;
-            padding: 36px 30px 30px 30px;
-        }
-        .admin-title {
-            font-size: 2rem;
-            font-weight: bold;
-            letter-spacing: 0.08em;
-            margin-bottom: 32px;
-            color: #32363b;
-            text-shadow: 2px 2px 0 #b0bec555;
-            text-align: left;
-        }
-        .btn-danger {
-            background-color: #e53935 !important;
-            border: none;
-        }
-        .btn-danger:hover {
-            background-color: #c62828 !important;
-        }
-        .btn-primary {
-            min-width: 90px;
-        }
+        .form-label { font-weight: bold; }
     </style>
 </head>
-<body>
-    <div class="admin-detail-container">
-        <div class="admin-title">管理者詳細</div>
-        <form th:action="@{/admin/save}" method="post" autocomplete="off">
-            <!-- ID (이메일) -->
-            <div class="form-group row align-items-center">
-                <label class="col-4 col-form-label">ID：</label>
-                <div class="col-8">
-                    <input type="email" class="form-control" name="email" th:value="${admin.email}" required placeholder="xxxxx@interline.co.jp">
+<body id="page-top">
+<div id="wrapper">
+    <!-- サイドバー -->
+    <div th:replace="~{fragments/sidebar-admin :: sidebar-admin}"></div>
+
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <!-- トップバー -->
+            <div th:replace="~{fragments/topbar :: topbar('管理者詳細')}"></div>
+
+            <div class="container-fluid">
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+
+                      
+                        <div th:if="${adminSuccess != null}" class="alert alert-success" th:text="${adminSuccess}"></div>
+                        <div th:if="${adminError != null}" class="alert alert-danger" th:text="${adminError}"></div>
+
+                        <form th:action="@{|/admin/admin/detail/${adminNum}|}" th:object="${adminDTO}" method="post" autocomplete="off">
+                          
+                            <div class="form-group">
+                                <label class="form-label">ユーザーID</label>
+                                <input type="text" th:field="*{id}" class="form-control" readonly>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">パスワード (変更時のみ入力)</label>
+                                <input type="password" th:field="*{password}" class="form-control" placeholder="新しいパスワード">
+                            </div>
+                 
+                            <div class="form-group">
+                                <label class="form-label">権限 (role)</label>
+                                <select th:field="*{role}" class="form-control">
+                                    <option value="center" th:selected="*{role} == 'center'">センター管理者</option>
+                                    <option value="hq_admin" th:selected="*{role} == 'hq_admin'">本社管理者</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">修正を保存</button>
+                        </form>
+                    </div>
                 </div>
             </div>
-            <!-- パスワード -->
-            <div class="form-group row align-items-center">
-                <label class="col-4 col-form-label">パスワード：</label>
-                <div class="col-8">
-                    <input type="password" class="form-control" name="password" autocomplete="new-password">
+        </div>
+        <!-- フッター -->
+        <footer class="sticky-footer bg-white">
+            <div class="container my-auto">
+                <div class="copyright text-center my-auto">
+                    <span>Copyright &copy; Your Website 2020</span>
                 </div>
             </div>
-            <!-- パスワード 확인 -->
-            <div class="form-group row align-items-center">
-                <label class="col-4 col-form-label">パスワード<br>確認：</label>
-                <div class="col-8">
-                    <input type="password" class="form-control" name="passwordCheck" autocomplete="new-password">
-                </div>
-            </div>
-            <!-- 会員種類 -->
-            <div class="form-group row align-items-center">
-                <label class="col-4 col-form-label">会員種類：</label>
-                <div class="col-8">
-                    <select class="form-control" name="role" required>
-                        <option th:value="CENTER_ADMIN" th:selected="${admin.role == 'CENTER_ADMIN'}">センター管理者</option>
-                        <option th:value="HEADQUARTER_ADMIN" th:selected="${admin.role == 'HEADQUARTER_ADMIN'}">本社管理者</option>
-                    </select>
-                </div>
-            </div>
-            <!-- 버튼 영역 -->
-            <div class="form-group row">
-                <div class="col text-center">
-                    <button type="submit" class="btn btn-primary mr-3">修正</button>
-                    <button type="button" class="btn btn-danger"
-                        onclick="if(confirm('削除しますか？')) location.href='/admin/delete?email='+document.getElementsByName('email')[0].value">削除</button>
-                </div>
-            </div>
-        </form>
+        </footer>
     </div>
-    <!-- Bootstrap 4 JS CDN (optional, for dropdowns etc) -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.6.2/js/bootstrap.min.js"></script>
+</div>
+<!-- ページトップボタン -->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+
+<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">ログアウトしますか？</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">「Logout」を選択すると現在のセッションが終了します。</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">キャンセル</button>
+                <a class="btn btn-primary" href="login.html">Logout</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script th:src="@{/js/sb-admin-2.min.js}"></script>
 </body>
 </html>

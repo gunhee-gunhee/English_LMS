@@ -1,180 +1,206 @@
-<!--<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>講師詳細</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>講師詳細・修正</title>
+
+    <!-- テンプレート用のカスタムフォント -->
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+    <link th:href="@{/vendor/datatables/dataTables.bootstrap4.min.css}" rel="stylesheet">
+
     <style>
-      .week-btn.active { background: #90caf9; color: #000; }
-      .schedule-item { background: #e3f2fd; margin: 4px 0; padding: 6px 10px; border-radius: 4px; }
-      .remove-btn { color: #e53935; cursor: pointer; }
+        .radio-group label { display: block; margin-bottom: 6px; }
+        button[aria-expanded="true"] {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
     </style>
 </head>
-<body>
-<div class="container" style="max-width:350px;">
-    <h2 class="text-center my-4">講師詳細</h2>
 
-    <form th:action="@{/teacher/update}" method="post">
-        <div class="form-group">
-            <label>ID</label>
-            <input class="form-control" name="id" value="1">
-        </div>
-        <div class="form-group">
-            <label>パスワード</label>
-            <input class="form-control" name="password" type="password" value="2">
-        </div>
-        <div class="form-group">
-            <label>パスワードの確認</label>
-            <input class="form-control" name="passwordConfirm" type="password" value="2">
-        </div>
-        <div class="form-group">
-            <label>ニックネーム</label>
-            <input class="form-control" name="nickname" value="5">
-        </div>
-        <div class="form-group">
-            <label>ZOOM ID</label>
-            <select class="form-control" name="zoomId">
-                <option>6</option>
-                 기타 Zoom ID 옵션들 
-            </select>
-        </div>
-        
-         3. 요일 선택 
-        <div class="form-group" id="weekday-area">
-            <label>受講曜日</label>
-            <div>
-                <button type="button" class="btn btn-sm week-btn" data-day="日">日</button>
-                <button type="button" class="btn btn-sm week-btn" data-day="月">月</button>
-                <button type="button" class="btn btn-sm week-btn" data-day="火">火</button>
-                <button type="button" class="btn btn-sm week-btn" data-day="水">水</button>
-                <button type="button" class="btn btn-sm week-btn" data-day="木">木</button>
-                <button type="button" class="btn btn-sm week-btn" data-day="金">金</button>
-                <button type="button" class="btn btn-sm week-btn" data-day="土">土</button>
+<body id="page-top">
+
+<div id="wrapper">
+    <!-- サイドバー -->
+    <div th:replace="~{fragments/sidebar-admin :: sidebar-admin}"></div>
+
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <!-- トップバー -->
+            <div th:replace="~{fragments/topbar :: topbar('講師詳細')}"></div>
+
+            <div class="container-fluid">
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+
+                        <!-- 成功/エラーメッセージ -->
+                        <div th:if="${teacherSuccess != null}" class="alert alert-success" th:text="${teacherSuccess}"></div>
+                        <div th:if="${teacherError != null}" class="alert alert-danger" th:text="${teacherError}"></div>
+
+                        <form th:action="@{|/admin/teacher/detail/${teacherNum}|}" th:object="${teacherDTO}" method="post" autocomplete="off">
+                            <!-- ユーザーID（編集不可） -->
+                            <div class="form-group">
+                                <label>ユーザーID</label>
+                                <input type="text" id="teacherId" th:field="*{id}" class="form-control" readonly>
+                            </div>
+                            <!-- パスワード（空欄の場合は変更なし） -->
+                            <div class="form-group">
+                                <label>パスワード (変更時のみ入力)</label>
+                                <input type="password" id="teacherPassword" th:field="*{password}" class="form-control" placeholder="新しいパスワード">
+                            </div>
+                            <!-- ニックネーム -->
+                            <div class="form-group">
+                                <label>ニックネーム</label>
+                                <input type="text" id="teacherNickname" th:field="*{nickname}" class="form-control">
+                            </div>
+                            <!-- Zoom ID -->
+                            <div class="form-group">
+                                <label for="inputZoomId">Zoom ID</label>
+                                <select class="form-control" id="inputZoomId" th:field="*{zoomId}">
+                                    <option value="" th:selected="*{zoomId} == null or *{zoomId} == ''">Zoom ID</option>
+                                    <option th:each="id : ${zoomIdList}" th:value="${id}" th:selected="${id} == *{zoomId}">[[${id}]]</option>
+                                </select>
+                            </div>
+                            <!-- 無効化 -->
+							<div class="form-group form-check">
+							    <input type="checkbox" th:field="*{nullity}" class="form-check-input" id="nullityCheckbox">
+							    <label class="form-check-label" for="nullityCheckbox">無効化（チェック時は停止）</label>
+							</div>
+                            <!-- 登録日（編集不可） -->
+                            <div class="form-group">
+                                <label>登録日</label>
+                                <input type="text" th:value="*{join_date}" class="form-control" readonly>
+                            </div>
+
+                            <!-- 授業スケジュールリスト -->
+                            <div>
+                                <label>授業スケジュール</label>
+                                <div id="scheduleBoxList">
+                                    <!-- 既存スケジュール表示（削除ボタン付き） -->
+                                    <div th:each="schedule, idx : *{schedules}" class="card mb-3 schedule-item">
+                                        <div class="card-body">
+                                            <div class="form-group">
+                                                <label>授業曜日</label>
+                                                <div class="btn-group btn-group-toggle d-flex flex-wrap" data-toggle="buttons">
+                                                    <label class="btn btn-outline-primary m-1" th:classappend="${#lists.contains(schedule.weekdays, '日')} ? 'active'">
+                                                        <input type="checkbox" th:field="*{schedules[__${idx.index}__].weekdays}" value="日" autocomplete="off">日
+                                                    </label>
+                                                    <label class="btn btn-outline-primary m-1" th:classappend="${#lists.contains(schedule.weekdays, '月')} ? 'active'">
+                                                        <input type="checkbox" th:field="*{schedules[__${idx.index}__].weekdays}" value="月" autocomplete="off">月
+                                                    </label>
+                                                    <label class="btn btn-outline-primary m-1" th:classappend="${#lists.contains(schedule.weekdays, '火')} ? 'active'">
+                                                        <input type="checkbox" th:field="*{schedules[__${idx.index}__].weekdays}" value="火" autocomplete="off">火
+                                                    </label>
+                                                    <label class="btn btn-outline-primary m-1" th:classappend="${#lists.contains(schedule.weekdays, '水')} ? 'active'">
+                                                        <input type="checkbox" th:field="*{schedules[__${idx.index}__].weekdays}" value="水" autocomplete="off">水
+                                                    </label>
+                                                    <label class="btn btn-outline-primary m-1" th:classappend="${#lists.contains(schedule.weekdays, '木')} ? 'active'">
+                                                        <input type="checkbox" th:field="*{schedules[__${idx.index}__].weekdays}" value="木" autocomplete="off">木
+                                                    </label>
+                                                    <label class="btn btn-outline-primary m-1" th:classappend="${#lists.contains(schedule.weekdays, '金')} ? 'active'">
+                                                        <input type="checkbox" th:field="*{schedules[__${idx.index}__].weekdays}" value="金" autocomplete="off">金
+                                                    </label>
+                                                    <label class="btn btn-outline-primary m-1" th:classappend="${#lists.contains(schedule.weekdays, '土')} ? 'active'">
+                                                        <input type="checkbox" th:field="*{schedules[__${idx.index}__].weekdays}" value="土" autocomplete="off">土
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="form-group d-flex flex-wrap align-items-center">
+                                                <label class="mr-2">開始</label>
+                                                <select th:field="*{schedules[__${idx.index}__].startHour}" class="form-control mx-1" style="width:80px;">
+                                                    <option value="">--</option>
+                                                    <option th:each="h : ${#numbers.sequence(0,23)}" th:value="${h}" th:text="${h == 0 ? '00' : h}"></option>
+                                                </select>時
+                                                <select th:field="*{schedules[__${idx.index}__].startMinute}" class="form-control mx-1" style="width:80px;">
+                                                    <option value="">--</option>
+                                                    <option th:each="m : ${#numbers.sequence(0,50,10)}" th:value="${m}" th:text="${m == 0 ? '00' : m}"></option>
+                                                </select>分
+                                                <span class="mx-2">〜</span>
+                                                <label class="mr-2">終了</label>
+                                                <select th:field="*{schedules[__${idx.index}__].endHour}" class="form-control mx-1" style="width:80px;">
+                                                    <option value="">--</option>
+                                                    <option th:each="h : ${#numbers.sequence(0,23)}" th:value="${h}" th:text="${h == 0 ? '00' : h}"></option>
+                                                </select>時
+                                                <select th:field="*{schedules[__${idx.index}__].endMinute}" class="form-control mx-1" style="width:80px;">
+                                                    <option value="">--</option>
+                                                    <option th:each="m : ${#numbers.sequence(0,50,10)}" th:value="${m}" th:text="${m == 0 ? '00' : m}"></option>
+                                                </select>分
+												<button type="button" class="btn btn-sm btn-danger removeScheduleBtn d-block w-100 mt-2">スケジュール削除</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- スケジュール追加ボタン -->
+                            <button type="button" id="addScheduleBtn" class="btn btn-primary btn-user mb-3">
+                                スケジュール追加
+                            </button>
+                            <button type="submit" class="btn btn-primary btn-block">修正を保存</button>
+                        </form>
+
+                        <!-- 講師削除ボタン（別フォーム） -->
+                        <form th:action="@{|/admin/teacher/detail/${teacherNum}/delete|}" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-danger mt-3"
+                                    onclick="return confirm('本当に削除しますか？');">削除</button>
+                        </form>
+                        <a href="/admin/teacher-list" class="btn btn-secondary mt-3 ml-2">リストへ戻る</a>
+                    </div>
+                </div>
             </div>
         </div>
+        <!-- フッター -->
+        <footer class="sticky-footer bg-white">
+            <div class="container my-auto">
+                <div class="copyright text-center my-auto">
+                    <span>Copyright &copy; Your Website 2020</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+<!-- ページトップボタン -->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
 
-         4. 시간 선택 
-        <div class="form-group" id="time-area">
-            <label>受講時間</label>
-            <div class="d-flex align-items-center">
-                <select class="form-control mr-2" style="width: 70px;" id="startHour">
-                  <option>9</option><option>10</option><option>11</option>
-                   ... 
-                </select>
-                時〜
-                <select class="form-control ml-2" style="width: 70px;" id="endHour">
-                  <option>10</option><option>11</option><option>12</option>
-                   ... 
-                </select>
-                時
+<!-- ログアウトモーダル -->
+<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">ログアウトしますか？</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">「Logout」を選択すると現在のセッションが終了します。</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">キャンセル</button>
+                <a class="btn btn-primary" href="login.html">Logout</a>
             </div>
         </div>
-        
-         7. 스케줄 추가 
-        <button type="button" id="addScheduleBtn" class="btn btn-info btn-sm mb-2">スケジュール追加 ＋</button>
-        
-         8. 스케줄 리스트 
-        <div id="schedule-list">
-             JS로 스케줄이 여기 들어감 
-        </div>
-        
-        <div class="form-group mt-2">
-          <div class="form-check">
-            <input type="checkbox" class="form-check-input" id="inactive" name="inactive">
-            <label class="form-check-label" for="inactive">◎無効化 (現在、授業を行っていません。)</label>
-          </div>
-        </div>
-
-        <div class="d-flex justify-content-between mt-3">
-            <button type="submit" class="btn btn-primary flex-fill mr-2">修正</button>
-            <button type="button" class="btn btn-danger flex-fill ml-2" onclick="confirmDelete()">削除</button>
-        </div>
-    </form>
+    </div>
 </div>
 
-<script>
-let selectedDays = [];
-let scheduleList = [];
+<!-- jQuery & スケジュール追加/削除用スクリプト -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Custom scripts for all pages-->
+  <script th:src="@{/js/sb-admin-2.min.js}"></script>
 
-// 요일 버튼 토글
-document.querySelectorAll('.week-btn').forEach(btn => {
-  btn.addEventListener('click', function() {
-    this.classList.toggle('active');
-    const day = this.getAttribute('data-day');
-    if (this.classList.contains('active')) {
-      if (!selectedDays.includes(day)) selectedDays.push(day);
-    } else {
-      selectedDays = selectedDays.filter(d => d !== day);
-    }
-  });
-});
+ <!--授業年月日JS-->
+<script th:src="@{/js/class-period.js}"></script>
 
-// 스케줄 추가
-document.getElementById('addScheduleBtn').onclick = function() {
-  const days = [...selectedDays];
-  const start = document.getElementById('startHour').value;
-  const end = document.getElementById('endHour').value;
-  if (!days.length) {
-    alert("曜日を選択してください。");
-    return;
-  }
-  if (start >= end) {
-    alert("時間を正しく選択してください。");
-    return;
-  }
-  days.forEach(day => {
-    const schedule = { day, start, end };
-    scheduleList.push(schedule);
-    renderSchedules();
-  });
-};
+ <!--講師スケジュールの追加-->
+<script th:src="@{/js/add-schedule.js}"></script>
 
-// 스케줄 렌더링
-function renderSchedules() {
-  const list = document.getElementById('schedule-list');
-  list.innerHTML = '';
-  scheduleList.forEach((s, i) => {
-    const el = document.createElement('div');
-    el.className = 'schedule-item d-flex align-items-center justify-content-between';
-    el.innerHTML = `${s.day}　${s.start}時〜${s.end}時
-      <span class="remove-btn ml-2" onclick="removeSchedule(${i})">✕</span>
-      <input type="hidden" name="schedules[${i}].day" value="${s.day}">
-      <input type="hidden" name="schedules[${i}].start" value="${s.start}">
-      <input type="hidden" name="schedules[${i}].end" value="${s.end}">
-    `;
-    list.appendChild(el);
-  });
-}
-
-// 스케줄 삭제
-function removeSchedule(idx) {
-  scheduleList.splice(idx, 1);
-  renderSchedules();
-}
-
-// 삭제 버튼
-function confirmDelete() {
-  if (confirm("本当に削除しますか？")) {
-    // 실제 삭제 로직 필요 (예: form submit or ajax)
-    alert("삭제 요청 (연결 필요)");
-  }
-}
-
-// ★ 페이지 진입 시, DB에서 스케줄 불러오기 (Thymeleaf 예시)
-window.onload = function() {
-  /* 
-  예시:
-  /*[# th:each="sch, i : ${teacher.schedules}"]*/
-  scheduleList.push({
-    day: '/*[[${sch.day}]]*/',
-    start: '/*[[${sch.start}]]*/',
-    end: '/*[[${sch.end}]]*/'
-  });
-  
-  /*[/]*/
-  renderSchedules();
-}
 </script>
 </body>
 </html>
--->

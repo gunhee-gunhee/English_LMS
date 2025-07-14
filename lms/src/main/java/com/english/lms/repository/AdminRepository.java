@@ -9,6 +9,7 @@ import com.english.lms.entity.AdminEntity;
 
 @Repository
 public interface AdminRepository extends JpaRepository<AdminEntity, Integer> {
-
-	Optional<AdminEntity> findByAdminId(String adminId); //データがない場合がある -> 処理
+    Optional<AdminEntity> findByAdminId(String adminId);
+    Optional<AdminEntity> findByAdminNum(Integer adminNum);
+    void deleteByAdminId(String adminId);
 }
