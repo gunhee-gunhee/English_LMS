@@ -53,7 +53,7 @@ public class SecurityConfig {
 	        .authorizeHttpRequests(auth -> auth
 	            .requestMatchers("/admin/login", "/admin/css/**", "/admin/js/**","/admin/vendor/**").permitAll()
 	            //管理者のみ
-	            .requestMatchers("/admin/lo","/admin/center/**").hasRole("ADMIN")
+	            .requestMatchers("/admin/**","/admin/center/**").hasRole("ADMIN")
 	            
 	            //center + admin アクセス可能
 	            .requestMatchers("/admin/regular-class-list","/admin/register","/admin/student/**","/admin/teacher/**").hasAnyRole("ADMIN","CENTER")

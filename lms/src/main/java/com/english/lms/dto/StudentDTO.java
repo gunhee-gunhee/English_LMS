@@ -1,5 +1,7 @@
 package com.english.lms.dto;
 
+import com.english.lms.enums.Role;
+
 import lombok.*;
 
 @Getter
@@ -24,4 +26,6 @@ public class StudentDTO {
     private String role;
     private String company;
 
+    
+    private String teacherNickname;
 }

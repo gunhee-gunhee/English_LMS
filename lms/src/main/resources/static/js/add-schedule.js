@@ -1,7 +1,9 @@
+
 // ==========================
 // スケジュール追加ボタン
 // ==========================
 let scheduleCount = document.querySelectorAll('.schedule-item').length || 0;
+
 
 document.getElementById('addScheduleBtn').onclick = function() {
   // 新しいスケジュール行を生成

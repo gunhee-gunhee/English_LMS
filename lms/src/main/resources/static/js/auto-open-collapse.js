@@ -1,3 +1,8 @@
+/*
+フォーム送信後にエラーや成功メッセージを表示するためにページをリダイレクトする際、
+送信されたフォームを自動的に開くための処理。
+ */
+
 document.addEventListener('DOMContentLoaded', function () {
     const targetDiv = document.getElementById('formOpenTarget');
     if (!targetDiv) return;

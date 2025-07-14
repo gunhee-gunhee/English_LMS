@@ -1,6 +1,11 @@
+/*
+   endTime が startTime よりも前の場合、エラーメッセージを表示して登録を中断する
+*/
+
+
 
 function validateAndConfirm() {
-    // 에러 메시지 숨기기
+    // 通常はエラーメッセージを非表示にする
     const errorDiv = document.getElementById('timeError');
     errorDiv.style.display = 'none';
     errorDiv.textContent = '';

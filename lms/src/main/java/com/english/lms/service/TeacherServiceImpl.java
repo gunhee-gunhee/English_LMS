@@ -5,9 +5,12 @@ import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.english.lms.dto.StudentDTO;
 import com.english.lms.dto.TeacherDTO;
 import com.english.lms.dto.TeacherScheduleDTO;
 import com.english.lms.entity.TeacherEntity;
@@ -210,4 +213,18 @@ public class TeacherServiceImpl implements TeacherService {
         }
         return result;
     }
+    
+    
+    // ====================================================
+    //    教師照会ページで使用される処理メソッド
+    // ====================================================
+	@Override
+	public Page<TeacherDTO> getTeacherPage(Pageable pageable) {
+		/**
+		    Pageableは、現在のページ番号や1ページあたりに表示するデータの件数など、ページングに関する情報を持つオブジェクト
+			TeacherEntityは、データベースの1行（レコード）を表すオブジェクト
+		*/
+//		Page<TeacherEntity> teacherPage = teacherRepository.
+		return null;
+	}
 }

@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Instabiz_ADMIM:会員登録</title>
+    <title>Instabiz_会員登録</title>
 
     <!-- Custom fonts for this template -->
     <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
@@ -98,27 +98,27 @@
 											<div th:if="${studentSuccess != null}" class="alert alert-success" th:text="${studentSuccess}"></div>
 											<form class="user" id="studentSignupForm" th:action="@{/admin/student/register}" th:object="${studentDTO}" method="post"
                                                 onsubmit="return confirm('会員登録しますか？');">
-                                                <!-- 아이디 -->
+                                                <!-- ID -->
                                                 <div class="form-group">
                                                     <label for="inputId">ユーザーID</label>
                                                     <input type="text" class="form-control form-control-user" id="studentId" th:field="*{id}" placeholder="ユーザーID" required>
                                                 </div>
-                                                <!-- 비밀번호 -->
+                                                <!-- パスワード -->
                                                 <div class="form-group">
                                                     <label for="inputPassword">パスワード</label>
                                                     <input type="password" class="form-control form-control-user" id="studentPassword" th:field="*{password}" placeholder="パスワード" required>
                                                 </div>
-                                                <!-- 비밀번호 확인 -->
+                                                <!-- パスワードチェック -->
                                                 <div class="form-group">
                                                     <label for="inputPasswordCheck">パスワード確認</label>
                                                     <input type="password" class="form-control form-control-user" id="studentPasswordCheck" th:field="*{passwordCheck}" placeholder="パスワード確認" required>
                                                 </div>
-                                                <!-- 닉네임 -->
+                                                <!-- ニックネーム -->
                                                 <div class="form-group">
                                                     <label for="inputNickname">ニックネーム</label>
                                                     <input type="text" class="form-control form-control-user" id="studentNickname" th:field="*{nickname}" placeholder="ニックネーム">
                                                 </div>
-                                                <!-- 닉네임(후리가나) -->
+                                                <!-- ニックネーム(フリガナ) -->
                                                 <div class="form-group">
                                                     <label for="inputNicknameJp">ニックネーム（ふりがな）</label>
                                                     <input type="text" class="form-control form-control-user" id="studentNicknameJp" th:field="*{nicknameJp}" placeholder="ニックネーム（ふりがな）">
@@ -128,7 +128,7 @@
                                                     <label for="inputGroup">所属</label>
                                                     <input type="text" class="form-control form-control-user" id="studentGroup" th:field="*{company}" placeholder="所属">
                                                 </div>
-                                                <!-- 연령 라디오 그룹 -->
+                                                <!-- 年齢 -->
                                                 <div class="form-group radio-group">
                                                     <label>年齢</label>
                                                     <label><input type="radio" th:field="*{age}" value="10歳未満" required> 10歳未満</label>
@@ -139,7 +139,7 @@
                                                     <label><input type="radio" th:field="*{age}" value="50代"> 50代</label>
                                                     <label><input type="radio" th:field="*{age}" value="60歳以上"> 60歳以上</label>
                                                 </div>
-                                                <!-- 영어레벨(1~10) 라디오 그룹 -->
+                                                <!-- 英語レベル(1~10) -->
                                                 <div class="form-group radio-group">
                                                     <label>英語レベル</label>
                                                     <label><input type="radio" th:field="*{englishLevel}" value="1" required> 1レベル</label>
@@ -153,7 +153,7 @@
                                                     <label><input type="radio" th:field="*{englishLevel}" value="9"> 9レベル</label>
                                                     <label><input type="radio" th:field="*{englishLevel}" value="10"> 10レベル</label>
                                                 </div>
-                                                <!-- 영어 학습 목적 -->
+                                                <!-- 学習目的 -->
                                                 <div class="form-group radio-group">
                                                     <label>英語学習目的</label>
                                                     <label><input type="radio" th:field="*{englishPurpose}" value="旅行" required> 旅行</label>
@@ -162,7 +162,7 @@
                                                     <label><input type="radio" th:field="*{englishPurpose}" value="趣味"> 趣味</label>
                                                     <label><input type="radio" th:field="*{englishPurpose}" value="その他"> その他</label>
                                                 </div>
-                                                <!-- instabiz 유입경로 -->
+                                                <!-- instabiz 流入経路 -->
                                                 <div class="form-group radio-group">
                                                     <label>instabizを知ったきっかけ</label>
                                                     <label><input type="radio" th:field="*{signupPath}" value="検索" required> 検索</label>
@@ -183,28 +183,28 @@
 
                                         <div class="card-body">
 
-                                         <!-- 에러 메시지 -->
+                                         <!-- エラーメッセージ -->
                                             <div th:if="${teacherError != null}" class="alert alert-danger" th:text="${teacherError}"></div>
 											<div th:if="${teacherSuccess != null}" class="alert alert-success" th:text="${teacherSuccess}"></div>
 											<div id="timeError" class="alert alert-danger" style="display: none;"></div>
 											<form class="user" id="teacherSignupForm" th:action="@{/admin/teacher/register}" th:object="${teacherDTO}" method="post"
                                                 onsubmit="return validateAndConfirm();">
-                                                <!-- 아이디 -->
+                                                <!-- ID -->
                                                 <div class="form-group">
                                                     <label for="inputId">ユーザーID</label>
                                                     <input type="text" class="form-control form-control-user" id="teacherId" th:field="*{id}" placeholder="ユーザーID" required>
                                                 </div>
-                                                <!-- 비밀번호 -->
+                                                <!-- パスワード -->
                                                 <div class="form-group">
                                                     <label for="inputPassword">パスワード</label>
                                                     <input type="password" class="form-control form-control-user" id="teacherPassword" th:field="*{password}" placeholder="パスワード" required>
                                                 </div>
-                                                <!-- 비밀번호 확인 -->
+                                                <!-- パスワードチェック -->
                                                 <div class="form-group">
                                                     <label for="inputPasswordCheck">パスワード確認</label>
                                                     <input type="password" class="form-control form-control-user" id="teacherPasswordCheck" th:field="*{passwordCheck}" placeholder="パスワード確認" required>
                                                 </div>
-                                                <!-- 닉네임 -->
+                                                <!-- ニックネーム -->
                                                 <div class="form-group">
                                                     <label for="inputNickname">ニックネーム</label>
                                                     <input type="text" class="form-control form-control-user" id="teacherNickname" th:field="*{nickname}" placeholder="ニックネーム">
@@ -341,17 +341,17 @@
 											<div th:if="${centerSuccess != null}" class="alert alert-success" th:text="${centerSuccess}"></div>
 											<form class="user" id="centerSignupForm" th:action="@{/admin/center/register}" th:object="${adminDTO}" method="post"
                                                 onsubmit="return confirm('会員登録しますか？');">
-                                                <!-- 아이디 -->
+                                                <!-- ID -->
                                                 <div class="form-group">
                                                     <label for="inputId">ユーザーID</label>
                                                     <input type="text" class="form-control form-control-user" id="centerId" th:field="*{id}" placeholder="ユーザーID" required>
                                                 </div>
-                                                <!-- 비밀번호 -->
+                                                <!-- パスワード -->
                                                 <div class="form-group">
                                                     <label for="inputPassword">パスワード</label>
                                                     <input type="password" class="form-control form-control-user" id="centerPassword" th:field="*{password}" placeholder="パスワード" required>
                                                 </div>
-                                                <!-- 비밀번호 확인 -->
+                                                <!-- パスワードチェック -->
                                                 <div class="form-group">
                                                     <label for="inputPasswordCheck">パスワード確認</label>
                                                     <input type="password" class="form-control form-control-user" id="centerPasswordCheck" th:field="*{passwordCheck}" placeholder="パスワード確認" required>
@@ -369,22 +369,22 @@
 
                                         <div class="card-body">
 
-                                         <!-- 에러 메시지 -->
+                                         <!-- エラーメッセージ -->
                                             <div th:if="${adminError}" class="alert alert-danger" th:text="${adminError}"></div>
 											<div th:if="${adminSuccess != null}" class="alert alert-success" th:text="${adminSuccess}"></div>
                                             <form class="user" id="adminSignupForm" th:action="@{/admin/register}" th:object="${adminDTO}" method="post"
                                                 onsubmit="return confirm('会員登録しますか？');">
-                                                <!-- 아이디 -->
+                                                <!-- ID -->
                                                 <div class="form-group">
                                                     <label for="inputId">ユーザーID</label>
                                                     <input type="text" class="form-control form-control-user" id="adminId" th:field="*{id}" placeholder="ユーザーID" required>
                                                 </div>
-                                                <!-- 비밀번호 -->
+                                                <!-- パスワード -->
                                                 <div class="form-group">
                                                     <label for="inputPassword">パスワード</label>
                                                     <input type="password" class="form-control form-control-user" id="adminPassword" th:field="*{password}" placeholder="パスワード" required>
                                                 </div>
-                                                <!-- 비밀번호 확인 -->
+                                                <!-- パスワードチェック -->
                                                 <div class="form-group">
                                                     <label for="inputPasswordCheck">パスワード確認</label>
                                                     <input type="password" class="form-control form-control-user" id="adminPasswordCheck" th:field="*{passwordCheck}" placeholder="パスワード確認" required>
@@ -396,32 +396,15 @@
                                             </form>
                                         </div>
                                     </div> <!--本社管理者登録　End-->
-
-                                  
+                   
                                 </div>
-                            
-                            
-                            
-                            
-                            
-                            
-                            
-                            
-                            
-                            
-                            
                             
                             </div>
                           <!--button collapseのplace  End-->
-
-
-
                         </div>
                     </div>
-
                 </div>
                 <!-- /.container-fluid -->
-
             </div>
             <!-- End of Main Content -->
 
@@ -480,15 +463,16 @@
 
     <!-- Custom scripts for all pages-->
     <script th:src="@{/js/sb-admin-2.min.js}"></script>
-
+　　　
+　　　<!--このページの Custom　JS-->
    <!--授業年月日JS-->
 　　<script th:src="@{/js/class-period.js}"></script>
 
    <!--講師スケジュールの追加-->
 　　<script th:src="@{/js/add-schedule.js}"></script>
 	    
-  		<!--授業終了の時間を自動設定-->
-	    <!-- <script src="js/class-endtime.js"></script> -->
+   <!--授業終了の時間を自動設定-->
+ <!-- <script src="js/class-endtime.js"></script> -->
 
 	<!--自動でcollapseを開く-->
 	<script th:src="@{/js/auto-open-collapse.js}"></script>
