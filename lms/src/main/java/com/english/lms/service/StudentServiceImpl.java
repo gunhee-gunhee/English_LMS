@@ -12,13 +12,13 @@ import com.english.lms.repository.TeacherRepository;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Pageable;
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -60,6 +60,7 @@ public class StudentServiceImpl implements StudentService {
         // StudentRepository에서 studentId로 중복 체크
         return studentRepository.findByStudentId(id).isPresent();
     }
+
     
 //    //student-listのStudentDTO生成
 //	@Override
@@ -125,14 +126,15 @@ public class StudentServiceImpl implements StudentService {
 	public Page<StudentDTO> getStudentPageWithTeacher(Pageable pageable) {
         //Pageableは、現在のページ番号や1ページあたりに表示するデータの件数など、ページングに関する情報を持つオブジェクト
 		//StudentEntityは、データベースの1行（レコード）を表すオブジェクト
-		Page<StudentEntity> studentPage = studentRepository.findAll(pageable);
+		//学生リストを取得する。
+		Page<StudentEntity> studentPage = studentRepository.findAllStudentsPage(pageable);
 		
 		//studentEntity -> StudentDTO (+teacher 情報）
         List<StudentDTO> dtoList = studentPage.getContent().stream().map(student -> {
          
           //studentNumで　classEntity取得
         	Integer StudentNum = student.getStudentNum();
-        	ClassEntity classEntity = classRepository.findFirstByStudentNum(StudentNum);
+        	ClassEntity classEntity = classRepository.findByStudentNumQuery(StudentNum);
         	
         	// デフォルト値：ニックネームなし
         	String teacherNickname = "ニックネームなし";
@@ -169,4 +171,6 @@ public class StudentServiceImpl implements StudentService {
         //total : // 全体のデータ件数（ページネーションの計算に使用）
 		return new PageImpl<>(dtoList, pageable, studentPage.getTotalElements());
 	}
+    
+    
 }

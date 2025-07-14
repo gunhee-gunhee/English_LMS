@@ -14,10 +14,14 @@ public interface ClassRepository extends JpaRepository<ClassEntity, Integer> {
     
 	List<ClassEntity> findByStudentNum(Integer studentNum);
     
-    ClassEntity findFirstByStudentNum(Integer studentNum);
-    
     @Query("SELECT c.teacherNum FROM ClassEntity c WHERE c.studentNum = :studentNum")
     Integer findTeacherNumByStudentNum(@Param("studentNum") Integer studentNum);
+
+    @Query(
+    		value= "SELECT * FROM lms_class WHERE student_num = :studentNum lIMIT 1",
+    		nativeQuery = true 
+    		)
+	ClassEntity findByStudentNumQuery(@Param("studentNum") Integer studentNum);
 
 
 }
