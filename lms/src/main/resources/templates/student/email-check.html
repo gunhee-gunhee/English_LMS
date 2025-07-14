@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,12 +7,11 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Admin - Email Authentication</title>
+    <title>メール認証</title>
 
     <!-- Custom fonts for this template-->
     <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
-
     <!-- Custom styles for this template-->
     <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
     <link th:href="@{/css/custom.css}" rel="stylesheet">
@@ -22,52 +20,77 @@
 <body class="bg-gradient-danger">
 
     <div class="container">
-        <!-- Outer Row -->
         <div class="row justify-content-center">
-
             <div class="col-xl-10 col-lg-12 col-md-9" style="height: 600px;">
-
                 <div class="card o-hidden border-0 shadow-lg my-5">
                     <div class="card-body p-0" style="height: 600px;">
-                        <!-- Nested Row within Card Body -->
                         <div class="row d-flex justify-content-center">
                             <div class="col-lg-6">
                                 <div class="p-5">
                                     <div class="text-center">
                                         <h1 class="h4 text-gray-900 mb-4">メール認証</h1>
                                     </div>
-                                    <form class="user" th:action="@{/student/email-authentication}" method="post">
+
+                                    <!-- 1. 이미 등록된 이메일 안내 -->
+                                    <div th:if="${alreadyRegistered}">
+                                        <p style="color:red; font-weight:bold;">このメールアドレスは既に登録されています。</p>
+                                    </div>
+
+                                    <!-- 2. 이메일 입력/발송 폼 (메일 발송 전이면 항상 노출) -->
+                                    <form class="user" th:action="@{/student/email-check}" method="post"
+                                          th:if="!${sent}">
                                         <div class="form-group">
                                             <input type="email" class="form-control form-control-user"
-                                                   id="InputEmail" name="email"
-                                                   placeholder="メールアドレス" required>
+                                                   name="email"
+                                                   placeholder="メールアドレス" required
+                                                   th:value="${email}">
                                         </div>
                                         <button type="submit" class="btn btn-outline-danger btn-user btn-block">
                                             認証メール送信
                                         </button>
                                     </form>
+
+                                    <!-- 3. 인증번호 입력 폼 (메일 발송 후) -->
+                                    <div th:if="${sent}">
+                                        <div th:if="${authSuccess}">
+                                            <p style="color:green; font-weight:bold;">認証成功！</p>
+                                        </div>
+                                        <div th:if="${authFailed}">
+                                            <p style="color:red; font-weight:bold;">認証コードが間違っています。</p>
+                                        </div>
+                                        <p>
+                                            認証コードが <span th:text="${email}"></span> に送信されました。メールをご確認ください。
+                                        </p>
+                                        <form th:action="@{/student/email-check/verify}" method="post" style="margin-bottom:10px;">
+                                            <input type="hidden" name="email" th:value="${email}" />
+                                            <input type="text" class="form-control" name="authCode"
+                                                   placeholder="認証コード" required style="margin-bottom: 10px;">
+                                            <button type="submit" class="btn btn-outline-danger btn-user btn-block">
+                                                認証確認
+                                            </button>
+                                        </form>
+                                        <!-- 인증메일 재전송 버튼 -->
+                                        <form th:action="@{/student/email-check}" method="post" style="margin-top:10px;">
+                                            <input type="hidden" name="email" th:value="${email}" />
+                                            <button type="submit" class="btn btn-link btn-sm">
+                                                認証メール再送信
+                                            </button>
+                                        </form>
+                                    </div>
                                     <hr>
-                                    <!-- 불필요한 회원가입/비밀번호 찾기 링크 제거 또는 수정 가능 -->
                                 </div>
                             </div>
-                       </div>
+                        </div>
                     </div>
                 </div>
-
             </div>
-
         </div>
-
     </div>
 
     <!-- Bootstrap core JavaScript-->
     <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
     <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
-
-    <!-- Core plugin JavaScript-->
     <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
-
-    <!-- Custom scripts for all pages-->
     <script th:src="@{/js/sb-admin-2.min.js}"></script>
 </body>
 </html>

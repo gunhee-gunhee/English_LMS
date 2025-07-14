@@ -84,12 +84,14 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
                     "/student/login",
-                    "/student/email-check",      
+                    "/student/email-check", 
+                    "/student/email-check/verify",
                     "/student/signup",             
                     "/student/signup-complete",
                     "/student/irregular-class-apply",
                     "/student/myinfo",
                     "/student/myinfocheck",
+                    "/student/textinfo",
                     "/student/thanks",
                     "/student/css/**",
                     "/student/js/**",
@@ -105,9 +107,11 @@ public class SecurityConfig {
                 .failureHandler(studentFailureHandler)
             )
             .logout(logout -> logout
-                .logoutUrl("/student/logout")
-                .logoutSuccessUrl("/student/login?logout")
-            )
+                    .logoutUrl("/student/logout")
+                    .logoutSuccessUrl("/student/login?logout")
+                    .invalidateHttpSession(true)
+                    .deleteCookies("JSESSIONID")
+                )
             .userDetailsService(studentService);
         return http.build();
     }
