@@ -1,23 +1,76 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
-
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <title>TEACHER MYPAGE</title>
-
-
+    <title>マイページ・スケジューラー</title>
+    <!-- Bootstrap & FontAwesome & 커스텀 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
 </head>
+<body id="page-top">
+<div id="wrapper">
+    <!-- サイドバー -->
+    <div th:replace="~{fragments/sidebar-admin :: sidebar-admin}"></div>
 
-<body >
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <!-- トップバー -->
+            <div th:replace="~{fragments/topbar :: topbar('マイスケジュール')}"></div>
+            <div class="container-fluid">
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        <h4 class="mb-4">スケジュール照会</h4>
+                        <div class="row mb-3">
+                            <div class="col-auto">
+                                <label for="date-input" class="col-form-label">日付を選択</label>
+                            </div>
+                            <div class="col-auto">
+                                <input type="date" id="date-input" class="form-control">
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-primary" id="search-btn">検索</button>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="schedule-table">
+                                <thead>
+                                    <tr>
+                                        <th>時間</th>
+                                        <th>生徒</th>
+                                        <th>授業名</th>
+                                        <th>授業タイプ</th>
+                                        <th>出席</th>
+                                        <th>欠席</th>
+                                        <th>詳細</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- JSで行を追加 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- フッター -->
+        <footer class="sticky-footer bg-white">
+            <div class="container my-auto">
+                <div class="copyright text-center my-auto">
+                    <span>Copyright &copy; Your Website 2020</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+<!-- ページトップボタン -->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
 
- <h1>TEACHER MYPAGE</h1>
-
+<!-- jQuery & Custom JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script th:src="@{/js/teacher-mypage-schedule.js}"></script>
 </body>
-
 </html>
