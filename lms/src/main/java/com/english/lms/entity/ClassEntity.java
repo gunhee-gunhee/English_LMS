@@ -28,7 +28,7 @@ public class ClassEntity {
     private Integer teacherNum;
 
     @Column(name = "week_days")
-    private Integer weekDays; 
+    private String weekDays; 
 
     @Column(name = "text_num")
     private Integer textNum;

@@ -1,3 +1,12 @@
+
+/*
+
+スケジュール追加ボタンを押すと、授業の曜日と時間を入力できる div タグを生成する。
+
+*/
+
+
+
 let scheduleCount = 1;
 document.getElementById('addScheduleBtn').onclick = function() {
   const box = document.createElement('div');
