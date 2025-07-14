@@ -27,6 +27,12 @@ public class DayClassEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "day_class_num")
     private Integer dayClassNum;
+    
+    @Column(name = "student_num")
+    private Integer studentNum;
+    
+    @Column(name = "teacher_num")
+    private Integer teacherNum;
 
     @Column(name = "class_num")
     private Integer classNum;

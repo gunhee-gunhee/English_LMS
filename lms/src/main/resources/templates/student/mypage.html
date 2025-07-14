@@ -2,46 +2,113 @@
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
-    <title>STUDENT MYPAGE</title>
+    <title>マイページ | Student</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <!-- SB Admin 2 CSS/JS 리소스 -->
     <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700,900" rel="stylesheet">
     <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
     <link th:href="@{/css/custom.css}" rel="stylesheet">
+    <style>
+        .month-nav { display: flex; align-items: center; justify-content: center; margin: 34px 0 24px 0; }
+        .month-nav button { border: none; background: transparent; font-size: 1.6em; color: #e74a3b; margin: 0 16px; cursor: pointer; }
+        .month-title { font-size: 1.5em; font-weight: bold; letter-spacing: 2px; color: #b9381e; }
+        .table-calendar { width: 100%; background: #fff; border-radius: 14px; box-shadow: 0 2px 12px rgba(231,74,59,0.07); margin: 0 auto; }
+        .table-calendar th, .table-calendar td { text-align: center; padding: 12px 6px; vertical-align: middle; }
+        .table-calendar th { background: #f8d7da; color: #c0392b; font-size: 1.04em; }
+        .table-calendar td { font-size: 1em; }
+        .day-holiday { color: #e74a3b; font-weight: bold; }
+        .day-normal { color: #333; }
+        .btn-small { font-size: .93em; padding: 5px 12px; border-radius: 8px; }
+        .btn-comment { background: #f7cac9; color: #a94442; border: none; }
+        .btn-text { background: #d5e3ff; color: #355fa1; border: none; }
+        .no-lesson { color: #bbb; font-size: .95em; }
+        @media (max-width: 900px) {
+            .table-calendar th, .table-calendar td { font-size: .98em; padding: 6px 2px; }
+            .month-title { font-size: 1.09em; }
+        }
+    </style>
 </head>
 <body class="bg-gradient-danger" id="page-top">
 
-<!-- Page Wrapper -->
 <div id="wrapper">
-
     <!-- Sidebar -->
     <div th:replace="~{fragments/sidebar-student :: sidebar-student}"></div>
     <!-- End Sidebar -->
 
-    <!-- Content Wrapper -->
     <div id="content-wrapper" class="d-flex flex-column">
-
-        <!-- Main Content -->
         <div id="content">
-
             <!-- Topbar -->
             <div th:replace="~{fragments/topbar-student :: topbar('マイページ')}"></div>
             <!-- End Topbar -->
 
-            <!-- Begin Page Content -->
             <div class="container-fluid">
-                <div class="content-center">
-                    <h1>STUDENT MYPAGE</h1>
-                    <!-- 원하는 내용 추가 -->
+                <div class="month-nav">
+                    <button type="button" class="month-btn" th:attr="data-month=${prevMonth}">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <span class="month-title" th:text="${currentMonthLabel}">2025年7月</span>
+                    <button type="button" class="month-btn" th:attr="data-month=${nextMonth}">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
                 </div>
-            </div>
-            <!-- End Page Content -->
 
+                <div style="overflow-x:auto;">
+                    <table class="table table-calendar">
+                        <thead>
+                            <tr>
+                                <th>日付</th>
+                                <th>時間</th>
+                                <th>クラス種別</th>
+                                <th>コメント</th>
+                                <th>テキスト</th>
+                                <th>クラス関連</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <!-- 1일부터 31일까지: dayList를 반복 -->
+                        <tr th:each="day : ${dayList}">
+                            <td>
+                                <!-- 날짜: 공휴일 or 주말이면 빨간색 -->
+                                <span th:text="${day.dayLabel}"
+                                      th:classappend="${day.holiday or day.weekend} ? 'day-holiday' : 'day-normal'">1</span>
+                                <span th:if="${day.holiday}" style="font-size:0.82em; margin-left:3px;" th:text="'（' + ${day.holidayName} + '）'"></span>
+                            </td>
+                            <td>
+                                <span th:if="${#lists.size(day.lessons) > 0}"
+                                      th:text="${day.lessonTimesStr}"></span>
+                                <span th:if="${#lists.isEmpty(day.lessons)}" class="no-lesson">-</span>
+                            </td>
+                            <td>
+                                <span th:if="${#lists.size(day.lessons) > 0}"
+                                      th:text="${day.classTypesStr}"></span>
+                                <span th:if="${#lists.isEmpty(day.lessons)}" class="no-lesson">-</span>
+                            </td>
+                            <td>
+                                <button th:each="lesson : ${day.lessons}"
+                                        th:text="'コメント'"
+                                        th:class="'btn btn-small btn-comment'"
+                                        th:attr="data-dayclassnum=${lesson.dayClassNum}"
+                                        style="margin:2px"></button>
+                                <span th:if="${#lists.isEmpty(day.lessons)}" class="no-lesson">-</span>
+                            </td>
+                            <td>
+                                <button th:each="lesson : ${day.lessons}"
+                                        th:text="'テキスト'"
+                                        th:class="'btn btn-small btn-text'"
+                                        th:attr="data-dayclassnum=${lesson.dayClassNum}"
+                                        style="margin:2px"></button>
+                                <span th:if="${#lists.isEmpty(day.lessons)}" class="no-lesson">-</span>
+                            </td>
+                            <td><!-- クラス関連（今は空） --></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div style="height: 32px;"></div>
+            </div>
         </div>
-        <!-- End of Main Content -->
 
         <!-- Footer -->
         <footer class="sticky-footer bg-white">
@@ -51,34 +118,6 @@
                 </div>
             </div>
         </footer>
-        <!-- End of Footer -->
-
-    </div>
-    <!-- End of Content Wrapper -->
-</div>
-<!-- End of Page Wrapper -->
-
-<!-- Scroll to Top Button-->
-<a class="scroll-to-top rounded" href="#page-top">
-    <i class="fas fa-angle-up"></i>
-</a>
-
-<!-- Logout Modal-->
-<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                <a class="btn btn-primary" href="login.html">Logout</a>
-            </div>
-        </div>
     </div>
 </div>
 
@@ -87,5 +126,31 @@
 <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
 <script th:src="@{/js/sb-admin-2.min.js}"></script>
+<!-- 임시 버튼 함수 예시 -->
+<script>
+    // 월 이동 처리
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.month-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var month = btn.getAttribute('data-month');
+                if (month) location.href = '?month=' + month;
+            });
+        });
+
+        // 댓글/텍스트 버튼 기능 예시
+        document.querySelectorAll('.btn-comment').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var dayClassNum = btn.getAttribute('data-dayclassnum');
+                alert("コメント機能 coming soon! dayClassNum: " + dayClassNum);
+            });
+        });
+        document.querySelectorAll('.btn-text').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var dayClassNum = btn.getAttribute('data-dayclassnum');
+                alert("テキスト機能 coming soon! dayClassNum: " + dayClassNum);
+            });
+        });
+    });
+</script>
 </body>
 </html>

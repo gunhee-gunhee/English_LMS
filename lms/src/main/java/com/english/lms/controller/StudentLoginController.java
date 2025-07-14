@@ -11,4 +11,9 @@ public class StudentLoginController {
 		return "student/login";
 	}
 	
+	@GetMapping("/student/logout")
+	public String logoutPage() {
+		return "student/login";
+	}
+	
 }

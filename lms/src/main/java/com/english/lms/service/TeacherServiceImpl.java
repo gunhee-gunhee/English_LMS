@@ -2,12 +2,7 @@ package com.english.lms.service;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,9 +12,11 @@ import com.english.lms.dto.TeacherDTO;
 import com.english.lms.dto.TeacherScheduleDTO;
 import com.english.lms.entity.TeacherEntity;
 import com.english.lms.entity.TeacherScheduleEntity;
+import com.english.lms.entity.ZoomAccountEntity;
 import com.english.lms.enums.Role;
 import com.english.lms.repository.TeacherRepository;
 import com.english.lms.repository.TeacherScheduleRepository;
+import com.english.lms.repository.ZoomAccountRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +28,7 @@ public class TeacherServiceImpl implements TeacherService {
     private final TeacherRepository teacherRepository;
     private final TeacherScheduleRepository teacherScheduleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ZoomAccountRepository zoomAccountRepository;
 
     // ==========================
     //      DTO変換メソッド
@@ -39,7 +37,6 @@ public class TeacherServiceImpl implements TeacherService {
      * エンティティからDTOへの変換（スケジュールもまとめて）
      */
     public TeacherDTO toDTO(TeacherEntity entity, List<TeacherScheduleEntity> schedules) {
-        // スケジュールを曜日＋時間帯でグループ化してDTOリストへ変換
         List<TeacherScheduleDTO> scheduleDTOs = mapSchedulesToDTOs(schedules);
 
         return TeacherDTO.builder()
@@ -71,18 +68,12 @@ public class TeacherServiceImpl implements TeacherService {
 
         // 既存スケジュールをすべて削除
         teacherScheduleRepository.deleteByTeacherNum(teacherNum);
-        
-        System.out.println("=== schedules ===");
-        for (TeacherScheduleDTO s : teacherDTO.getSchedules()) {
-            System.out.println(s);
-        }
-        
+
         for (TeacherScheduleDTO schedule : teacherDTO.getSchedules()) {
             // 값이 하나라도 null이면 무시
             if (schedule.getStartHour() == null || schedule.getStartMinute() == null
-             || schedule.getEndHour() == null || schedule.getEndMinute() == null
-             || schedule.getWeekdays() == null || schedule.getWeekdays().isEmpty()) {
-                System.out.println("[무시] 빈 스케줄 row: " + schedule);
+                    || schedule.getEndHour() == null || schedule.getEndMinute() == null
+                    || schedule.getWeekdays() == null || schedule.getWeekdays().isEmpty()) {
                 continue;
             }
 
@@ -112,9 +103,7 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     @Transactional
     public void deleteTeacher(Integer teacherNum) {
-        // 先にスケジュールを削除
         teacherScheduleRepository.deleteByTeacherNum(teacherNum);
-        // 講師本体を削除
         teacherRepository.deleteById(teacherNum);
     }
 
@@ -123,7 +112,6 @@ public class TeacherServiceImpl implements TeacherService {
     // ==========================
     @Override
     public boolean existsById(String id) {
-        // IDの重複を確認
         return teacherRepository.findByTeacherId(id).isPresent();
     }
 
@@ -131,33 +119,42 @@ public class TeacherServiceImpl implements TeacherService {
     //      新規登録処理
     // ==========================
     @Override
-    @Transactional // 講師とスケジュールの登録が両方成功したら保存完了
+    @Transactional
     public void registerTeacher(TeacherDTO teacherDTO) {
-        // 基本情報を保存
+        // zoom_id로 ZoomAccountEntity를 찾음
+        ZoomAccountEntity zoomEntity = zoomAccountRepository.findByZoomId(teacherDTO.getZoomId())
+                .orElseThrow(() -> new RuntimeException("Zoomアカウントが存在しません。"));
+        Integer zoomNum = zoomEntity.getZoomNum();
+
+        // 기본 정보 저장
         TeacherEntity teacher = TeacherEntity.builder()
                 .teacherId(teacherDTO.getId())
                 .password(passwordEncoder.encode(teacherDTO.getPassword()))
                 .nickname(teacherDTO.getNickname())
+                .zoomNum(zoomNum)
                 .joinDate(LocalDateTime.now())
                 .nullity(false)
                 .role(Role.TEACHER)
                 .build();
 
-        // 講師本体登録
+        // Zoom 계정 연결 상태 true로 변경
+        zoomEntity.setLinked(true);
+
+        // 강사 정보 저장
         TeacherEntity entity = teacherRepository.save(teacher);
         Integer teacherNum = entity.getTeacherNum();
 
-        // スケジュール保存
+        // 스케줄 저장
         for (TeacherScheduleDTO schedule : teacherDTO.getSchedules()) {
-            // 時間（時と分）を結合してLocalTimeを作成
+            if (schedule.getStartHour() == null || schedule.getStartMinute() == null
+                    || schedule.getEndHour() == null || schedule.getEndMinute() == null
+                    || schedule.getWeekdays() == null || schedule.getWeekdays().isEmpty()) {
+                continue;
+            }
             LocalTime startTime = LocalTime.of(schedule.getStartHour(), schedule.getStartMinute());
             LocalTime endTime = LocalTime.of(schedule.getEndHour(), schedule.getEndMinute());
-
-            // 曜日ごとにタイムスロットを保存
             for (String weekday : schedule.getWeekdays()) {
-                // 時間初期化
                 LocalTime time = startTime;
-
                 while (!time.isAfter(endTime)) {
                     TeacherScheduleEntity scheduleEntity = TeacherScheduleEntity.builder()
                             .teacherNum(teacherNum)
@@ -165,9 +162,7 @@ public class TeacherServiceImpl implements TeacherService {
                             .timeSlot(time)
                             .isAvailable(1)
                             .build();
-
                     teacherScheduleRepository.save(scheduleEntity);
-
                     time = time.plusMinutes(10);
                 }
             }
@@ -181,30 +176,26 @@ public class TeacherServiceImpl implements TeacherService {
      * 同じ時間帯が複数の曜日で重複する場合は1つのDTOのweekdayリストにまとめて返す
      */
     public List<TeacherScheduleDTO> mapSchedulesToDTOs(List<TeacherScheduleEntity> schedules) {
-        // 1. 曜日ごとに時間スロットをまとめる
         Map<String, List<LocalTime>> weekdayMap = new LinkedHashMap<>();
         for (TeacherScheduleEntity entity : schedules) {
             weekdayMap.computeIfAbsent(entity.getWeekDay(), k -> new ArrayList<>()).add(entity.getTimeSlot());
         }
 
-        // 2. 同じ時間帯（開始～終了）が同じ曜日をまとめる
         Map<String, List<String>> timeRangeToWeekdays = new LinkedHashMap<>();
-        Map<String, LocalTime[]> timeRangeToTimes = new LinkedHashMap<>(); // 時間範囲パース用
+        Map<String, LocalTime[]> timeRangeToTimes = new LinkedHashMap<>();
 
         for (Map.Entry<String, List<LocalTime>> entry : weekdayMap.entrySet()) {
             List<LocalTime> times = entry.getValue().stream().sorted().collect(Collectors.toList());
             if (times.isEmpty()) continue;
             LocalTime start = times.get(0);
             LocalTime end = times.get(times.size() - 1);
-            // 開始～終了時刻をkeyに
             String timeKey = String.format("%02d:%02d-%02d:%02d",
                     start.getHour(), start.getMinute(),
                     end.getHour(), end.getMinute());
             timeRangeToWeekdays.computeIfAbsent(timeKey, k -> new ArrayList<>()).add(entry.getKey());
-            timeRangeToTimes.put(timeKey, new LocalTime[] { start, end });
+            timeRangeToTimes.put(timeKey, new LocalTime[]{start, end});
         }
 
-        // 3. DTOリスト作成
         List<TeacherScheduleDTO> result = new ArrayList<>();
         for (String key : timeRangeToWeekdays.keySet()) {
             List<String> weekdays = timeRangeToWeekdays.get(key);
