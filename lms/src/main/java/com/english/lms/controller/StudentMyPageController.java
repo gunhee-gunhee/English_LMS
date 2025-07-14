@@ -3,11 +3,14 @@ package com.english.lms.controller;
 import com.english.lms.entity.StudentEntity;
 import com.english.lms.entity.DayClassEntity;
 import com.english.lms.entity.DayOffEntity;
-import com.english.lms.dto.DayDto;
-import com.english.lms.dto.DayClassDto;
+import com.english.lms.entity.TeacherEntity;
+import com.english.lms.dto.DayClassDTO;
+import com.english.lms.dto.DayRowDto;
 import com.english.lms.repository.StudentRepository;
 import com.english.lms.repository.DayClassRepository;
 import com.english.lms.repository.DayOffRepository;
+import com.english.lms.repository.TeacherRepository;
+import com.english.lms.service.StudentMyPageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
@@ -15,13 +18,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.time.DayOfWeek;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -32,89 +33,139 @@ public class StudentMyPageController {
     private final StudentRepository studentRepository;
     private final DayClassRepository dayClassRepository;
     private final DayOffRepository dayOffRepository;
+    private final TeacherRepository teacherRepository;
+    private final StudentMyPageService studentMyPageService;
 
     @GetMapping("/student/mypage")
     public String mypage(
             @RequestParam(value = "month", required = false) @DateTimeFormat(pattern = "yyyy-MM") YearMonth month,
             Model model
     ) {
-        // 1. 현재 로그인한 학생
         String loginId = getLoginId();
         StudentEntity student = studentRepository.findByStudentId(loginId)
-                .orElseThrow(() -> new RuntimeException("학생 정보가 없습니다."));
+                .orElseThrow(() -> new RuntimeException("学生情報がありません。"));
 
-        // 2. 월 정보 (없으면 이번달)
         YearMonth ym = (month != null) ? month : YearMonth.now();
         model.addAttribute("currentMonth", ym.toString());
         model.addAttribute("currentMonthLabel", ym.getYear() + "年" + ym.getMonthValue() + "月");
         model.addAttribute("prevMonth", ym.minusMonths(1).toString());
         model.addAttribute("nextMonth", ym.plusMonths(1).toString());
 
-        // 3. DB에서 해당 월의 공휴일 목록 조회 (한 번에)
+        // 今日の日付をmodelに追加
+        LocalDate today = LocalDate.now();
+        model.addAttribute("today", today);
+
         LocalDate startDate = ym.atDay(1);
         LocalDate endDate = ym.atEndOfMonth();
         List<DayOffEntity> holidayEntities = dayOffRepository.findByOffDateBetween(
                 java.sql.Date.valueOf(startDate), java.sql.Date.valueOf(endDate)
         );
-        // Map<LocalDate, String>
         Map<LocalDate, String> holidayMap = new HashMap<>();
         for (DayOffEntity e : holidayEntities) {
             holidayMap.put(e.getOffDate().toLocalDate(), e.getName());
         }
 
-        // 날짜 라벨 포맷
         DateTimeFormatter dayLabelFormatter = DateTimeFormatter.ofPattern("d");
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+        List<DayRowDto> rowList = new ArrayList<>();
 
-        // 4. 일별로 DayDto 생성
-        List<DayDto> dayList = new ArrayList<>();
         for (int day = 1; day <= ym.lengthOfMonth(); day++) {
             LocalDate date = ym.atDay(day);
             boolean isHoliday = holidayMap.containsKey(date);
             String holidayName = isHoliday ? holidayMap.get(date) : "";
 
-            // 주말 여부 계산
-            DayOfWeek dow = date.getDayOfWeek();
-            boolean isWeekend = (dow == DayOfWeek.SATURDAY || dow == DayOfWeek.SUNDAY);
+            int dayOfWeek = date.getDayOfWeek().getValue(); // 月=1, ... 日=7
+            String dateClass;
+            if (isHoliday) {
+                dateClass = "day-holiday";
+            } else if (dayOfWeek == 7) {
+                dateClass = "day-sunday";
+            } else if (dayOfWeek == 6) {
+                dateClass = "day-saturday";
+            } else {
+                dateClass = "day-normal";
+            }
 
-            // 학생의 해당 날짜 수업 목록 가져오기
             List<DayClassEntity> lessonEntities = dayClassRepository.findByStudentNumAndClassDate(student.getStudentNum(), date);
-
-            // DayClassEntity → DayClassDto 변환
-            List<DayClassDto> lessons = lessonEntities.stream()
-                    .map(DayClassDto::from)
+            List<DayClassDTO> lessons = lessonEntities.stream()
+                    .map(entity -> {
+                        String teacherNickname = "";
+                        if (entity.getTeacherNum() != null) {
+                            Optional<TeacherEntity> t = teacherRepository.findById(entity.getTeacherNum());
+                            teacherNickname = t.map(TeacherEntity::getNickname).orElse("");
+                        }
+                        return DayClassDTO.from(entity, teacherNickname);
+                    })
                     .collect(Collectors.toList());
 
-            // 수업시간 문자열 조합
-            String lessonTimesStr = lessons.stream()
-                    .filter(l -> l.getStartTime() != null && l.getEndTime() != null)
-                    .map(l -> l.getStartTime().format(timeFormatter) + "～" + l.getEndTime().format(timeFormatter))
-                    .collect(Collectors.joining(", "));
+            int rowspan = lessons.size() > 0 ? lessons.size() : 1;
 
-            // 수업타입 문자열 조합
-            String classTypesStr = lessons.stream()
-                    .map(DayClassDto::getClassType)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.joining(", "));
-
-            DayDto dto = new DayDto();
-            dto.setDate(date);
-            dto.setDayLabel(date.format(dayLabelFormatter)); // "11" 등
-            dto.setHoliday(isHoliday);
-            dto.setHolidayName(holidayName);
-            dto.setLessons(lessons);
-            dto.setLessonTimesStr(lessonTimesStr);
-            dto.setClassTypesStr(classTypesStr);
-            dto.setWeekend(isWeekend); // ★ 주말여부 세팅
-
-            dayList.add(dto);
+            if (lessons.isEmpty()) {
+                // 授業のない日
+                DayRowDto row = new DayRowDto();
+                row.setDate(date);
+                row.setDayLabel(date.format(dayLabelFormatter));
+                row.setDateClass(dateClass);
+                row.setHoliday(isHoliday);
+                row.setHolidayName(holidayName);
+                row.setLesson(null);
+                row.setFirst(true);
+                row.setRowspan(1);
+                rowList.add(row);
+            } else {
+                for (int i = 0; i < lessons.size(); i++) {
+                    DayClassDTO lesson = lessons.get(i);
+                    DayRowDto row = new DayRowDto();
+                    if (i == 0) {
+                        row.setDate(date);
+                        row.setDayLabel(date.format(dayLabelFormatter));
+                        row.setDateClass(dateClass);
+                        row.setHoliday(isHoliday);
+                        row.setHolidayName(holidayName);
+                        row.setFirst(true);
+                        row.setRowspan(rowspan);
+                    } else {
+                        row.setDate(null);
+                        row.setDayLabel(null);
+                        row.setDateClass(null);
+                        row.setHoliday(false);
+                        row.setHolidayName(null);
+                        row.setFirst(false);
+                        row.setRowspan(0);
+                    }
+                    row.setLesson(lesson);
+                    rowList.add(row);
+                }
+            }
         }
-        model.addAttribute("dayList", dayList);
+        model.addAttribute("rowList", rowList);
 
         return "student/mypage";
     }
 
-    // 로그인한 아이디
+    // 欠席処理 API
+    @PostMapping("/student/mypage/absent")
+    @ResponseBody
+    public String setAbsent(@RequestParam("dayClassNum") Integer dayClassNum) {
+        studentMyPageService.setAbsent(dayClassNum, true);
+        return "OK";
+    }
+
+    // 欠席取消 API
+    @PostMapping("/student/mypage/absent-cancel")
+    @ResponseBody
+    public String cancelAbsent(@RequestParam("dayClassNum") Integer dayClassNum) {
+        studentMyPageService.setAbsent(dayClassNum, false);
+        return "OK";
+    }
+
+    // 出席処理 API (参加ボタン用)
+    @PostMapping("/student/mypage/attend")
+    @ResponseBody
+    public String setAttendance(@RequestParam("dayClassNum") Integer dayClassNum) {
+        studentMyPageService.setAttendance(dayClassNum, true); // attendance 컬럼을 1로
+        return "OK";
+    }
+
     private String getLoginId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication.getPrincipal() instanceof UserDetails) {

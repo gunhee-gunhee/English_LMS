@@ -10,24 +10,114 @@
     <link href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700,900" rel="stylesheet">
     <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
     <link th:href="@{/css/custom.css}" rel="stylesheet">
+    <!-- CSRF -->
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
     <style>
-        .month-nav { display: flex; align-items: center; justify-content: center; margin: 34px 0 24px 0; }
-        .month-nav button { border: none; background: transparent; font-size: 1.6em; color: #e74a3b; margin: 0 16px; cursor: pointer; }
-        .month-title { font-size: 1.5em; font-weight: bold; letter-spacing: 2px; color: #b9381e; }
-        .table-calendar { width: 100%; background: #fff; border-radius: 14px; box-shadow: 0 2px 12px rgba(231,74,59,0.07); margin: 0 auto; }
-        .table-calendar th, .table-calendar td { text-align: center; padding: 12px 6px; vertical-align: middle; }
-        .table-calendar th { background: #f8d7da; color: #c0392b; font-size: 1.04em; }
-        .table-calendar td { font-size: 1em; }
-        .day-holiday { color: #e74a3b; font-weight: bold; }
-        .day-normal { color: #333; }
-        .btn-small { font-size: .93em; padding: 5px 12px; border-radius: 8px; }
-        .btn-comment { background: #f7cac9; color: #a94442; border: none; }
-        .btn-text { background: #d5e3ff; color: #355fa1; border: none; }
-        .no-lesson { color: #bbb; font-size: .95em; }
-        @media (max-width: 900px) {
-            .table-calendar th, .table-calendar td { font-size: .98em; padding: 6px 2px; }
-            .month-title { font-size: 1.09em; }
+        .month-nav {
+            display: flex; align-items: center; justify-content: center; margin: 34px 0 24px 0;
         }
+        .month-nav button {
+            border: none;
+            background: transparent;
+            font-size: 1.6em;
+            color: #222 !important;
+            margin: 0 16px;
+            cursor: pointer;
+        }
+        .month-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: #222 !important;
+        }
+        .table-calendar {
+            width: 100%;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 2px 12px rgba(231,74,59,0.07);
+            margin: 0 auto;
+        }
+        .table-calendar th, .table-calendar td {
+            text-align: center;
+            padding: 12px 6px;
+            vertical-align: middle;
+        }
+        .table-calendar th {
+            background: #e4e4e4 !important;
+            color: #222 !important;
+            font-size: 1.04em;
+            font-weight: 700;
+        }
+        .table-calendar td {
+            font-size: 1em;
+        }
+        .day-holiday { color: #e74a3b; font-weight: bold; }
+        .day-sunday { color: #e74a3b; font-weight: bold; }
+        .day-saturday { color: #3b61e7; font-weight: bold; }
+        .day-normal { color: #333; }
+        .row-category { background: #f7f7f7 !important; color: #111 !important; }
+        .btn-small { font-size: .93em; padding: 5px 12px; border-radius: 8px; }
+        .btn-comment {
+            background: #fff7ad;
+            color: #222 !important;
+            border: none;
+            font-weight: bold;
+        }
+        .btn-comment:hover { background: #fffac2; }
+        .btn-text {
+            background: #ffd6ad;
+            color: #222 !important;
+            border: none;
+            font-weight: bold;
+        }
+        .btn-text:hover { background: #ffe2c7; }
+        .btn-join {
+            background: #adf0ff;
+            color: #222 !important;
+            border: none;
+            font-weight: bold;
+        }
+        .btn-join:hover { background: #caf7ff; }
+        .btn-attend { background: #eef7e7; color: #189c31; border: none; font-weight: bold; }
+        .btn-absent, .btn-absent-cancel {
+            background: #ffeaea;
+            color: #e74a3b;
+            border: none;
+            font-weight: bold;
+        }
+        .btn-absent:hover, .btn-absent-cancel:hover { background: #ffd3d3; }
+        .no-lesson { color: #bbb; font-size: .95em; }
+        .custom-modal-header-comment { background: #fff7ad; color: #a08700; }
+        .custom-modal-header-text { background: #ffd6ad; color: #d6691d; }
+        .custom-modal-header-join { background: #adf0ff; color: #1987a3; }
+        .custom-modal-header-absent { background: #ffeaea; color: #e74a3b; }
+        .custom-modal-title { font-weight: 600; font-size: 1.2em; letter-spacing: 1px; }
+        .custom-modal-date {
+            color: #fff;
+            background: #888;
+            border-radius: 7px;
+            padding: 4px 12px;
+            font-size: 1.05em;
+            margin-bottom: 16px;
+            display: inline-block;
+            letter-spacing: 1px;
+        }
+        .custom-modal-comment, .custom-modal-progress {
+            color: #333;
+            font-size: 1.1em;
+            background: #f7f2ee;
+            border-radius: 8px;
+            padding: 18px 18px 14px 18px;
+            text-align: center;
+        }
+        .custom-modal-icon { font-size: 2em; margin-bottom: 7px; display: inline-block; }
+        .custom-modal-icon-comment { color: #ffe066; }
+        .custom-modal-icon-text { color: #ffae64; }
+        .custom-modal-icon-join { color: #61cfff; }
+        .custom-modal-icon-absent { color: #e74a3b; }
+        .modal-content { border-radius: 14px !important; }
+        .modal-footer { border-top: none; }
     </style>
 </head>
 <body class="bg-gradient-danger" id="page-top">
@@ -53,55 +143,111 @@
                         <i class="fas fa-chevron-right"></i>
                     </button>
                 </div>
-
                 <div style="overflow-x:auto;">
                     <table class="table table-calendar">
                         <thead>
                             <tr>
                                 <th>日付</th>
                                 <th>時間</th>
+                                <th>講師</th>
                                 <th>クラス種別</th>
                                 <th>コメント</th>
                                 <th>テキスト</th>
-                                <th>クラス関連</th>
+                                <th>参加</th>
+                                <th>出席関連</th>
                             </tr>
                         </thead>
                         <tbody>
-                        <!-- 1일부터 31일까지: dayList를 반복 -->
-                        <tr th:each="day : ${dayList}">
-                            <td>
-                                <!-- 날짜: 공휴일 or 주말이면 빨간색 -->
-                                <span th:text="${day.dayLabel}"
-                                      th:classappend="${day.holiday or day.weekend} ? 'day-holiday' : 'day-normal'">1</span>
-                                <span th:if="${day.holiday}" style="font-size:0.82em; margin-left:3px;" th:text="'（' + ${day.holidayName} + '）'"></span>
+                        <tr th:each="row : ${rowList}"
+                            th:classappend="|${row.lesson != null 
+                                and (
+                                    row.lesson.attendance == true 
+                                    or (row.lesson.attendance == false and (row.lesson.absent != null and row.lesson.absent != '0'))
+                                    or (row.lesson.zoomLink != null and !#strings.isEmpty(row.lesson.zoomLink))
+                                ) 
+                                ? 'row-category' : ''}|">
+                            <td th:if="${row.first}"
+                                th:rowspan="${row.rowspan}"
+                                th:class="${row.dateClass}">
+                                <span th:text="${row.dayLabel}">1</span>
+                                <span th:if="${row.isHoliday}" style="font-size:0.82em; margin-left:3px;" th:text="'（' + ${row.holidayName} + '）'"></span>
                             </td>
                             <td>
-                                <span th:if="${#lists.size(day.lessons) > 0}"
-                                      th:text="${day.lessonTimesStr}"></span>
-                                <span th:if="${#lists.isEmpty(day.lessons)}" class="no-lesson">-</span>
+                                <span th:if="${row.lesson != null}"
+                                      th:text="${row.lesson.startTime != null && row.lesson.endTime != null} ? ${#temporals.format(row.lesson.startTime, 'HH:mm')} + '～' + ${#temporals.format(row.lesson.endTime, 'HH:mm')} : '-'">
+                                    -
+                                </span>
+                                <span th:if="${row.lesson == null}" class="no-lesson">-</span>
                             </td>
                             <td>
-                                <span th:if="${#lists.size(day.lessons) > 0}"
-                                      th:text="${day.classTypesStr}"></span>
-                                <span th:if="${#lists.isEmpty(day.lessons)}" class="no-lesson">-</span>
+                                <span th:if="${row.lesson != null}" th:text="${row.lesson.teacherNickname}">講師名</span>
+                                <span th:if="${row.lesson == null}" class="no-lesson">-</span>
                             </td>
                             <td>
-                                <button th:each="lesson : ${day.lessons}"
+                                <span th:if="${row.lesson != null}" th:text="${row.lesson.classType}">クラス種別</span>
+                                <span th:if="${row.lesson == null}" class="no-lesson">-</span>
+                            </td>
+                            <!-- コメント ボタン (결석 상태면 안보임) -->
+                            <td>
+                                <button th:if="${row.lesson != null and row.lesson.absent != '1'}"
                                         th:text="'コメント'"
                                         th:class="'btn btn-small btn-comment'"
-                                        th:attr="data-dayclassnum=${lesson.dayClassNum}"
+                                        th:attr="data-dayclassnum=${row.lesson.dayClassNum},data-comment=${row.lesson.comment != null ? row.lesson.comment : ''},data-date=${row.date != null ? #temporals.format(row.date, 'yyyy/MM/dd') : #temporals.format(row.lesson.classDate, 'yyyy/MM/dd')}"
                                         style="margin:2px"></button>
-                                <span th:if="${#lists.isEmpty(day.lessons)}" class="no-lesson">-</span>
+                                <span th:if="${row.lesson == null or row.lesson.absent == '1'}" class="no-lesson">-</span>
                             </td>
+                            <!-- テキスト ボタン (결석 상태면 안보임) -->
                             <td>
-                                <button th:each="lesson : ${day.lessons}"
+                                <button th:if="${row.lesson != null and row.lesson.absent != '1'}"
                                         th:text="'テキスト'"
                                         th:class="'btn btn-small btn-text'"
-                                        th:attr="data-dayclassnum=${lesson.dayClassNum}"
+                                        th:attr="data-dayclassnum=${row.lesson.dayClassNum},data-progress=${row.lesson.progress != null ? row.lesson.progress : ''},data-date=${row.date != null ? #temporals.format(row.date, 'yyyy/MM/dd') : #temporals.format(row.lesson.classDate, 'yyyy/MM/dd')}"
                                         style="margin:2px"></button>
-                                <span th:if="${#lists.isEmpty(day.lessons)}" class="no-lesson">-</span>
+                                <span th:if="${row.lesson == null or row.lesson.absent == '1'}" class="no-lesson">-</span>
                             </td>
-                            <td><!-- クラス関連（今は空） --></td>
+                            <!-- 参加ボタン（결석 상태면 안보임) -->
+                            <td>
+                                <span th:if="${row.lesson != null and row.lesson.absent != '1' and row.date != null and row.date.equals(today)}">
+                                    <a th:if="${row.lesson.zoomLink != null and !#strings.isEmpty(row.lesson.zoomLink)}"
+                                       href="javascript:void(0);"
+                                       class="btn btn-small btn-join btn-join-modal"
+                                       th:attr="data-date=${row.date != null ? #temporals.format(row.date, 'yyyy/MM/dd') : #temporals.format(row.lesson.classDate, 'yyyy/MM/dd')},
+                                                data-time=${row.lesson.startTime != null && row.lesson.endTime != null ? #temporals.format(row.lesson.startTime, 'HH:mm') + '～' + #temporals.format(row.lesson.endTime, 'HH:mm') : '-'},
+                                                data-teacher=${row.lesson.teacherNickname},
+                                                data-zoomlink=${row.lesson.zoomLink},
+                                                data-dayclassnum=${row.lesson.dayClassNum}">
+                                        参加
+                                    </a>
+                                    <span th:if="${row.lesson.zoomLink == null or #strings.isEmpty(row.lesson.zoomLink)}"
+                                          class="no-lesson">リンク無し</span>
+                                </span>
+                            </td>
+                            <!-- 出席/欠席/欠席取消 ボタン (결석취소도 빨간색!) -->
+                            <td>
+                                <span th:if="${row.lesson != null}">
+                                    <!-- attendance == true -->
+                                    <span th:if="${row.lesson.attendance == true}" class="btn btn-small btn-attend" style="pointer-events: none;">出席完了</span>
+                                    <!-- attendance == false, absent == null or absent == '0' -->
+                                    <button th:if="${row.lesson.attendance == false and (row.lesson.absent == null or row.lesson.absent == '0')}"
+                                            th:attr="data-dayclassnum=${row.lesson.dayClassNum},
+                                                     data-date=${row.date != null ? #temporals.format(row.date, 'yyyy/MM/dd') : #temporals.format(row.lesson.classDate, 'yyyy/MM/dd')},
+                                                     data-time=${row.lesson.startTime != null && row.lesson.endTime != null ? #temporals.format(row.lesson.startTime, 'HH:mm') + '～' + #temporals.format(row.lesson.endTime, 'HH:mm') : '-'},
+                                                     data-teacher=${row.lesson.teacherNickname}"
+                                            class="btn btn-small btn-absent btn-absent-modal"
+                                            type="button"
+                                            style="margin:2px;">欠席</button>
+                                    <!-- attendance == false, absent == '1' (결석취소도 빨간색 btn-absent 적용) -->
+                                    <button th:if="${row.lesson.attendance == false and row.lesson.absent == '1'}"
+                                            th:attr="data-dayclassnum=${row.lesson.dayClassNum},
+                                                     data-date=${row.date != null ? #temporals.format(row.date, 'yyyy/MM/dd') : #temporals.format(row.lesson.classDate, 'yyyy/MM/dd')},
+                                                     data-time=${row.lesson.startTime != null && row.lesson.endTime != null ? #temporals.format(row.lesson.startTime, 'HH:mm') + '～' + #temporals.format(row.lesson.endTime, 'HH:mm') : '-'},
+                                                     data-teacher=${row.lesson.teacherNickname}"
+                                            class="btn btn-small btn-absent btn-absent-cancel-modal"
+                                            type="button"
+                                            style="margin:2px;">欠席取消</button>
+                                </span>
+                                <span th:if="${row.lesson == null}" class="no-lesson">-</span>
+                            </td>
                         </tr>
                         </tbody>
                     </table>
@@ -121,14 +267,87 @@
     </div>
 </div>
 
-<!-- SB Admin 2 및 공통 JS -->
+<!-- コメント モーダル -->
+<div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header custom-modal-header-comment">
+        <span class="custom-modal-icon custom-modal-icon-comment"><i class="fas fa-comment-dots"></i></span>
+        <h5 class="modal-title custom-modal-title" id="commentModalLabel" style="margin-left:7px;">コメント内容</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="閉じる" style="margin-top:-4px;">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="commentModalBody" style="text-align:center; min-height: 110px;"></div>
+      <div class="modal-footer" style="justify-content: center;">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" style="min-width:120px;">閉じる</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- テキスト(進度) モーダル -->
+<div class="modal fade" id="textModal" tabindex="-1" role="dialog" aria-labelledby="textModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header custom-modal-header-text">
+        <span class="custom-modal-icon custom-modal-icon-text"><i class="fas fa-book"></i></span>
+        <h5 class="modal-title custom-modal-title" id="textModalLabel" style="margin-left:7px;">テキスト内容</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="閉じる" style="margin-top:-4px;">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="textModalBody" style="text-align:center; min-height: 110px;"></div>
+      <div class="modal-footer" style="justify-content: center;">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" style="min-width:120px;">閉じる</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- 参加 モーダル -->
+<div class="modal fade" id="joinModal" tabindex="-1" role="dialog" aria-labelledby="joinModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header custom-modal-header-join">
+        <span class="custom-modal-icon custom-modal-icon-join"><i class="fas fa-link"></i></span>
+        <h5 class="modal-title custom-modal-title" id="joinModalLabel" style="margin-left:7px;">参加確認</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="閉じる" style="margin-top:-4px;">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="joinModalBody" style="text-align:center; min-height: 120px;"></div>
+      <div class="modal-footer" style="justify-content: center;">
+        <a id="joinModalLink" href="#" class="btn btn-join" target="_blank" style="min-width:110px;">参加</a>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" style="min-width:110px;">閉じる</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- 欠席/欠席取消 モーダル -->
+<div class="modal fade" id="absentModal" tabindex="-1" role="dialog" aria-labelledby="absentModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header custom-modal-header-absent">
+        <span class="custom-modal-icon custom-modal-icon-absent"><i class="fas fa-times-circle"></i></span>
+        <h5 class="modal-title custom-modal-title" id="absentModalLabel" style="margin-left:7px;">欠席関連</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="キャンセル" style="margin-top:-4px;">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="absentModalBody" style="text-align:center; min-height: 90px;"></div>
+      <div class="modal-footer" style="justify-content: center;">
+        <button type="button" class="btn btn-danger" id="absentModalYesBtn" style="min-width:110px;">確認</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" style="min-width:110px;">キャンセル</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JS -->
 <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
 <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
 <script th:src="@{/js/sb-admin-2.min.js}"></script>
-<!-- 임시 버튼 함수 예시 -->
 <script>
-    // 월 이동 처리
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.month-btn').forEach(function(btn) {
             btn.addEventListener('click', function() {
@@ -136,21 +355,155 @@
                 if (month) location.href = '?month=' + month;
             });
         });
-
-        // 댓글/텍스트 버튼 기능 예시
+        // コメント モーダル
         document.querySelectorAll('.btn-comment').forEach(function(btn) {
             btn.addEventListener('click', function() {
-                var dayClassNum = btn.getAttribute('data-dayclassnum');
-                alert("コメント機能 coming soon! dayClassNum: " + dayClassNum);
+                var comment = btn.getAttribute('data-comment');
+                var date = btn.getAttribute('data-date');
+                if (!comment || comment.trim() === '') {
+                    comment = 'コメントがありません。';
+                }
+                var html = '';
+                if (date) {
+                    html += '<div class="custom-modal-date"><i class="fas fa-calendar-alt"></i> ' + date + '</div>';
+                }
+                html += '<div class="custom-modal-comment">' + comment.replace(/\n/g, "<br>") + '</div>';
+                document.getElementById('commentModalBody').innerHTML = html;
+                $('#commentModal').modal('show');
             });
         });
+        // テキスト(進度) モーダル
         document.querySelectorAll('.btn-text').forEach(function(btn) {
             btn.addEventListener('click', function() {
-                var dayClassNum = btn.getAttribute('data-dayclassnum');
-                alert("テキスト機能 coming soon! dayClassNum: " + dayClassNum);
+                var progress = btn.getAttribute('data-progress');
+                var date = btn.getAttribute('data-date');
+                if (!progress || progress.trim() === '') {
+                    progress = 'テキスト内容がありません。';
+                }
+                var html = '';
+                if (date) {
+                    html += '<div class="custom-modal-date"><i class="fas fa-calendar-alt"></i> ' + date + '</div>';
+                }
+                html += '<div class="custom-modal-progress">' + progress.replace(/\n/g, "<br>") + '</div>';
+                document.getElementById('textModalBody').innerHTML = html;
+                $('#textModal').modal('show');
             });
         });
+        // 参加 モーダル + 출석처리(POST)
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+        document.querySelectorAll('.btn-join-modal').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var date = btn.getAttribute('data-date') || '-';
+                var time = btn.getAttribute('data-time') || '-';
+                var teacher = btn.getAttribute('data-teacher') || '-';
+                var zoomlink = btn.getAttribute('data-zoomlink') || '#';
+                var dayClassNum = btn.getAttribute('data-dayclassnum');
+                var html = '';
+                html += '<div class="custom-modal-date"><i class="fas fa-calendar-alt"></i> ' + date + '</div>';
+                html += '<div style="margin:8px 0;font-size:1.07em;"><b>時間：</b>' + time + '</div>';
+                html += '<div style="margin-bottom:13px;font-size:1.07em;"><b>講師：</b>' + teacher + '</div>';
+                html += '<div class="custom-modal-comment" style="margin-top:9px;">参加しますか？</div>';
+                document.getElementById('joinModalBody').innerHTML = html;
+                var joinLink = document.getElementById('joinModalLink');
+                joinLink.setAttribute('href', zoomlink);
+
+                // 기존 onclick 제거
+                joinLink.onclick = null;
+                joinLink.onclick = function(e) {
+                    e.preventDefault();
+                    // 출석 처리 API 호출
+                    fetch('/student/mypage/attend', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            [csrfHeader]: csrfToken
+                        },
+                        body: 'dayClassNum=' + dayClassNum
+                    }).then(res => res.text())
+                      .then(result => {
+                          if (result === 'OK') {
+                              $('#joinModal').modal('hide');
+                              window.open(zoomlink, '_blank');
+                              setTimeout(function(){ location.reload(); }, 200);
+                          } else {
+                              alert('処理に失敗しました。');
+                          }
+                      });
+                    return false;
+                };
+
+                $('#joinModal').modal('show');
+            });
+        });
+
+        // 欠席/欠席取消 モーダル
+        let absentTarget = { dayClassNum: null, type: null, date: '', time: '', teacher: '' };
+
+        document.querySelectorAll('.btn-absent-modal').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                absentTarget.dayClassNum = btn.getAttribute('data-dayclassnum');
+                absentTarget.type = 'absent';
+                absentTarget.date = btn.getAttribute('data-date');
+                absentTarget.time = btn.getAttribute('data-time');
+                absentTarget.teacher = btn.getAttribute('data-teacher');
+                let html = '';
+                if(absentTarget.date) {
+                    html += '<div class="custom-modal-date"><i class="fas fa-calendar-alt"></i> ' + absentTarget.date + '</div>';
+                }
+                if(absentTarget.time || absentTarget.teacher) {
+                    html += '<div style="margin:8px 0;font-size:1.07em;"><b>時間：</b>' + (absentTarget.time || '-') + '</div>';
+                    html += '<div style="margin-bottom:13px;font-size:1.07em;"><b>講師：</b>' + (absentTarget.teacher || '-') + '</div>';
+                }
+                html += '<div class="custom-modal-comment" style="margin-top:9px;">欠席しますか？</div>';
+                document.getElementById('absentModalBody').innerHTML = html;
+                $('#absentModal').modal('show');
+            });
+        });
+        document.querySelectorAll('.btn-absent-cancel-modal').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                absentTarget.dayClassNum = btn.getAttribute('data-dayclassnum');
+                absentTarget.type = 'cancel';
+                absentTarget.date = btn.getAttribute('data-date');
+                absentTarget.time = btn.getAttribute('data-time');
+                absentTarget.teacher = btn.getAttribute('data-teacher');
+                let html = '';
+                if(absentTarget.date) {
+                    html += '<div class="custom-modal-date"><i class="fas fa-calendar-alt"></i> ' + absentTarget.date + '</div>';
+                }
+                if(absentTarget.time || absentTarget.teacher) {
+                    html += '<div style="margin:8px 0;font-size:1.07em;"><b>時間：</b>' + (absentTarget.time || '-') + '</div>';
+                    html += '<div style="margin-bottom:13px;font-size:1.07em;"><b>講師：</b>' + (absentTarget.teacher || '-') + '</div>';
+                }
+                html += '<div class="custom-modal-comment" style="margin-top:9px;">欠席取消しますか？</div>';
+                document.getElementById('absentModalBody').innerHTML = html;
+                $('#absentModal').modal('show');
+            });
+        });
+        document.getElementById('absentModalYesBtn').onclick = function() {
+            if (!absentTarget.dayClassNum) return;
+            let url = absentTarget.type === 'absent'
+                ? '/student/mypage/absent'
+                : '/student/mypage/absent-cancel';
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    [csrfHeader]: csrfToken
+                },
+                body: 'dayClassNum=' + absentTarget.dayClassNum
+            }).then(res => res.text())
+              .then(result => {
+                  if (result === 'OK') {
+                      location.reload();
+                  } else {
+                      alert('処理に失敗しました.');
+                  }
+              });
+        };
     });
 </script>
+<!-- fontawesome アイコン CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
 </body>
 </html>
