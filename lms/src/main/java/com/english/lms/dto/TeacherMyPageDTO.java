@@ -19,8 +19,10 @@ public class TeacherMyPageDTO {
     private String endTime;
     private String studentName;
     private String studentNameJp;
-    private String classType;
+    private String classType;    // "free", "additional", "regular" 중 하나
     private String className;
     private String absent;
     private boolean attendance;
+    private String zoomLink;     
 }
+

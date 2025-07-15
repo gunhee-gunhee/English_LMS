@@ -18,7 +18,8 @@ public class TeacherMyPageRepository {
     public List<TeacherMyPageDTO> getTeacherSchedule(int teacherNum, String date) {
         String sql = "SELECT dc.day_class_num, dc.start_time, dc.end_time, " +
                 "s.nickname AS student_name, s.nickname_jp AS student_name_jp, " +
-                "dc.class_type, dc.class_name, dc.absent, dc.attendance " +
+                "dc.class_type, dc.class_name, dc.absent, dc.attendance, " +
+                "dc.zoom_link " +    // zoom_link 컬럼 SELECT
                 "FROM lms_day_class dc " +
                 "JOIN lms_class c ON dc.class_num = c.class_num " +
                 "JOIN lms_student s ON c.student_num = s.student_num " +
@@ -31,3 +32,4 @@ public class TeacherMyPageRepository {
         );
     }
 }
+
