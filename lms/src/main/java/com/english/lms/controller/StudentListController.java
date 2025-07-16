@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 
 import com.english.lms.dto.StudentDTO;
+import com.english.lms.service.AdminStudentService;
 import com.english.lms.service.StudentService;
 
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class StudentListController {
 	
-	private final StudentService studentService;
+	private final AdminStudentService adminStudentService;
 
 //	@GetMapping("/admin/student-list")
 //	public String studentListPage(Model model) {
@@ -47,7 +48,7 @@ public class StudentListController {
 		Sort.Direction direction = dir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
 	    Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sort));
 
-	    Page<StudentDTO> studentPage = studentService.getStudentPageWithTeacher(pageable);
+	    Page<StudentDTO> studentPage = adminStudentService.getStudentPageWithTeacher(pageable);
 
 	    model.addAttribute("studentPage", studentPage);
         model.addAttribute("currentPage", page);
