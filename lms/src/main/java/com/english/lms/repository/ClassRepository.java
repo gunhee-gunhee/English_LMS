@@ -17,6 +17,7 @@ public interface ClassRepository extends JpaRepository<ClassEntity, Integer> {
     @Query("SELECT c.teacherNum FROM ClassEntity c WHERE c.studentNum = :studentNum")
     Integer findTeacherNumByStudentNum(@Param("studentNum") Integer studentNum);
 
+    //該当学生のclassEntity取得
     @Query(
     		value= "SELECT * FROM lms_class WHERE student_num = :studentNum lIMIT 1",
     		nativeQuery = true 

@@ -9,6 +9,8 @@ import com.english.lms.repository.ClassRepository;
 import com.english.lms.repository.StudentRepository;
 import com.english.lms.repository.TeacherRepository;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Pageable;
@@ -60,117 +62,8 @@ public class StudentServiceImpl implements StudentService {
         // StudentRepository에서 studentId로 중복 체크
         return studentRepository.findByStudentId(id).isPresent();
     }
-
-    
-//    //student-listのStudentDTO生成
-//	@Override
-//	public List<StudentDTO> getAllStudentWithTeacher() {
-//		
-//		//StudentEntity
-//		List<StudentEntity> allStudents = studentRepository.findAll();
-//		
-//		//StudentDTOList 追加
-//		List<StudentDTO> dtoList = new ArrayList<>();
-//		
-//		//StudentDTO List 生成
-//		for(StudentEntity student : allStudents) {
-//			
-//			//StudentNum
-//			Integer studentNum = student.getStudentNum();
-//			
-//			// studentNum に対応する ClassEntity を取得する
-//			ClassEntity classEntity = classRepository.findFirstByStudentNum(studentNum);
-//			
-//			//teacher nickNameを取得
-//			// teacherNickNameはString型で受け取る必要がある！
-//			String teacherNickname = "ニックネームなし";
-//			
-//			if(classEntity != null ) {
-//				
-//				//classEntityてteacherNumを取得する。
-//				Integer teacherNum = classEntity.getTeacherNum();
-//				
-//				
-//				Optional<TeacherEntity> teacherOpt = teacherRepository.findById(teacherNum);
-//				if (teacherOpt.isPresent()) {
-//				    teacherNickname = teacherOpt.get().getNickname();
-//				}
-//			}
-//			
-//			
-//			
-//			//StudentDTO
-//			StudentDTO dto = StudentDTO.builder()
-//					.id(student.getStudentId())
-//					.nickname(student.getNickname())
-//					.company(student.getCompany())
-//					.age(student.getAge())
-//					.englishLevel(student.getEnglishLevel())
-//					.point(student.getPoint())
-//					.nullity(student.getNullity())
-//					.role(student.getRole() != null ? student.getRole().name() : null)
-//					.teacherNickname(teacherNickname)
-//					.build();
-//					
-//			//DTOListに追加
-//			dtoList.add(dto);
-//					
-//
-//
-//		 }
-//		return dtoList;
-//	}
 	
-	// ページネーション
-	@Override
-	public Page<StudentDTO> getStudentPageWithTeacher(Pageable pageable) {
-        //Pageableは、現在のページ番号や1ページあたりに表示するデータの件数など、ページングに関する情報を持つオブジェクト
-		//StudentEntityは、データベースの1行（レコード）を表すオブジェクト
-		//学生リストを取得する。
-		Page<StudentEntity> studentPage = studentRepository.findAllStudentsPage(pageable);
-		
-		//studentEntity -> StudentDTO (+teacher 情報）
-        List<StudentDTO> dtoList = studentPage.getContent().stream().map(student -> {
-         
-          //studentNumで　classEntity取得
-        	Integer StudentNum = student.getStudentNum();
-        	ClassEntity classEntity = classRepository.findByStudentNumQuery(StudentNum);
-        	
-        	// デフォルト値：ニックネームなし
-        	String teacherNickname = "ニックネームなし";
-        	
-        	if(classEntity != null) {
-        		Integer teacherNum = classEntity.getTeacherNum();
-        		Optional<TeacherEntity> teacherOpt = teacherRepository.findById(teacherNum);
-        		if(teacherOpt.isPresent()) {
-        			teacherNickname = teacherOpt.get().getNickname();
-        		}
-        	}
-        	
-        	//studentDTO 生成
-        	//StudentDTO
-        	return StudentDTO.builder()
-                    .id(student.getStudentId())
-                    .nickname(student.getNickname())
-                    .company(student.getCompany())
-                    .age(student.getAge())
-                    .englishLevel(student.getEnglishLevel())
-                    .point(student.getPoint())
-                    .nullity(student.getNullity())
-                    .role(student.getRole() != null ? student.getRole().name() : null)
-                    .teacherNickname(teacherNickname)
-                    .build();
 
-        }).toList(); 
-        	
-		
-		
-		//new PageImpl(List<T> content, Pageable pageable, long total)
-        //content : List<StudentDTO> dtoList \
-        //pageable : // 現在のページング設定（ページ番号、1ページあたりの件数、並び順など）
-        //total : // 全体のデータ件数（ページネーションの計算に使用）
-		return new PageImpl<>(dtoList, pageable, studentPage.getTotalElements());
-	}
     
     
 }

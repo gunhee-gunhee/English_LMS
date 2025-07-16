@@ -14,7 +14,5 @@ public interface StudentService {
     void registerStudent(StudentDTO dto);
     boolean existsById(String id);
     
- // -- #pageable は Spring Data JPA が自動的に解釈するコメントです
-    //student List 関連メソッド
-	Page<StudentDTO> getStudentPageWithTeacher(Pageable pageable);
+
 }

@@ -1,7 +1,5 @@
 package com.english.lms.dto;
 
-import com.english.lms.enums.Role;
-
 import lombok.*;
 
 @Getter
