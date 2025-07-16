@@ -3,11 +3,9 @@ package com.english.lms.repository;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+
 
 import com.english.lms.entity.StudentEntity;
 
@@ -28,11 +26,5 @@ public interface StudentRepository extends JpaRepository<StudentEntity, Integer>
 	@Query("SELECT DISTINCT s.company FROM StudentEntity s WHERE s.company IS NOT NULL ORDER BY s.company")
 	List<String> findDistinctCompanies();
 	
-	@Query(
-			value = "SELECT * FROM lms_student ORDER BY id -- #pageable",
-			countQuery = "SELECT COUNT(*) FROM lms_student",
-			nativeQuery = true
-		)
-//	List<StudentEntity> findAllStudentsPage(@Param("limit") int limit, @Param("offset") int offset);
-	Page<StudentEntity> findAllStudentsPage(Pageable pageable);
+
 }

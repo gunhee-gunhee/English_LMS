@@ -99,7 +99,7 @@ public class DetailController {
         log.info("강사 상세페이지: {}", teacherNum);
         
 
-        TeacherEntity teacher = teacherRepository.findByTeacherNum(teacherNum)
+        TeacherEntity teacher = teacherRepository.findByTeacher(teacherNum)
                 .orElseThrow(() -> new RuntimeException("講師無し."));
 
 

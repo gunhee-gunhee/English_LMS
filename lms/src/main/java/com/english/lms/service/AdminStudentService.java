@@ -102,7 +102,7 @@ public class AdminStudentService {
     }
 
     public String getTeacherNickname(Integer teacherNum) {
-        return teacherRepository.findByTeacherNum(teacherNum)
+        return teacherRepository.findByTeacher(teacherNum)
                 .map(TeacherEntity::getNickname) // 엔티티 이름에 맞게 수정
                 .orElse(null);
     }
