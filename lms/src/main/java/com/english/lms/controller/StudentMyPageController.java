@@ -4,14 +4,12 @@ import com.english.lms.entity.StudentEntity;
 import com.english.lms.entity.DayClassEntity;
 import com.english.lms.entity.DayOffEntity;
 import com.english.lms.entity.TeacherEntity;
-import com.english.lms.entity.PointEntity;
 import com.english.lms.dto.DayClassDTO;
 import com.english.lms.dto.DayRowDto;
 import com.english.lms.repository.StudentRepository;
 import com.english.lms.repository.DayClassRepository;
 import com.english.lms.repository.DayOffRepository;
 import com.english.lms.repository.TeacherRepository;
-import com.english.lms.repository.PointRepository;
 import com.english.lms.service.StudentMyPageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -36,7 +34,6 @@ public class StudentMyPageController {
     private final DayClassRepository dayClassRepository;
     private final DayOffRepository dayOffRepository;
     private final TeacherRepository teacherRepository;
-    private final PointRepository pointRepository;   // ★ 추가
     private final StudentMyPageService studentMyPageService;
 
     @GetMapping("/student/mypage")
@@ -142,27 +139,7 @@ public class StudentMyPageController {
         }
         model.addAttribute("rowList", rowList);
 
-        // ▼▼▼▼▼ 포인트 관련: freePoint/additionalPoint 계산 및 모델 등록 ▼▼▼▼▼
-        Integer studentNum = student.getStudentNum();
-
-        // 무료포인트 (type='free', 여러 row면 합계)
-        int freePoint = pointRepository
-            .findByStudentNumAndType(studentNum, "free")
-            .stream()
-            .mapToInt(PointEntity::getPointAmount)
-            .sum();
-
-        // 보강포인트 (type='additional', expiresAt가 오늘 이후인 row만 합계)
-        int additionalPoint = pointRepository
-            .findByStudentNumAndType(studentNum, "additional")
-            .stream()
-            .filter(p -> p.getExpiresAt() != null && !p.getExpiresAt().isBefore(today))
-            .mapToInt(PointEntity::getPointAmount)
-            .sum();
-
-        model.addAttribute("freePoint", freePoint);
-        model.addAttribute("additionalPoint", additionalPoint);
-        // ▲▲▲▲▲ 여기까지 추가 ▲▲▲▲▲
+        // ▼▼▼ 포인트 관련 model.addAttribute는 전부 Advice에서 처리하므로 필요 없음 ▼▼▼
 
         return "student/mypage";
     }

@@ -1,20 +1,42 @@
 <!-- src/main/resources/templates/fragments/topbar-student.html -->
 <!DOCTYPE html>
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <style>
+        .topbar-title-ellipsis {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 360px;   /* 필요시 더 크게 조정 */
+            flex-shrink: 1;     /* 줄바꿈 없이 공간 모자라면 줄여줌 */
+            color: #e74a3b !important;  /* 빨간색! (Bootstrap Danger) */
+            margin-bottom: 0;
+            margin-top: 0;
+            font-weight: bold;
+        }
+        @media (max-width: 991px) {
+            .topbar-title-ellipsis {
+                max-width: 180px;
+            }
+        }
+    </style>
+</head>
 <body>
 <div th:fragment="topbar(title)">
-    <nav class="navbar navbar-expand navbar-light bg-white topbar static-top shadow">
-        <h4 class="m-4 ml-0 font-weight-bold text-primary" th:text="${title}">ページタイトル</h4>
+    <nav class="navbar navbar-expand navbar-light bg-white topbar static-top shadow" style="display: flex; align-items: center;">
+        <!-- 타이틀을 flex 아이템으로! -->
+        <h4 class="topbar-title-ellipsis" style="margin-left: 24px; margin-right: 12px; flex: 1;"
+            th:text="${title}">ページタイトル</h4>
 
         <!-- Sidebar Toggle (Topbar) -->
-        <form class="form-inline">
+        <form class="form-inline" style="margin-bottom:0;">
             <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                 <i class="fa fa-bars"></i>
             </button>
         </form>
 
         <!-- Topbar Navbar -->
-        <ul class="navbar-nav ml-auto" style="width:100%; display:flex; align-items:center;">
+        <ul class="navbar-nav ml-auto" style="display:flex; align-items:center;">
             <!-- ▼▼▼ 포인트 표시 영역: 오른쪽 정렬 ▼▼▼ -->
             <li class="nav-item d-flex align-items-center mr-3 ml-auto">
                 <span class="badge badge-success mr-2" style="font-size:1.08em;">
