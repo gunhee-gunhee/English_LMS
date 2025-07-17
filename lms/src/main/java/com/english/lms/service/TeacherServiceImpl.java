@@ -17,6 +17,7 @@ import com.english.lms.entity.TeacherEntity;
 import com.english.lms.entity.TeacherScheduleEntity;
 import com.english.lms.entity.ZoomAccountEntity;
 import com.english.lms.enums.Role;
+import com.english.lms.repository.TeacherListRepository;
 import com.english.lms.repository.TeacherRepository;
 import com.english.lms.repository.TeacherScheduleRepository;
 import com.english.lms.repository.ZoomAccountRepository;
@@ -32,7 +33,8 @@ public class TeacherServiceImpl implements TeacherService {
     private final TeacherScheduleRepository teacherScheduleRepository;
     private final PasswordEncoder passwordEncoder;
     private final ZoomAccountRepository zoomAccountRepository;
-
+    private final TeacherListRepository teacherListRepository;
+    
     // ==========================
     //      DTO変換メソッド
     // ==========================
@@ -129,7 +131,7 @@ public class TeacherServiceImpl implements TeacherService {
                 .orElseThrow(() -> new RuntimeException("Zoomアカウントが存在しません。"));
         Integer zoomNum = zoomEntity.getZoomNum();
 
-        // 기본 정보 저장
+        // 基本情報保存
         TeacherEntity teacher = TeacherEntity.builder()
                 .teacherId(teacherDTO.getId())
                 .password(passwordEncoder.encode(teacherDTO.getPassword()))
@@ -140,14 +142,14 @@ public class TeacherServiceImpl implements TeacherService {
                 .role(Role.TEACHER)
                 .build();
 
-        // Zoom 계정 연결 상태 true로 변경
+        // Zoom アカウントの linkedをtrueに更新する。
         zoomEntity.setLinked(true);
 
-        // 강사 정보 저장
+        // 講師の情報を保存する。
         TeacherEntity entity = teacherRepository.save(teacher);
         Integer teacherNum = entity.getTeacherNum();
 
-        // 스케줄 저장
+        // 授業のスケジュールを保存する。
         for (TeacherScheduleDTO schedule : teacherDTO.getSchedules()) {
             if (schedule.getStartHour() == null || schedule.getStartMinute() == null
                     || schedule.getEndHour() == null || schedule.getEndMinute() == null
@@ -224,7 +226,7 @@ public class TeacherServiceImpl implements TeacherService {
 		    Pageableは、現在のページ番号や1ページあたりに表示するデータの件数など、ページングに関する情報を持つオブジェクト
 			TeacherEntityは、データベースの1行（レコード）を表すオブジェクト
 		*/
-//		Page<TeacherEntity> teacherPage = teacherRepository.
-		return null;
+		return teacherListRepository.findAllStudentsPage(pageable);
 	}
+	
 }

@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const allCheckbox = document.getElementById("selectAllCheckbox");
     
     //tdのchekboxes
-    const checkboxes = document.querySelectorAll(".studentCheckbox");
+    const checkboxes = document.querySelectorAll(".ListCheckbox");
 
     // allCheckbox がチェックされたら、すべてのチェックボックスが選択される。
     allCheckbox.addEventListener("change", function(){

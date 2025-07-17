@@ -25,7 +25,7 @@ public class TeacherDTO {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;
     private LocalDate endDate;
-    
+    private String role;
     private List<TeacherScheduleDTO> schedules= new ArrayList<>();
  
 }

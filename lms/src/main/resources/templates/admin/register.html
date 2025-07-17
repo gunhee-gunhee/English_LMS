@@ -156,7 +156,7 @@
                                                 <!-- 学習目的 -->
                                                 <div class="form-group radio-group">
                                                     <label>英語学習目的</label>
-                                                    <label><input type="radio" th:field="*{englishPurpose}" value="旅行" required> 旅行</label>
+                                                    <label><input type="radio" th:field="*{englishPurpose}" value="旅行"> 旅行</label>
                                                     <label><input type="radio" th:field="*{englishPurpose}" value="仕事"> 仕事</label>
                                                     <label><input type="radio" th:field="*{englishPurpose}" value="留学"> 留学</label>
                                                     <label><input type="radio" th:field="*{englishPurpose}" value="趣味"> 趣味</label>
@@ -165,7 +165,7 @@
                                                 <!-- instabiz 流入経路 -->
                                                 <div class="form-group radio-group">
                                                     <label>instabizを知ったきっかけ</label>
-                                                    <label><input type="radio" th:field="*{signupPath}" value="検索" required> 検索</label>
+                                                    <label><input type="radio" th:field="*{signupPath}" value="検索"> 検索</label>
                                                     <label><input type="radio" th:field="*{signupPath}" value="SNS"> SNS</label>
                                                     <label><input type="radio" th:field="*{signupPath}" value="知人の紹介"> 知人の紹介</label>
                                                     <label><input type="radio" th:field="*{signupPath}" value="広告"> 広告</label>
@@ -187,8 +187,10 @@
                                             <div th:if="${teacherError != null}" class="alert alert-danger" th:text="${teacherError}"></div>
 											<div th:if="${teacherSuccess != null}" class="alert alert-success" th:text="${teacherSuccess}"></div>
 											<div id="timeError" class="alert alert-danger" style="display: none;"></div>
+											<div id="zoomIdError" class="alert alert-danger" style="display: none;"></div>
+											<div id="weekdayError" class="alert alert-danger" style="display:none;"></div>
 											<form class="user" id="teacherSignupForm" th:action="@{/admin/teacher/register}" th:object="${teacherDTO}" method="post"
-                                                onsubmit="return validateAndConfirm();">
+                                                onsubmit="return registerConfirm();">
                                                 <!-- ID -->
                                                 <div class="form-group">
                                                     <label for="inputId">ユーザーID</label>
@@ -249,7 +251,7 @@
                                                                 </label>
                                                                 <!--月曜日-->
                                                                 <label class="btn btn-outline-primary m-1">
-                                                                    <input type="checkbox" th:field="*{schedules[0].weekdays}" value="月" autocomplete="off">月
+                                                                    <input type="checkbox" th:field="*{schedules[0].weekdays}" value="月" autocomplete="off" >月
                                                                 </label>
                                                                 <!--火曜日-->
                                                                 <label class="btn btn-outline-primary m-1">
@@ -269,7 +271,7 @@
                                                                 </label>
                                                                 <!--土曜日-->
                                                                 <label class="btn btn-outline-primary m-1">
-                                                                    <input type="checkbox" th:field="*{schedules[0].weekdays}" value="土" autocomplete="off">土
+                                                                    <input type="checkbox" th:field="*{schedules[0].weekdays}" value="土" autocomplete="off" >土
                                                                 </label>
                                                             </div>
                                                         </div>
@@ -479,6 +481,9 @@
 	
 	<!--時間関連エラーメッセージ-->
 	<script th:src="@{/js/time-error.js}"></script>
+	
+	<!--register エラーメッセージ-->
+	<script th:src="@{/js/input-zoom-id.js}"></script>
 	</body>
 
 </html>

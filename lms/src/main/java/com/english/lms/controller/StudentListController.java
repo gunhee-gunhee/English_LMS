@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.english.lms.dto.StudentDTO;
 import com.english.lms.service.AdminStudentService;
-import com.english.lms.service.StudentService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,16 +23,6 @@ public class StudentListController {
 	
 	private final AdminStudentService adminStudentService;
 
-//	@GetMapping("/admin/student-list")
-//	public String studentListPage(Model model) {
-//		
-//		
-//		List<StudentDTO> students = studentService.getAllStudentWithTeacher();
-//		
-//		model.addAttribute("students", students);
-//		
-//		return "admin/student-list";
-//	}
 	
 	@GetMapping("/admin/student-list")
 	public String studentListPage(
@@ -43,8 +32,8 @@ public class StudentListController {
 			@RequestParam(name = "dir", defaultValue = "asc") String dir,
 			Model model) {
 		
-		  System.out.println("size = " + size);
 		// ソート条件と並び順は Pageable で構成
+		// dir に渡された値が大文字・小文字を区別せず "desc" と一致すれば true！
 		Sort.Direction direction = dir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
 	    Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sort));
 

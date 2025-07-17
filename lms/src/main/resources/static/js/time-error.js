@@ -4,7 +4,7 @@
 
 
 
-function validateAndConfirm() {
+function validateTimeError() {
     // 通常はエラーメッセージを非表示にする
     const errorDiv = document.getElementById('timeError');
     errorDiv.style.display = 'none';
@@ -27,6 +27,6 @@ function validateAndConfirm() {
         return false;
     }
 
-    return confirm('会員登録しますか？');
+    return true;
 }
 
