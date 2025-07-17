@@ -35,6 +35,6 @@ public class AdminLoginSuccessHandler implements AuthenticationSuccessHandler {
         }
         
      // ロールがADMINの場合は、/admin/regular-class-listにリダイレクト
-        response.sendRedirect("/admin/regular-class-list");
+        response.sendRedirect("/admin/student-list");
     }
 }
