@@ -63,54 +63,54 @@ $(document).ready(function() {
     fetchAndRender(selectedDate);
 
     // テーブルにスケジュールデータを描画する本体ロジック
-    function fetchAndRender(date) {
-        fetch(`/api/teacher-mypage/${teacherNum}/schedule?date=${date}`)
-            .then(res => res.json())
-            .then(list => {
-                const tbody = $('#schedule-table tbody');
-                tbody.empty();
-                if (!list || list.length === 0) {
-                    tbody.append('<tr><td colspan="6" class="text-center">No classes</td></tr>');
-                    return;
-                }
-                list.forEach(row => {
-                    // 生徒名（日本語があれば併記）
-                    let studentLabel = row.studentName + (row.studentNameJp ? ` (${row.studentNameJp})` : "");
-                    // 詳細ボタン
-                    let detailBtn = `<a href="/teacher/day-class/${row.dayClassNum}" class="btn btn-warning btn-sm">Detail</a>`;
-                    // 授業タイプバッジ
-                    let classTypeLabel = "";
-                    if (row.classType === "free") {
-                        classTypeLabel = `<span class="badge bg-info text-dark type-free">Free class</span>`;
-                    } else if (row.classType === "additional") {
-                        classTypeLabel = `<span class="badge bg-secondary text-dark type-additional">Additional class</span>`;
-                    } else {
-                        classTypeLabel = `<span class="badge bg-primary text-light type-regular">Regular class</span>`;
-                    }
-                    // Absence ( Planned absence, Absent confirmed)
-                    let absentLabel = "";
-                    if (row.absent) {
-                        const now = new Date();
-                        let startDate = new Date(date + "T" + row.startTime);
-                        let absentType = startDate < now ? "Absent confirmed" : "Planned absence";
-                        absentLabel = `<span class="badge ${absentType === "Absent confirmed" ? "absent-fixed" : "absent-planned"}">${absentType}</span>`;
-                    }
-                    // Zoom参加ボタン
-                    let zoomBtn = row.zoomLink
-                        ? `<a href="${row.zoomLink}" target="_blank" class="btn btn-primary btn-sm zoom-btn">Join</a>`
-                        : `<button class="btn btn-secondary btn-sm" disabled>Join</button>`;
+	function fetchAndRender(date) {
+	    fetch(`/api/teacher-mypage/${teacherNum}/schedule?date=${date}`)
+	        .then(res => res.json())
+	        .then(list => {
+	            const tbody = $('#schedule-table tbody');
+	            tbody.empty();
+	            if (!list || list.length === 0) {
+	                tbody.append('<tr><td colspan="6" class="text-center no-lesson">No classes</td></tr>');
+	                return;
+	            }
+				list.forEach(row => {
+					let studentLabel =
+					    `<a href="/student/detail/${row.studentNum}" class="fw-bold text-primary text-decoration-underline">
+					        ${row.studentName}${row.studentNameJp ? ` (${row.studentNameJp})` : ""}
+					    </a>`;
+				    let detailBtn = `<a href="/teacher/day-class/${row.dayClassNum}" class="btn btn-small btn-comment">Detail</a>`;
+				    let classTypeLabel = "";
+				    if (row.classType === "free") {
+				        classTypeLabel = `<span class="no-lesson">Free class</span>`;
+				    } else if (row.classType === "additional") {
+				        classTypeLabel = `<span class="no-lesson">Additional class</span>`;
+				    } else {
+				        classTypeLabel = `<span class="no-lesson">Regular class</span>`;
+				    }
+				    let absentLabel = "";
+				    if (row.absent) {
+				        const now = new Date();
+				        let startDate = new Date(date + "T" + row.startTime);
+				        let absentType = startDate < now ? "Absent confirmed" : "Planned absence";
+				        absentLabel = `<span class="btn btn-small ${absentType === "Absent confirmed" ? "btn-absent" : "btn-absent-cancel"}">${absentType}</span>`;
+				    }
+				    let zoomBtn = row.zoomLink
+				        ? `<a href="${row.zoomLink}" target="_blank" class="btn btn-small btn-join">Join</a>`
+				        : `<button class="btn btn-small btn-join" disabled>Join</button>`;
 
-                    tbody.append(`
-                        <tr>
-                            <td>${row.startTime} ~ ${row.endTime}</td>
-                            <td>${studentLabel}</td>
-                            <td>${detailBtn}</td>
-                            <td>${classTypeLabel}</td>
-                            <td>${absentLabel}</td>
-                            <td>${zoomBtn}</td>
-                        </tr>
-                    `);
-                });
-            });
-    }
+				    $('#schedule-table tbody').append(`
+				        <tr>
+				            <td>${row.startTime} ~ ${row.endTime}</td>
+				            <td>${studentLabel}</td>
+				            <td>${detailBtn}</td>
+				            <td>${classTypeLabel}</td>
+				            <td>${absentLabel}</td>
+				            <td>${zoomBtn}</td>
+				        </tr>
+				    `);
+				});
+
+	        });
+	}
+
 });

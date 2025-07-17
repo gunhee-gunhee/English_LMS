@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Student Detail</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .readonly-input { background: #bdbdbd; color: #222; border-radius: 10px; border:1px solid #888; }
+        .blue-box { background: #d6e7f8; }
+        .save-btn { width: 130px; font-size: 1.2em; }
+        .detail-label { font-weight: bold; }
+    </style>
+</head>
+<body>
+<div class="container py-4">
+    <div class="mb-3"><h5>Student Detail</h5></div>
+    <div class="border rounded p-4">
+
+        <!-- Nickname (JP까지 포함, JP 없으면 안 뜸) -->
+        <div class="row mb-3 align-items-center">
+            <div class="col-3 detail-label">Nickname</div>
+            <div class="col-9 d-flex align-items-center">
+                <input type="text"
+                       class="form-control readonly-input"
+                       readonly
+                       th:value="${student.nickname}" />
+            </div>
+        </div>
+
+        <!-- Age -->
+        <div class="row mb-3 align-items-center">
+            <div class="col-3 detail-label">Age</div>
+            <div class="col-9">
+                <input type="text"
+                       class="form-control readonly-input"
+                       readonly
+                       th:value="${student.age}" />
+            </div>
+        </div>
+
+        <!-- English Level -->
+        <div class="row mb-3 align-items-center">
+            <div class="col-3 detail-label">English Level</div>
+            <div class="col-9">
+                <input type="text"
+                       class="form-control readonly-input"
+                       readonly
+                       th:value="${student.englishLevel} + ' Level'" />
+            </div>
+        </div>
+
+        <!-- Purpose of learning English -->
+        <div class="row mb-3 align-items-center">
+            <div class="col-3 detail-label">Purpose of learning English</div>
+            <div class="col-9">
+                <input type="text"
+                       class="form-control readonly-input"
+                       readonly
+                       th:value="${student.englishPurpose}" />
+            </div>
+        </div>
+
+        <!-- 필요시 메시지 표시 -->
+        <div th:if="${msg}" class="alert alert-success mt-3" th:text="${msg}"></div>
+
+    </div>
+</div>
+</body>
+</html>

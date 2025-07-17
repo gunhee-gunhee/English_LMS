@@ -8,12 +8,62 @@
     <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <style>
-        .absent-fixed { background: #ff3333; color: #fff; font-weight: bold; }
-        .absent-planned { background: #ffaa00; color: #222; font-weight: bold; }
-        .type-free { background: #eee; color: #111; }
-        .type-additional { background: #eee; color: #111; }
-        .zoom-btn { background: #3388ff; color: #fff; }
-        .center-align { text-align: center; }
+		/* -------- 공통 버튼 스타일 -------- */
+		.btn-small { font-size: .93em; padding: 5px 12px; border-radius: 8px; }
+		.btn-comment {
+		    background: #fff7ad;
+		    color: #222 !important;
+		    border: none;
+		    font-weight: bold;
+		}
+		.btn-comment:hover { background: #fffac2; }
+		.btn-text {
+		    background: #ffd6ad;
+		    color: #222 !important;
+		    border: none;
+		    font-weight: bold;
+		}
+		.btn-text:hover { background: #ffe2c7; }
+		.btn-join {
+		    background: #adf0ff;
+		    color: #222 !important;
+		    border: none;
+		    font-weight: bold;
+		}
+		.btn-join:hover { background: #caf7ff; }
+		.btn-attend { background: #eef7e7; color: #189c31; border: none; font-weight: bold; }
+		.btn-absent, .btn-absent-cancel {
+		    background: #ffeaea;
+		    color: #e74a3b;
+		    border: none;
+		    font-weight: bold;
+		}
+		.btn-absent:hover, .btn-absent-cancel:hover { background: #ffd3d3; }
+
+		/* -------- 테이블 스타일 -------- */
+		.table-calendar {
+		    width: 100%;
+		    background: #fff;
+		    border-radius: 14px;
+		    box-shadow: 0 2px 12px rgba(231,74,59,0.07);
+		    margin: 0 auto;
+		}
+		.table-calendar th, .table-calendar td {
+		    text-align: center;
+		    padding: 12px 6px;
+		    vertical-align: middle;
+		}
+		.table-calendar th {
+		    background: #e4e4e4 !important;
+		    color: #222 !important;
+		    font-size: 1.04em;
+		    font-weight: 700;
+		}
+		.table-calendar td {
+		    font-size: 1em;
+		}
+		.row-category { background: #f7f7f7 !important; color: #111 !important; }
+		.no-lesson { color: #bbb; font-size: .95em; }
     </style>
 </head>
 <body id="page-top">
@@ -37,7 +87,7 @@
                     </div>
                 </div>
                 <div class="table-responsive">
-                    <table class="table table-bordered align-middle text-center" id="schedule-table">
+                    <table class="table table-calendar" id="schedule-table">
                         <thead>
                             <tr>
                                 <th>Time</th>

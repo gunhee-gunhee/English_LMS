@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Class Detail</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .readonly-input { background: #bdbdbd; color: #222; border-radius: 10px; border:1px solid #888; }
+        .blue-box { background: #d6e7f8; }
+        .save-btn { width: 130px; font-size: 1.2em; }
+        .detail-label { font-weight: bold; }
+    </style>
+</head>
+<body>
+<div class="container py-4">
+    <div class="mb-3"><h5>Class Detail</h5></div>
+    <div class="border rounded p-4">
+        <!-- 날짜 + 요일 -->
+        <h4 class="mb-4" th:text="${#dates.format(detail.classDate, 'yyyy-MM-dd')} + ' (' + ${detail.weekDay} + ') Days'"></h4>
+        <form th:action="@{|/teacher/day-class/${detail.dayClassNum}|}" method="post" autocomplete="off">
+            <div class="row mb-3 align-items-center">
+                <div class="col-3 detail-label">Student name</div>
+                <div class="col-9">
+                    <input type="text" th:value="${detail.studentName + (detail.studentNameJp != null ? ' (' + detail.studentNameJp + ')' : '')}" class="form-control readonly-input" readonly>
+                </div>
+            </div>
+            <div class="row mb-3 align-items-center">
+                <div class="col-3 detail-label">Class Type</div>
+                <div class="col-9">
+                    <input type="text" th:value="${detail.classType}" class="form-control readonly-input" readonly>
+                </div>
+            </div>
+			<div class="row mb-3 align-items-center">
+			    <div class="col-3 detail-label">Teaching Material</div>
+			    <div class="col-9">
+			        <input type="text" th:value="${detail.name}" class="form-control readonly-input" readonly>
+			    </div>
+			</div>
+            <div class="row mb-2">
+                <div class="col-12 detail-label">Comment</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-12">
+                    <textarea name="comment" class="form-control blue-box" rows="3" th:text="${detail.comment}"></textarea>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-12 detail-label">Progress</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-12">
+                    <textarea name="progress" class="form-control blue-box" rows="3" th:text="${detail.progress}"></textarea>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-12 text-center">
+                    <button type="submit" class="btn btn-primary save-btn">Save</button>
+                </div>
+            </div>
+        </form>
+        <div th:if="${msg}" class="alert alert-success mt-3" th:text="${msg}"></div>
+    </div>
+</div>
+</body>
+</html>
