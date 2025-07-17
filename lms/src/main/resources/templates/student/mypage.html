@@ -207,7 +207,8 @@
                             </td>
                             <!-- 参加ボタン（결석 상태면 안보임) -->
                             <td>
-                                <span th:if="${row.lesson != null and row.lesson.absent != '1' and row.date != null and row.date.equals(today)}">
+                                <!-- 여기만 조건을 row.lesson.classDate로 변경! -->
+                                <span th:if="${row.lesson != null and row.lesson.absent != '1' and row.lesson.classDate != null and row.lesson.classDate.equals(today)}">
                                     <a th:if="${row.lesson.zoomLink != null and !#strings.isEmpty(row.lesson.zoomLink)}"
                                        href="javascript:void(0);"
                                        class="btn btn-small btn-join btn-join-modal"

@@ -86,6 +86,15 @@
 		    width: 100%;
 		    max-width: 100%;
 		}
+        /* 안내 div 스타일 */
+        .notice-free-class {
+            margin: 20px auto 0;
+            max-width: 700px;
+            font-size: 1.3em;
+            color: #e74a3b;
+            text-align: center;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body class="bg-gradient-danger" id="page-top">
@@ -112,6 +121,10 @@
                 <div class="card o-hidden border-0 shadow-lg">
                     <div class="card-body p-0">
                         <div class="p-5">
+							<!-- ★★★ 안내 문구 영역 추가 (수정된 부분) ★★★ -->
+							<span th:if="${applyTitle != null}" class="available-time-label" th:text="${applyTitle}"></span>
+							<!-- ★★★ 여기까지 ★★★ -->
+
                             <!-- フォーム開始 -->
                             <form id="applyForm" method="post" action="/irregular-class/apply" autocomplete="off">
                                 <!-- カレンダー -->
@@ -220,7 +233,7 @@
                 return;
             }
             if (!document.getElementById('selectedTime').value) {
-                alert("時間を選択してください。");
+                alert("時間を選択してください.");
                 return;
             }
             if (confirm("申請しますか？")) {

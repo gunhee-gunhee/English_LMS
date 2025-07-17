@@ -4,12 +4,14 @@ import com.english.lms.entity.StudentEntity;
 import com.english.lms.entity.DayClassEntity;
 import com.english.lms.entity.DayOffEntity;
 import com.english.lms.entity.TeacherEntity;
+import com.english.lms.entity.PointEntity;
 import com.english.lms.dto.DayClassDTO;
 import com.english.lms.dto.DayRowDto;
 import com.english.lms.repository.StudentRepository;
 import com.english.lms.repository.DayClassRepository;
 import com.english.lms.repository.DayOffRepository;
 import com.english.lms.repository.TeacherRepository;
+import com.english.lms.repository.PointRepository;
 import com.english.lms.service.StudentMyPageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -34,6 +36,7 @@ public class StudentMyPageController {
     private final DayClassRepository dayClassRepository;
     private final DayOffRepository dayOffRepository;
     private final TeacherRepository teacherRepository;
+    private final PointRepository pointRepository;   // ★ 추가
     private final StudentMyPageService studentMyPageService;
 
     @GetMapping("/student/mypage")
@@ -51,7 +54,7 @@ public class StudentMyPageController {
         model.addAttribute("prevMonth", ym.minusMonths(1).toString());
         model.addAttribute("nextMonth", ym.plusMonths(1).toString());
 
-        // 今日の日付をmodelに追加
+        // 오늘 날짜를 model에 추가
         LocalDate today = LocalDate.now();
         model.addAttribute("today", today);
 
@@ -139,10 +142,32 @@ public class StudentMyPageController {
         }
         model.addAttribute("rowList", rowList);
 
+        // ▼▼▼▼▼ 포인트 관련: freePoint/additionalPoint 계산 및 모델 등록 ▼▼▼▼▼
+        Integer studentNum = student.getStudentNum();
+
+        // 무료포인트 (type='free', 여러 row면 합계)
+        int freePoint = pointRepository
+            .findByStudentNumAndType(studentNum, "free")
+            .stream()
+            .mapToInt(PointEntity::getPointAmount)
+            .sum();
+
+        // 보강포인트 (type='additional', expiresAt가 오늘 이후인 row만 합계)
+        int additionalPoint = pointRepository
+            .findByStudentNumAndType(studentNum, "additional")
+            .stream()
+            .filter(p -> p.getExpiresAt() != null && !p.getExpiresAt().isBefore(today))
+            .mapToInt(PointEntity::getPointAmount)
+            .sum();
+
+        model.addAttribute("freePoint", freePoint);
+        model.addAttribute("additionalPoint", additionalPoint);
+        // ▲▲▲▲▲ 여기까지 추가 ▲▲▲▲▲
+
         return "student/mypage";
     }
 
-    // 欠席処理 API
+    // 결석처리 API
     @PostMapping("/student/mypage/absent")
     @ResponseBody
     public String setAbsent(@RequestParam("dayClassNum") Integer dayClassNum) {
@@ -150,7 +175,7 @@ public class StudentMyPageController {
         return "OK";
     }
 
-    // 欠席取消 API
+    // 결석취소 API
     @PostMapping("/student/mypage/absent-cancel")
     @ResponseBody
     public String cancelAbsent(@RequestParam("dayClassNum") Integer dayClassNum) {
@@ -158,11 +183,11 @@ public class StudentMyPageController {
         return "OK";
     }
 
-    // 出席処理 API (参加ボタン用)
+    // 출석처리 API (참가버튼용)
     @PostMapping("/student/mypage/attend")
     @ResponseBody
     public String setAttendance(@RequestParam("dayClassNum") Integer dayClassNum) {
-        studentMyPageService.setAttendance(dayClassNum, true); // attendance 컬럼을 1로
+        studentMyPageService.setAttendance(dayClassNum, true);
         return "OK";
     }
 
