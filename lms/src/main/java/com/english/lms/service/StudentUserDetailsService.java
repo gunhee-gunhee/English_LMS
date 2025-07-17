@@ -27,7 +27,6 @@ public class StudentUserDetailsService implements UserDetailsService {
 				
 					return new UsernameNotFoundException("アカウントなし");
 				});
-		System.out.println("dB에서 가져온 객체 : " + student);
 		
 		return new CustomUserDetails(
 				student.getStudentId(),

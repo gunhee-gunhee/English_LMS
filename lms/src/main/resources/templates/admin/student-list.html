@@ -21,7 +21,8 @@
 	<link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
 
 	<!-- Custom styles for this page -->
-	<link th:href="@{/vendor/datatables/dataTables.bootstrap4.min.css}" rel="stylesheet">
+	<!-- <link th:href="@{/vendor/datatables/dataTables.bootstrap4.min.css}" rel="stylesheet"> -->
+	
 
 
 	<style>
@@ -130,7 +131,7 @@
 									<tbody>
 										<tr th:each="student : ${studentPage.content}">
 											<td><input type="checkbox" name="selectedIds" th:value="${student.id}"
-													class="studentCheckbox"></td>
+													class="ListCheckbox"></td>
 											<td th:text="${student.id}">ID</td>
 											<td th:text="${student.nickname}">ニックネーム</td>
 											<td th:text="${student.company != null && !#strings.isEmpty(student.company) ? student.company : '個人'}">所属</td>
@@ -140,7 +141,7 @@
 											<td th:text="${student.point}">ポイント</td>
 											<td th:text="${student.nullity ? '無効':'有効'}">状態</td>
 											<td th:text="${student.role != null ? '学生' : student.role}">会員種類</td>
-											<td><a th:href="@{/admin/student/detail(id=${student.id})}">詳細</a></td>
+											<td><a th:href="@{/admin/student/detail/{id}(id=${student.studentNum})}">詳細</a></td>
 										</tr>
 
 
@@ -150,7 +151,7 @@
 								<!-- ページネーション -->
 								<!--StudentListController-->
 								<nav aria-label="Page navigation">
-									<div class="d-flex justify-content-center">
+									<div class="d-flex justify-content-center mt-3">
 										<ul class="pagination">
 											
 											<!--前へ-->

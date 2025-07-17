@@ -9,8 +9,9 @@ import org.springframework.data.repository.query.Param;
 import com.english.lms.entity.TeacherEntity;
 
 public interface TeacherRepository extends JpaRepository<TeacherEntity, Integer> {
-
-	Optional<TeacherEntity> findByTeacherId(String teacherId);
+	
+	@Query(value = "select * from lms_teacher where id = :teacherId", nativeQuery = true)
+	Optional<TeacherEntity> findByTeacherId(@Param("teacherId") String teacherId);
 
 	//学生リストで講師のニックネームを取得するクエリ
 	@Query(

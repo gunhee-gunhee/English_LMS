@@ -30,8 +30,7 @@ public class StudentServiceImpl implements StudentService {
 
     private final StudentRepository studentRepository;
     private final PasswordEncoder passwordEncoder;
-    private final ClassRepository classRepository;
-    private final TeacherRepository teacherRepository;
+
 
     @Override
     public void registerStudent(StudentDTO dto) {
@@ -47,13 +46,13 @@ public class StudentServiceImpl implements StudentService {
         student.setCompany(dto.getCompany());
 
 
-        // --- point 기본값 세팅 (꼭 필요) ---
+        // --- point セッチング ---
         student.setPoint(0);
         student.setNullity(false);
         student.setRole(Role.STUDENT);
 
-        // --- joinDate, use, role 등은 @PrePersist에서 자동 처리하면 좋음 ---
-
+        // --- joinDate, use, role 등은 @PrePersistで自動処理---
+   
         studentRepository.save(student);
     }
 

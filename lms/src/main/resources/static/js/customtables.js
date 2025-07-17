@@ -1,8 +1,13 @@
 $(document).ready(function () {
+	
+	console.log('customtables.js loaded!');
+	
     // 既存の DataTable を一度破棄してから再初期化する。
-    $('#dataTable').DataTable().destroy();
+	if ($.fn.DataTable.isDataTable('#dataTable')) {
+	    $('#dataTable').DataTable().destroy();
+	}
 
-    $('#dataTable').DataTable({
+    let table = $('#dataTable').DataTable({
         paging: false,                       // ページネーションを有効にする
         searching: false,                    // テーブル内の検索機能を有効にする
         lengthChange: true,                // 表示件数の選択メニューを非表示にする
@@ -18,14 +23,18 @@ $(document).ready(function () {
         ]
     });
 
+	table.order([1, 'asc']).draw();
+	
     table.on('draw', function () {
     $('#dataTable th:first-child')
         .removeClass('sorting sorting_asc sorting_desc')
         .addClass('sorting_disabled')
-        .removeAttr('aria-label')  // 보조기능도 꺼버리자
+        .removeAttr('aria-label')  
         .removeAttr('aria-sort');
+		
+		console.log('draw! current order:', table.order());
 });
-
+console.log('Current order:', table.order());
 });
 
 

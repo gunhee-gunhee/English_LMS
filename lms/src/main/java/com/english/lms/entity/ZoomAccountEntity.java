@@ -1,9 +1,5 @@
 package com.english.lms.entity;
 
-import java.time.LocalDateTime;
-
-import com.english.lms.enums.Role;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

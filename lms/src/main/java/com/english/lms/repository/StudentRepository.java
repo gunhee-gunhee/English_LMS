@@ -5,13 +5,15 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-
+import org.springframework.data.repository.query.Param;
 
 import com.english.lms.entity.StudentEntity;
 
-public interface StudentRepository extends JpaRepository<StudentEntity, Integer> {
- 
-	Optional<StudentEntity> findByStudentId(String studentId); 
+public interface StudentRepository extends JpaRepository<StudentEntity, Integer>{
+
+	@Query(value=  "select * from lms_student where id = :studentId", nativeQuery = true)
+	Optional<StudentEntity> findByStudentId(@Param("studentId") String studentId); 
+	
 	boolean existsByStudentId(String studentId);
 	
 	// age 중복 없이 모두 추출

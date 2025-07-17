@@ -49,7 +49,7 @@ public class AdminServiceImpl implements AdminService {
         adminRepository.save(admin);
     }
 
-    // ====== 여기부터 adminNum (Integer) 기준 CRUD ======
+    // ====== adminNum (Integer) CRUD ======
 
     @Override
     public AdminDTO getAdmin(Integer adminNum) {

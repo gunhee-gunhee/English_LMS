@@ -20,10 +20,6 @@
 	<!-- Custom styles for this template -->
 	<link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
 
-	<!-- Custom styles for this page -->
-	<link th:href="@{/vendor/datatables/dataTables.bootstrap4.min.css}" rel="stylesheet">
-
-
 	<style>
 		/* table sytle */
 		#dataTable th.sorting_disabled::after,
@@ -39,9 +35,14 @@
 			text-align: center;
 		}
 
-		tbody td {
-			text-align: center;
+		table.dataTable thead th {
+			text-align: center !important;
 		}
+
+		table.dataTable tbody td {
+			text-align: center !important;
+		}
+
 
 		/* 検索関連style */
 		.search-box {
@@ -73,7 +74,7 @@
 						<div class="card-body">
 
 							<!--検索-->
-							<div class="input-group search-box">
+							<div class="input-group search-box mb-4">
 								<input type="text" class="form-control search-input" placeholder="Search for..."
 									aria-label="Search">
 								<div class="input-group-append">
@@ -85,16 +86,20 @@
 
 							<!--検索件数-->
 							<!--StudentListController-->
-							<div class="d-flex align-items-center mb-3 mt-3" style="width: 200px;">
-								<select id="customLength" class="form-select form-select-sm rounded"
-									style="width: auto; border-color: #bcbfc8; color: #6d6e77;">
-									<option value="10">10</option>
-									<option value="25">25</option>
-									<option value="50">50</option>
-									<option value="100">100</option>
+							<form id="pageSizeForm" class="mb-4" method="get" th:action="@{/admin/teacher-list}">
+								<input type="hidden" name="sort" th:value="${sort}">
+								<input type="hidden" name="dir" th:value="${dir}">
+								<input type="hidden" name="page" value="0">
+								<select name="size" class="form-select form-select-sm rounded"
+									    onchange="document.getElementById('pageSizeForm').submit()"
+										style="width: auto; border-color: #bcbfc8; color: #6d6e77;">
+									<option th:value="10" th:selected="${size == 10}">10</option>
+									<option th:value="25" th:selected="${size == 25}">25</option>
+									<option th:value="50" th:selected="${size == 50}">50</option>
+									<option th:value="100" th:selected="${size == 100}">100</option>
 								</select>
 								<span style="margin-left: 8px;">件</span>
-							</div>
+							</form>
 
 							<button type="button" class="btn btn-success mb-2">メッセージ送信</button>
 
@@ -103,35 +108,26 @@
 									<thead>
 										<tr>
 											<th><input type="checkbox" id="selectAllCheckbox"></th>
-											<th>ID</th>
 											<th>ニックネーム</th>
-											<th>所属</th>
-											<th>年齢</th>
-											<th>英語レベル</th>
-											<th>講師</th>
-											<th>ポイント</th>
+											<th>ID</th>
+											<th>zoomアカウント</th>
 											<th>状態</th>
 											<th>会員種類</th>
 											<th>詳細</th>
 										</tr>
 									</thead>
-									
-									<tbody>
-										<tr th:each="student : ${students}">
-											<td><input type="checkbox" name="selectedIds" th:value="${student.id}"
-													class="studentCheckbox"></td>
-											<td th:text="${student.id}">ID</td>
-											<td th:text="${student.nickname}">ニックネーム</td>
-											<td th:text="${student.company ?: '個人'}">所属</td>
-											<td th:text="${student.age}">年齢</td>
-											<td th:text="${student.englishLevel}">英語レベル</td>
-											<td th:text="${student.teacherNickname}">講師</td>
-											<td th:text="${student.point}">ポイント</td>
-											<td th:text="${student.nullity ? '無効':'有効'}">状態</td>
-											<td th:text="${student.role != null ? '学生' : student.role}">会員種類</td>
-											<td><a th:href="@{/admin/student/detail(id=${student.id})}">詳細</a></td>
-										</tr>
 
+									<tbody>
+										<tr th:each="teacher : ${teacherPage.content}">
+											<td><input type="checkbox" name="selectedIds" th:value="${teacher.id}"
+													class="ListCheckbox"></td>
+											<td th:text="${teacher.nickname}">ニックネーム</td>
+											<td th:text="${teacher.id}">ID</td>
+											<td th:text="${teacher.zoomId}">zoomアカウント</td>
+											<td th:text="${teacher.nullity ? '無効':'有効'}">状態</td>
+											<td th:text="${teacher.role != null ? '講師' : teacher.role}">会員種類</td>
+											<td><a th:href="@{/admin/teacher/detail(id=${teacher.id})}">詳細</a></td>
+										</tr>
 
 									</tbody>
 								</table>
@@ -139,41 +135,40 @@
 								<!-- ページネーション -->
 								<!--StudentListController-->
 								<nav aria-label="Page navigation">
-									<div class="d-flex justify-content-center">
+									<div class="d-flex justify-content-center mt-3">
 										<ul class="pagination">
-											
+
 											<!--前へ-->
-											<li class="page-item"
-												th:classappend="${currentPage == 0} ? 'disabled'">
-												<a class="page-link" 
-												th:href="@{/admin/student-list(page=${currentPage -1}, size=${10}, sort=${sort}, dir=${dir})}" 
-												aria-label="Previous">
-												<span aria-hidden="true">&laquo;</span>
+											<li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+												<a class="page-link"
+													th:href="@{/admin/teacher-list(page=${currentPage -1}, size=${size}, sort=${sort}, dir=${dir})}"
+													aria-label="Previous">
+													<span aria-hidden="true">&laquo;</span>
 												</a>
 											</li>
-											
+
 											<!--ページの番号-->
-											<li class="page-item"
-												th:each="i : ${#numbers.sequence(0, totalPages -1)}" 
+											<li class="page-item" th:each="i : ${#numbers.sequence(0, teacherPage.totalPages -1)}"
 												th:classappend="${i == currentPage} ? 'active'">
 												<a class="page-link"
-												th:href="@{/admin/student-list(page=${i}, size=${10}, sort=${sort}, dir=${dir})}" 
-												th:text="${i + 1}">1</a>
+													th:href="@{/admin/teacher-list(page=${i}, size=${size}, sort=${sort}, dir=${dir})}"
+													th:text="${i + 1}">1</a>
 											</li>
-											
+
 											<!--次へ-->
-											<li class="page-item" th:classappend="${currentPage + 1 == totalPages} ? 'disabled'">
+											<li class="page-item"
+												th:classappend="${currentPage + 1 == totalPages} ? 'disabled'">
 												<a class="page-link"
-												   th:href="@{/admin/student-list(page=${currentPage + 1}, size=${10}, sort=${sort}, dir=${dir})}"
-												   aria-label="Next">
+													th:href="@{/admin/teacher-list(page=${currentPage + 1}, size=${size}, sort=${sort}, dir=${dir})}"
+													aria-label="Next">
 													<span aria-hidden="true">&raquo;</span>
 												</a>
 											</li>
-											
+
 										</ul>
 									</div>
 								</nav>
-								
+
 							</div>
 						</div>
 					</div>
@@ -226,9 +221,14 @@
 
 
 
+	<!-- jQuery -->
+	<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css" />
+	<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
 
 	<!-- Bootstrap core JavaScript-->
-	<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+	<!--<script th:src="@{/vendor/jquery/jquery.min.js}"></script>-->
 	<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 
 	<!-- Core plugin JavaScript-->
@@ -236,6 +236,7 @@
 
 	<!-- Custom scripts for all pages-->
 	<script th:src="@{/js/sb-admin-2.min.js}"></script>
+
 	<!--追加JS-->
 	<script th:src="@{/js/customtables.js}"></script>
 	<script th:src="@{/js/table-check-box.js}"></script>

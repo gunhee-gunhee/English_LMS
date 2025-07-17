@@ -4,11 +4,12 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.english.lms.entity.ZoomAccountEntity;
 
 public interface ZoomAccountRepository extends JpaRepository<ZoomAccountEntity, Integer> {
-
+	@Query(value = "SELECT * FROM lms_zoom_account WHERE linked = 0", nativeQuery = true)
 	List<ZoomAccountEntity> findByLinkedFalse();
 
 	Optional<ZoomAccountEntity> findByZoomId(String zoomId);
