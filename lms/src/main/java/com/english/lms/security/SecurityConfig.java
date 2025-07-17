@@ -95,8 +95,8 @@ public class SecurityConfig {
                     "/student/thanks",
                     "/student/css/**",
                     "/student/js/**",
-                    "/student/apply",    // :チェックマーク_緑: GET/POST
-                    "/student/thanks"    // :チェックマーク_緑: GET
+                    "/student/apply", 
+                    "/student/thanks"
                 ).permitAll()
                 .anyRequest().hasRole("STUDENT")
             )
