@@ -199,50 +199,7 @@
 <!-- Flatpickr JS CDN -->
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
-<script>
-    let selectedDate = null;
-    let selectedTime = null;
-    flatpickr("#calendar", {
-        locale: "ja",
-        dateFormat: "Y-m-d",
-        inline: true,
-        onChange: function(selectedDates, dateStr) {
-            selectedDate = dateStr;
-            document.getElementById('selectedDate').value = dateStr;
-        }
-    });
-
-    document.addEventListener("DOMContentLoaded", function() {
-        // 時間選択ボタン：単一選択
-        document.querySelectorAll('.time-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('selected'));
-                this.classList.add('selected');
-                selectedTime = this.innerText;
-                document.getElementById('selectedTime').value = selectedTime;
-            });
-        });
-
-        // 申請ボタン을 클릭했을 때 confirm
-        const applyBtn = document.getElementById("applyBtn");
-        const applyForm = document.getElementById("applyForm");
-
-        applyBtn.addEventListener('click', function() {
-            if (!document.getElementById('selectedDate').value) {
-                alert("日付を選択してください。");
-                return;
-            }
-            if (!document.getElementById('selectedTime').value) {
-                alert("時間を選択してください.");
-                return;
-            }
-            if (confirm("申請しますか？")) {
-                applyForm.submit();
-				window.location.href = '/student/thanks';
-            }
-        });
-    });
-</script>
+<script th:src="@{/js/calendar.js}"></script>
 
 <!-- SB Admin 2 및 공통 JS -->
 <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
