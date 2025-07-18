@@ -14,4 +14,12 @@ public interface PointRepository extends JpaRepository<PointEntity, Integer> {
 
     // ★ 학생별, 타입별 포인트 row 목록 (예: 무료/보강포인트 등)
     List<PointEntity> findByStudentNumAndType(Integer studentNum, String type);
+
+    // ★ 조건에 맞는 결석포인트 row만 조회
+    List<PointEntity> findByStudentNumAndTypeAndPointAmountGreaterThanEqualAndExpiresAtGreaterThanEqualOrderByExpiresAtAsc(
+            Integer studentNum,
+            String type,
+            Integer pointAmount,
+            LocalDate expiresAt
+    );
 }
