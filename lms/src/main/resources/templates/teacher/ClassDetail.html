@@ -3,7 +3,10 @@
 <head>
     <meta charset="utf-8">
     <title>Class Detail</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet">
+	<link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <style>
         .readonly-input { background: #bdbdbd; color: #222; border-radius: 10px; border:1px solid #888; }
         .blue-box { background: #d6e7f8; }
@@ -11,10 +14,13 @@
         .detail-label { font-weight: bold; }
     </style>
 </head>
-<body>
-<div class="container py-4">
-    <div class="mb-3"><h5>Class Detail</h5></div>
-    <div class="border rounded p-4">
+<body id="page-top">
+<div id="wrapper">
+    <div th:replace="~{fragments/sidebar-teacher :: sidebar-teacher}"></div>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <div th:replace="~{fragments/topbar :: topbar('Class Detail')}"></div>
+            <div class="container-fluid">
         <!-- 날짜 + 요일 -->
         <h4 class="mb-4" th:text="${#dates.format(detail.classDate, 'yyyy-MM-dd')} + ' (' + ${detail.weekDay} + ') Days'"></h4>
         <form th:action="@{|/teacher/day-class/${detail.dayClassNum}|}" method="post" autocomplete="off">
@@ -60,6 +66,11 @@
         </form>
         <div th:if="${msg}" class="alert alert-success mt-3" th:text="${msg}"></div>
     </div>
+        </div>
+    </div>
 </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script th:src="@{/js/teacher-mypage-schedule.js}"></script>
 </body>
 </html>

@@ -64,9 +64,12 @@ $(document).ready(function() {
 
     // テーブルにスケジュールデータを描画する本体ロジック
 	function fetchAndRender(date) {
-	    fetch(`/api/teacher-mypage/${teacherNum}/schedule?date=${date}`)
+	    fetch(`/api/teacher-mypage/schedule?date=${date}`)
 	        .then(res => res.json())
 	        .then(list => {
+				
+				console.log("API에서 읽어온 schedule list:", list);
+				
 	            const tbody = $('#schedule-table tbody');
 	            tbody.empty();
 	            if (!list || list.length === 0) {
@@ -75,7 +78,7 @@ $(document).ready(function() {
 	            }
 				list.forEach(row => {
 					let studentLabel =
-					    `<a href="/student/detail/${row.studentNum}" class="fw-bold text-primary text-decoration-underline">
+					    `<a href="/teacher/student/detail/${row.studentNum}" class="fw-bold text-primary text-decoration-underline">
 					        ${row.studentName}${row.studentNameJp ? ` (${row.studentNameJp})` : ""}
 					    </a>`;
 				    let detailBtn = `<a href="/teacher/day-class/${row.dayClassNum}" class="btn btn-small btn-comment">Detail</a>`;

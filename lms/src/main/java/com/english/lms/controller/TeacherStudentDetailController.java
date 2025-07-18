@@ -10,19 +10,20 @@ import com.english.lms.dto.StudentDetailDTO;
 import com.english.lms.repository.StudentDetailRepository;
 
 @Controller
-@RequestMapping("/student/detail")
-public class StudentDetailController {
+@RequestMapping("/teacher/student/detail")
+public class TeacherStudentDetailController {
 
     private final StudentDetailRepository studentDetailRepository;
 
-    public StudentDetailController(StudentDetailRepository studentDetailRepository) {
+    public TeacherStudentDetailController(StudentDetailRepository studentDetailRepository) {
         this.studentDetailRepository = studentDetailRepository;
     }
 
     @GetMapping("/{studentNum}")
-    public String studentDetail(@PathVariable("studentNum") int studentNum, Model model) {
+    public String teacherStudentDetail(@PathVariable("studentNum") int studentNum, Model model) {
         StudentDetailDTO student = studentDetailRepository.findStudentDetail(studentNum);
         model.addAttribute("student", student);
         return "teacher/StudentDetail";
     }
 }
+

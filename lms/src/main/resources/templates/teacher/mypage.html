@@ -68,13 +68,13 @@
 </head>
 <body id="page-top">
 <div id="wrapper">
-    <div th:replace="~{fragments/sidebar-admin :: sidebar-admin}"></div>
+    <div th:replace="~{fragments/sidebar-teacher :: sidebar-teacher}"></div>
     <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">
             <div th:replace="~{fragments/topbar :: topbar('My Schedule')}"></div>
             <div class="container-fluid">
                 <div class="row mb-3">
-                    <div class="col center-align">
+                    <div class="col-12 d-flex justify-content-center align-items-center">
                         <button class="btn btn-outline-secondary me-2" id="prev-day"><i class="fas fa-chevron-left"></i></button>
                         <span id="selected-date-label"
                               class="mx-3 my-auto"

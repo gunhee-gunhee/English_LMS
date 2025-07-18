@@ -103,16 +103,6 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     // ==========================
-    //      削除処理
-    // ==========================
-    @Override
-    @Transactional
-    public void deleteTeacher(Integer teacherNum) {
-        teacherScheduleRepository.deleteByTeacherNum(teacherNum);
-        teacherRepository.deleteById(teacherNum);
-    }
-
-    // ==========================
     //      ID重複チェック
     // ==========================
     @Override
