@@ -24,7 +24,7 @@ public class TeacherListRepositoryImpl implements TeacherRepositoryCustom {
 		int limit = pageable.getPageSize();
 		int offset = (int) pageable.getOffset();
 		
-		String sql = "SELECT t.id, t.nickname, SUBSTRING_INDEX(z.zoom_id, '@', 1) AS zoomId, t.nullity, t.role "+
+		String sql = "SELECT t.id, t.nickname, SUBSTRING_INDEX(z.zoom_id, '@', 1) AS zoomId, t.nullity, t.role, t.teacher_num "+
 					 "FROM lms_teacher t " + 
 					 "LEFT JOIN lms_zoom_account z ON t.zoom_num = z.zoom_num " +
 					 "ORDER BY t.nickname LIMIT " + limit + " OFFSET " + offset;
@@ -48,6 +48,7 @@ public class TeacherListRepositoryImpl implements TeacherRepositoryCustom {
 			.zoomId((String) row[2])
 			.nullity((Boolean) row[3])
 			.role(row[4] != null ? row[4].toString() : null)
+			.teacherNum((Integer) row[5])
 			.build()
 		
 		).toList();

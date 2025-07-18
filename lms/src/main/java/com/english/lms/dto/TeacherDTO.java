@@ -14,6 +14,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class TeacherDTO {
+	private Integer teacherNum;
     private String id;
     private String password;
     private String passwordCheck; // 폼에서 입력 받음

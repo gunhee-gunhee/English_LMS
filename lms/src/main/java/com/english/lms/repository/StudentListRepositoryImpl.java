@@ -24,7 +24,7 @@ public class StudentListRepositoryImpl implements StudentRepositoryCustom {
 			int limit = pageable.getPageSize();
 			int offset = (int) pageable.getOffset();
 			
-			String sql = "SELECT s.id, s.nickname, s.age, s.english_level, s.company, s.nullity, s.point, s.role, " +
+			String sql = "SELECT s.id, s.nickname, s.age, s.english_level, s.company, s.nullity, s.point, s.role, s.student_num, " +
 	                "COALESCE(t.nickname, 'ニックネームなし') AS teacher_nickname " +
 	                "FROM lms_student s " +
 	                "LEFT JOIN lms_class c ON s.student_num = c.student_num " +
@@ -53,6 +53,7 @@ public class StudentListRepositoryImpl implements StudentRepositoryCustom {
 	                      .nullity((Boolean) row[5])
 	                      .point((Integer) row[6])
 	                      .role(row[7] != null ? row[7].toString() : null)
+	                      .studentNum((Integer) row[8])
 	                      .teacherNickname((String) row[row.length - 1])
 	                      .build()
 	      ).toList();

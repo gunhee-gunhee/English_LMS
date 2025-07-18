@@ -126,7 +126,7 @@
 											<td th:text="${teacher.zoomId}">zoomアカウント</td>
 											<td th:text="${teacher.nullity ? '無効':'有効'}">状態</td>
 											<td th:text="${teacher.role != null ? '講師' : teacher.role}">会員種類</td>
-											<td><a th:href="@{/admin/teacher/detail(id=${teacher.id})}">詳細</a></td>
+											<td><a th:href="@{/admin/teacher/detail/{teacherNum}(teacherNum=${teacher.teacherNum})}">詳細</a></td>
 										</tr>
 
 									</tbody>

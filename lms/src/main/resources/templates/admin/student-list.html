@@ -141,7 +141,7 @@
 											<td th:text="${student.point}">ポイント</td>
 											<td th:text="${student.nullity ? '無効':'有効'}">状態</td>
 											<td th:text="${student.role != null ? '学生' : student.role}">会員種類</td>
-											<td><a th:href="@{/admin/student/detail/{id}(id=${student.studentNum})}">詳細</a></td>
+											<td><a th:href="@{/admin/student/detail/{studentNum}(studentNum = ${student.studentNum})}">詳細</a></td>
 										</tr>
 
 
