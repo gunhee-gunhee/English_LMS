@@ -47,9 +47,9 @@
 							                th:value="${settings['apply_time_limit'] != null ? settings['apply_time_limit'] : 48}"/> 時間
 							        </div>
 							        <div class="setting-row">
-							            <span class="label">補講の有効期限設定</span>
-							            <input class="input-box" type="number" name="valid_period"
-							                th:value="${settings['valid_period'] != null ? settings['valid_period'] : 30}"/> 日
+							            <span class="label">補講pointの有効期限設定</span>
+										<input class="input-box" type="number" name="additional_valid_period"
+										    th:value="${settings['additional_valid_period'] != null ? settings['additional_valid_period'] : 30}"/> 日
 							        </div>
 							        <div style="text-align:center;margin-top:40px;">
 							            <button class="set-btn" type="submit">設定</button>
