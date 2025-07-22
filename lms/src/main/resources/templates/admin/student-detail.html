@@ -43,83 +43,79 @@
 				<!-- DataTales Example -->
 				<div class="card shadow mb-4">
 					<div class="card-body">
+						
+						<div th:if="${studentSuccess != null}" class="alert alert-success" th:text="${studentSuccess}"></div>
+						<div th:if="${studentError != null}" class="alert alert-danger" th:text="${studentError}"></div>
+
 
 						<div class="container mt-5">
 
-							<form th:action="@{|/admin/student/detail/${student.studentNum}|}" method="post">
-								<!-- ID（メール形式でなくても良い） -->
-								<div class="mb-3">
-									<label class="form-label">ID：</label>
-									<input type="text" class="form-control" name="id" th:value="${student.id}" readonly>
-								</div>
-								<!-- パスワード -->
-								<div class="mb-3">
-									<label class="form-label">パスワード：</label>
-									<input type="password" class="form-control" name="password"
-										th:value="${student.password}">
-								</div>
-								<!-- ニックネーム -->
-								<div class="mb-3">
-									<label class="form-label">ニックネーム：</label>
-									<input type="text" class="form-control" name="nickname"
-										th:value="${student.nickname}">
-								</div>
-								<!-- 年齢選択 -->
-								<div class="mb-3">
-									<label class="form-label">年齢：</label>
-									<select class="form-select" name="age">
-										<option th:each="age : ${ageList}" th:value="${age}" th:text="${age}"
-											th:selected="${student.age == age}">選択</option>
-									</select>
-								</div>
-								<!-- 所属（会社名） -->
-								<div class="mb-3">
-									<label class="form-label">所属：</label>
-									<input type="text" class="form-control" name="company"
-										th:value="${student.company}">
-								</div>
-								<!-- 英語レベル -->
-								<div class="mb-3">
-									<label class="form-label">英語レベル：</label>
-									<select class="form-select" name="englishLevel">
-										<option th:each="level : ${englishLevelList}" th:value="${level}"
-											th:text="${level}" th:selected="${student.englishLevel == level}">選択
-										</option>
-									</select>
-								</div>
-									<div class="mb-3">
-									    <label class="form-label">担当講師：</label>
-									    <input type="text" class="form-control" th:value="${teacherNickname}" readonly>
-									</div>
-								</div>
-								<!-- 会員種類（학생, 강사, 센터관리자, 본사관리자） -->
-								<div class="mb-3">
-									<label class="form-label">会員種類：</label>
-									<select class="form-select" name="role">
-										<option th:value="student" th:selected="${student.role == 'student'}">学生
-										</option>
-										<option th:value="teacher" th:selected="${student.role == 'teacher'}">講師
-										</option>
-										<option th:value="center_admin" th:selected="${student.role == 'center_admin'}">
-											センター管理者</option>
-										<option th:value="hq_admin" th:selected="${student.role == 'hq_admin'}">本社管理者
-										</option>
-									</select>
-								</div>
-
-								<!-- 有効/無効（チェック시 無効化） -->
-								<div class="mb-3 form-check">
+							<form th:action="@{|/admin/student/detail/${student.studentNum}|}" method="post" onsubmit="return checkPassword();">
+							    <!-- ID -->
+							    <div class="mb-3">
+							        <label class="form-label">ID：</label>
+							        <input type="text" class="form-control" name="id" th:value="${student.id}" readonly>
+							    </div>
+							    <!-- パスワード -->
+							    <div class="mb-3">
+							        <label class="form-label">パスワード：</label>
+							        <input type="password" class="form-control" id="password" name="password" placeholder="新しいパスワード(変更時入力)">
+							    </div>
+							    <!-- パスワード確認 -->
+							    <div class="mb-3">
+							        <label class="form-label">パスワード確認：</label>
+							        <input type="password" class="form-control" id="passwordCheck" name="passwordCheck" placeholder="もう一度入力">
+							    </div>
+							    <!-- ニックネーム -->
+							    <div class="mb-3">
+							        <label class="form-label">ニックネーム：</label>
+							        <input type="text" class="form-control" name="nickname" th:value="${student.nickname}">
+							    </div>
+							    <!-- 年齢選択 -->
+							    <div class="mb-3">
+							        <label class="form-label">年齢：</label>
+							        <select class="form-control" name="age">
+							            <option th:each="age : ${ageList}" th:value="${age}" th:text="${age}"
+							                th:selected="${student.age == age}">選択</option>
+							        </select>
+							    </div>
+							    <!-- 所属 -->
+							    <div class="mb-3">
+							        <label class="form-label">所属：</label>
+							        <input type="text" class="form-control" name="company" th:value="${student.company}">
+							    </div>
+							    <!-- 英語レベル -->
+							    <div class="mb-3">
+							        <label class="form-label">英語レベル：</label>
+							        <select class="form-control" name="englishLevel">
+							            <option th:each="level : ${englishLevelList}" th:value="${level}"
+							                th:text="${level}" th:selected="${student.englishLevel == level}">選択</option>
+							        </select>
+							    </div>
+							    <!-- 担当講師 -->
+							    <div class="mb-3">
+							        <label class="form-label">担当講師：</label>
+							        <input type="text" class="form-control" th:value="${teacherNickname}" readonly>
+							    </div>
+							    <!-- 会員種類 -->
+							    <div class="mb-3">
+							        <label class="form-label">会員種類：</label>
+							        <select class="form-control" name="role">
+							            <option th:value="student" th:selected="${student.role == 'student'}">学生</option>
+							            <option th:value="teacher" th:selected="${student.role == 'teacher'}">講師</option>
+							            <option th:value="center_admin" th:selected="${student.role == 'center_admin'}">センター管理者</option>
+							            <option th:value="hq_admin" th:selected="${student.role == 'hq_admin'}">本社管理者</option>
+							        </select>
+							    </div>
+							    <!-- 有効/無効 -->
+							    <div class="mb-3 form-check">
 									<input type="checkbox" class="form-check-input" id="disabled" name="nullity"
 									    th:checked="${student.nullity}" th:value="true"/>
-									<label class="form-check-label" for="disabled">無効化（現在、授業を行っていません。）</label>
-								</div>
-								<div class="d-flex justify-content-between">
-									<button type="submit" class="btn btn-primary">修正</button>
-							</form>
-							<!-- 削除ボタンは別フォームでPOST -->
-							<form th:action="@{|/admin/student/detail/${student.studentNum}/delete|}" method="post">
-								<button type="submit" class="btn btn-danger"
-									onclick="return confirm('本当に削除しますか？');">削除</button>
+							        <label class="form-check-label" for="disabled">無効化（現在、授業を行っていません。）</label>
+							    </div>
+							    <div class="d-flex justify-content-start">
+							        <button type="submit" class="btn btn-primary">修正</button>
+							    </div>
 							</form>
 
 						</div>

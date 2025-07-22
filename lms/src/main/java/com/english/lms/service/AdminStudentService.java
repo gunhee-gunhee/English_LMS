@@ -2,9 +2,11 @@ package com.english.lms.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.english.lms.dto.StudentDTO;
@@ -17,12 +19,14 @@ import com.english.lms.repository.TeacherRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 管理者用：学生詳細サービス
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AdminStudentService {
 
     private final StudentListRepository studentListRepository;
@@ -68,13 +72,6 @@ public class AdminStudentService {
         return studentRepository.findDistinctCompanies();
     }
 
-    /**
-     * 学生を削除
-     */
-    public void deleteStudent(Integer studentNum) {
-        studentRepository.deleteById(studentNum);
-    }
-    
     public StudentDTO getStudent(Integer studentNum) {
         return studentRepository.findById(studentNum)
             .map(entity -> StudentDTO.builder()
@@ -99,20 +96,38 @@ public class AdminStudentService {
     }
 
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public void updateStudent(Integer studentNum, StudentDTO dto) {
         var optional = studentRepository.findById(studentNum);
         if (optional.isPresent()) {
             var entity = optional.get();
-            entity.setPassword(dto.getPassword());
+            log.info("학생수정 시도: studentNum={}, 입력비번={}, 입력확인비번={}", studentNum, dto.getPassword(), dto.getPasswordCheck());
+
+            // 서버단에서도 비밀번호와 확인값을 비교 (둘 다 입력됐을 때만)
+            if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
+                if (!dto.getPassword().equals(dto.getPasswordCheck())) {
+                    log.warn("비밀번호 불일치! 입력비번={}, 입력확인비번={}", dto.getPassword(), dto.getPasswordCheck());
+                    throw new IllegalArgumentException("パスワードが一致しません。");
+                }
+                // 암호화 저장
+                String encoded = passwordEncoder.encode(dto.getPassword());
+                log.info("비밀번호 암호화 후 저장: encoded={}", encoded);
+                entity.setPassword(encoded);
+            } else {
+                log.info("비밀번호 변경 없이 기존 유지");
+            }
             entity.setNickname(dto.getNickname());
             entity.setAge(dto.getAge());
             entity.setEnglishLevel(dto.getEnglishLevel());
             if (dto.getRole() != null) {
-            	entity.setRole(Role.valueOf(dto.getRole().toUpperCase()));
-            entity.setCompany(dto.getCompany());
-            entity.setNullity(dto.getNullity());
-            studentRepository.save(entity);
+                entity.setRole(Role.valueOf(dto.getRole().toUpperCase()));
             }
+            entity.setCompany(dto.getCompany());
+            entity.setNullity(dto.getNullity() != null ? dto.getNullity() : false);
+            studentRepository.save(entity);
+            log.info("학생 정보 저장 완료: {}", entity.getStudentNum());
         }
     }
 

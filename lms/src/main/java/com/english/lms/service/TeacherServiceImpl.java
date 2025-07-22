@@ -24,7 +24,9 @@ import com.english.lms.repository.ZoomAccountRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TeacherServiceImpl implements TeacherService {
@@ -44,11 +46,22 @@ public class TeacherServiceImpl implements TeacherService {
     public TeacherDTO toDTO(TeacherEntity entity, List<TeacherScheduleEntity> schedules) {
         List<TeacherScheduleDTO> scheduleDTOs = mapSchedulesToDTOs(schedules);
 
+        // ZoomId lookup by zoomNum
+        String zoomId = null;
+        if (entity.getZoomNum() != null) {
+            Optional<ZoomAccountEntity> zoomOpt = zoomAccountRepository.findById(entity.getZoomNum());
+            if (zoomOpt.isPresent()) {
+                zoomId = zoomOpt.get().getZoomId();
+            }
+        }
+
         return TeacherDTO.builder()
+                .teacherNum(entity.getTeacherNum())
                 .id(entity.getTeacherId())
                 .nickname(entity.getNickname())
                 .join_date(entity.getJoinDate())
                 .nullity(entity.getNullity())
+                .zoomId(zoomId != null ? zoomId.trim() : null)  
                 .schedules(scheduleDTOs)
                 .build();
     }
@@ -59,14 +72,50 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     @Transactional
     public void updateTeacher(Integer teacherNum, TeacherDTO teacherDTO) {
-        // 既存の講師情報を取得
         TeacherEntity teacher = teacherRepository.findById(teacherNum)
-                .orElseThrow(() -> new RuntimeException("강사가 존재하지 않습니다。"));
+                .orElseThrow(() -> {
+                    log.error("[講師更新] 該当する講師が存在しません (講師番号: {})", teacherNum);
+                    return new RuntimeException("該当する講師が存在しません。");
+                });
+        log.info("[講師更新] 講師情報を更新します (講師番号: {})", teacherNum);
 
-        // パスワードが指定されている場合のみ更新
+        // パスワード
         if (teacherDTO.getPassword() != null && !teacherDTO.getPassword().isEmpty()) {
+            if (!teacherDTO.getPassword().equals(teacherDTO.getPasswordCheck())) {
+                log.warn("[講師更新] パスワードが一致しません (ID: {})", teacher.getTeacherId());
+                throw new IllegalArgumentException("パスワードが一致しません。");
+            }
+            log.info("[講師更新] パスワードを更新します (ID: {})", teacher.getTeacherId());
             teacher.setPassword(passwordEncoder.encode(teacherDTO.getPassword()));
         }
+
+        teacher.setNickname(teacherDTO.getNickname());
+        teacher.setNullity(teacherDTO.getNullity());
+
+        // Zoomアカウント連携
+        if (teacherDTO.getZoomId() != null && !teacherDTO.getZoomId().isEmpty()) {
+            ZoomAccountEntity newZoom = zoomAccountRepository.findByZoomId(teacherDTO.getZoomId())
+                    .orElseThrow(() -> {
+                        log.error("[講師更新] Zoomアカウントが存在しません: {}", teacherDTO.getZoomId());
+                        return new RuntimeException("Zoomアカウントが存在しません。");
+                    });
+            // 기존 Zoom 해제
+            if (teacher.getZoomNum() != null) {
+                zoomAccountRepository.findById(teacher.getZoomNum())
+                        .ifPresent(oldZoom -> {
+                            oldZoom.setLinked(false);
+                            zoomAccountRepository.save(oldZoom);
+                            log.info("[講師更新] 以前のZoomアカウント連携解除: {}", oldZoom.getZoomId());
+                        });
+            }
+            newZoom.setLinked(true);
+            zoomAccountRepository.save(newZoom);
+            teacher.setZoomNum(newZoom.getZoomNum());
+            log.info("[講師更新] 新しいZoomアカウント連携: {}", newZoom.getZoomId());
+        }
+
+        teacherRepository.save(teacher);
+        log.info("[講師更新] 講師情報の保存が完了しました (講師番号: {})", teacherNum);
         teacher.setNickname(teacherDTO.getNickname());
         teacher.setNullity(teacherDTO.getNullity());
         teacherRepository.save(teacher);
