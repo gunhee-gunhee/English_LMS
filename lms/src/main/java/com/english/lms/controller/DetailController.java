@@ -131,13 +131,6 @@ public class DetailController {
         teacherService.updateTeacher(teacherNum, teacherDTO);
         return "redirect:/admin/teacher/detail/" + teacherNum + "?success";
     }
-
-    @PostMapping("/teacher/detail/{teacherNum}/delete")
-    public String deleteTeacher(
-            @PathVariable("teacherNum") Integer teacherNum) {
-        teacherService.deleteTeacher(teacherNum);
-        return "redirect:/admin/teacher-list?deleted";
-    }
     
     @GetMapping("/admin/detail/{adminNum}")
     public String showAdminDetail(@PathVariable("adminNum") Integer adminNum, Model model) {

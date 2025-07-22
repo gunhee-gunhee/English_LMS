@@ -17,9 +17,9 @@ public class StudentMyPageService {
     private final DayClassRepository dayClassRepository;
     private final PointRepository pointRepository;
 
-    // 결석/결석취소
+    // 결석/결석취소 (return값으로 성공/실패 구분)
     @Transactional
-    public void setAbsent(Integer dayClassNum, boolean absent) {
+    public boolean setAbsent(Integer dayClassNum, boolean absent) {
         DayClassEntity entity = dayClassRepository.findById(dayClassNum)
             .orElseThrow(() -> new IllegalArgumentException("授業が存在しません。"));
 
@@ -36,24 +36,34 @@ public class StudentMyPageService {
                             .studentNum(studentNum)
                             .absentDate(classDate)
                             .pointAmount(0)
+                            .type("additional")
                             .build());
 
-            // +1 포인트 적립
             point.setPointAmount(point.getPointAmount() + 1);
             point.setCreatedAt(LocalDate.now());
             point.setExpiresAt(LocalDate.now().plusDays(30));
-            point.setType("additional");   // 추가된 부분
+            point.setType("additional");
 
             pointRepository.save(point);
+            return true;
 
         } else {
-            // 결석취소: absent_date에 해당하는 row에서 -1
-            pointRepository.findByStudentNumAndAbsentDate(studentNum, classDate)
-                .ifPresent(point -> {
-                    point.setPointAmount(point.getPointAmount() - 1);
-                    point.setType("additional");   // 결석취소도 type을 'additional'로 유지
-                    pointRepository.save(point);
-                });
+            // 결석취소: absent_date에 해당하는 row에서 -1, 없으면 이미 사용된 것임
+            var opt = pointRepository.findByStudentNumAndAbsentDate(studentNum, classDate);
+            if (opt.isEmpty()) {
+                return false; // 이미 사용됨
+            }
+            PointEntity point = opt.get();
+            if (point.getPointAmount() <= 0) {
+                return false; // 이미 사용됨
+            }
+            point.setPointAmount(point.getPointAmount() - 1);
+            if (point.getPointAmount() <= 0) {
+                pointRepository.delete(point);
+            } else {
+                pointRepository.save(point);
+            }
+            return true;
         }
     }
 

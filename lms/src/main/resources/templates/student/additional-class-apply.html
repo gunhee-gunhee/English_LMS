@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="utf-8">
+    <title>補講申請</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+    <link th:href="@{/css/custom.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .calendar-box {
+            width: 100%;
+            min-height: 350px;
+            max-height: 480px;
+            background: #f7f7f7;
+            border-radius: 16px;
+            margin-bottom: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2em;
+            color: #bbb;
+        }
+        .flatpickr-calendar.inline {
+            box-shadow: none;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+        }
+        .flatpickr-day.weekend,
+        .flatpickr-day.dayoff {
+            color: #e74a3b !important;
+        }
+        .flatpickr-day.dayoff {
+            background: #fff0f0 !important;
+        }
+        .flatpickr-day.disabled {
+            cursor: not-allowed !important;
+            opacity: 0.6 !important;
+        }
+        .available-time-label {
+            font-size: 1.18em;
+            font-weight: bold;
+            color: #e74a3b;
+            margin-bottom: 12px;
+            margin-top: 10px;
+        }
+        .time-buttons-wrap {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 13px;
+            margin-bottom: 30px;
+            justify-items: start;
+            min-width: 340px;
+            overflow-x: auto;
+        }
+        .time-btn {
+            padding: 13px 0;
+            border-radius: 7px;
+            border: 1px solid #e74a3b;
+            background: #fff0f0;
+            color: #e74a3b;
+            font-size: 1.12em;
+            cursor: pointer;
+            transition: background .2s, color .2s;
+            margin-bottom: 0;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .time-btn.selected, .time-btn:hover {
+            background: #e74a3b;
+            color: #fff;
+        }
+        .apply-btn {
+            display: block;
+            width: 180px;
+            margin: 0 auto;
+            padding: 15px 0;
+            font-size: 1.15em;
+            border-radius: 7px;
+            background: #e74a3b;
+            color: #fff;
+            border: none;
+            box-shadow: 0 2px 8px rgba(231,74,59,0.1);
+            transition: background .2s;
+        }
+        .apply-btn:hover {
+            background: #c82333;
+        }
+        .content-center {
+            width: 100%;
+            max-width: 100%;
+        }
+		.success-message-simple {
+		    display: flex;
+		    align-items: center;
+		    justify-content: center;
+		    margin: 0 0 24px 0;   /* margin 좌우 0, 아래만 간격 */
+		    padding: 18px 26px;
+		    background: #e6faed;
+		    color: #28a745;
+		    font-size: 1.15em;
+		    font-weight: 600;
+		    border-radius: 12px;
+		    width: 100%;     /* 여기!! */
+		    max-width: none; /* 기존 max-width 제거 */
+		    box-shadow: 0 2px 8px rgba(40,167,69,0.06);
+		    position: relative;
+		    top: 0;
+		    z-index: 3;
+		}
+        .success-message-simple i {
+            margin-right: 12px;
+            font-size: 1.4em;
+        }
+    </style>
+</head>
+<body class="bg-gradient-danger" id="page-top">
+
+<div id="wrapper">
+    <div th:replace="~{fragments/sidebar-student :: sidebar-student}"></div>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <div th:replace="~{fragments/topbar-student :: topbar('補講申請')}"></div>
+            <div class="content-center">
+                <div class="card o-hidden border-0 shadow-lg">
+                    <div class="card-body p-0">
+                        <div class="p-5">
+                            <!-- 신청 완료 안내 메시지 (form 위에) -->
+                            <div th:if="${successMessage}" class="success-message-simple">
+                                <i class="fas fa-check-circle"></i>
+                                <span th:text="${successMessage}"></span>
+                            </div>
+                            <!-- フォーム開始 -->
+                            <form id="applyForm" method="post" action="/irregular-class/apply" autocomplete="off">
+                                <div class="form-group">
+                                    <label for="pointSelect">利用するポイント</label>
+                                    <select id="pointSelect" name="pointNum" class="form-control">
+                                        <option value="">選択なし</option>
+                                        <option th:each="option : ${pointOptions}"
+                                                th:value="${option.pointNum}"
+                                                th:text="${option.label}">
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="calendar-box">
+                                    <div id="calendar"></div>
+                                </div>
+                                <input type="hidden" name="selectedDate" id="selectedDate">
+                                <div class="available-time-label">申請可能時間</div>
+                                <div class="time-buttons-wrap">
+                                    <button type="button" class="time-btn">10:00</button>
+                                    <button type="button" class="time-btn">11:30</button>
+                                    <button type="button" class="time-btn">14:00</button>
+                                    <button type="button" class="time-btn">15:30</button>
+                                    <button type="button" class="time-btn">18:00</button>
+                                    <button type="button" class="time-btn">19:30</button>
+                                    <button type="button" class="time-btn">21:00</button>
+                                </div>
+                                <input type="hidden" name="selectedTime" id="selectedTime">
+                                <button type="button" class="apply-btn" id="applyBtn">申請</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="sticky-footer bg-white">
+            <div class="container my-auto">
+                <div class="copyright text-center my-auto">
+                    <span>Copyright &copy; Your Website 2020</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <a class="btn btn-primary" href="login.html">Logout</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
+<script>
+    let dayOffDates = [];
+    const today = new Date();
+    const startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+    const endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+    function ymd(d) {
+        return d.toISOString().slice(0,10);
+    }
+
+    fetch(`/api/dayoff?start=${ymd(startDate)}&end=${ymd(endDate)}`)
+        .then(r => r.json())
+        .then(dayoffList => {
+            dayOffDates = dayoffList.map(e => e.date);
+            initFlatpickr();
+        });
+
+    function initFlatpickr() {
+        flatpickr("#calendar", {
+            locale: "ja",
+            dateFormat: "Y-m-d",
+            inline: true,
+            disable: [
+                function(date) {
+                    return (date.getDay() === 0 || date.getDay() === 6 || dayOffDates.includes(ymd(date)));
+                }
+            ],
+            onDayCreate: function(dObj, dStr, fp, dayElem) {
+                const date = dayElem.dateObj;
+                if (date.getDay() === 0 || date.getDay() === 6) {
+                    dayElem.classList.add("weekend");
+                }
+                if (dayOffDates.includes(ymd(date))) {
+                    dayElem.classList.add("dayoff");
+                    dayElem.title = "공휴일";
+                }
+            },
+            onChange: function(selectedDates, dateStr) {
+                document.getElementById('selectedDate').value = dateStr;
+            }
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll('.time-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('selected'));
+                this.classList.add('selected');
+                document.getElementById('selectedTime').value = this.innerText;
+            });
+        });
+
+        // 신청 버튼 클릭
+        document.getElementById("applyBtn").addEventListener('click', function() {
+            if (!document.getElementById('pointSelect').value) {
+                alert("ポイントを選択してください。");
+                return;
+            }
+            if (!document.getElementById('selectedDate').value) {
+                alert("日付を選択してください。");
+                return;
+            }
+            if (!document.getElementById('selectedTime').value) {
+                alert("時間を選択してください。");
+                return;
+            }
+            // 신청하시겠습니까? 안내창 추가
+            if (!confirm("申請しますか？")) {
+                return;
+            }
+            document.getElementById('applyForm').submit();
+        });
+    });
+</script>
+
+<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+<script th:src="@{/js/sb-admin-2.min.js}"></script>
+</body>
+</html>

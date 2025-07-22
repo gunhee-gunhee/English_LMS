@@ -103,16 +103,6 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     // ==========================
-    //      削除処理
-    // ==========================
-    @Override
-    @Transactional
-    public void deleteTeacher(Integer teacherNum) {
-        teacherScheduleRepository.deleteByTeacherNum(teacherNum);
-        teacherRepository.deleteById(teacherNum);
-    }
-
-    // ==========================
     //      ID重複チェック
     // ==========================
     @Override
@@ -160,7 +150,8 @@ public class TeacherServiceImpl implements TeacherService {
             LocalTime endTime = LocalTime.of(schedule.getEndHour(), schedule.getEndMinute());
             for (String weekday : schedule.getWeekdays()) {
                 LocalTime time = startTime;
-                while (!time.isAfter(endTime)) {
+                while (time.isBefore(endTime)) {
+         
                     TeacherScheduleEntity scheduleEntity = TeacherScheduleEntity.builder()
                             .teacherNum(teacherNum)
                             .weekDay(weekday)

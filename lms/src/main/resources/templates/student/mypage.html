@@ -14,78 +14,27 @@
     <meta name="_csrf" th:content="${_csrf.token}" />
     <meta name="_csrf_header" th:content="${_csrf.headerName}" />
     <style>
-        .month-nav {
-            display: flex; align-items: center; justify-content: center; margin: 34px 0 24px 0;
-        }
-        .month-nav button {
-            border: none;
-            background: transparent;
-            font-size: 1.6em;
-            color: #222 !important;
-            margin: 0 16px;
-            cursor: pointer;
-        }
-        .month-title {
-            font-size: 1.5em;
-            font-weight: bold;
-            letter-spacing: 2px;
-            color: #222 !important;
-        }
-        .table-calendar {
-            width: 100%;
-            background: #fff;
-            border-radius: 14px;
-            box-shadow: 0 2px 12px rgba(231,74,59,0.07);
-            margin: 0 auto;
-        }
-        .table-calendar th, .table-calendar td {
-            text-align: center;
-            padding: 12px 6px;
-            vertical-align: middle;
-        }
-        .table-calendar th {
-            background: #e4e4e4 !important;
-            color: #222 !important;
-            font-size: 1.04em;
-            font-weight: 700;
-        }
-        .table-calendar td {
-            font-size: 1em;
-        }
+        .month-nav { display: flex; align-items: center; justify-content: center; margin: 34px 0 24px 0; }
+        .month-nav button { border: none; background: transparent; font-size: 1.6em; color: #222 !important; margin: 0 16px; cursor: pointer; }
+        .month-title { font-size: 1.5em; font-weight: bold; letter-spacing: 2px; color: #222 !important; }
+        .table-calendar { width: 100%; background: #fff; border-radius: 14px; box-shadow: 0 2px 12px rgba(231,74,59,0.07); margin: 0 auto; }
+        .table-calendar th, .table-calendar td { text-align: center; padding: 12px 6px; vertical-align: middle; }
+        .table-calendar th { background: #e4e4e4 !important; color: #222 !important; font-size: 1.04em; font-weight: 700; }
+        .table-calendar td { font-size: 1em; }
         .day-holiday { color: #e74a3b; font-weight: bold; }
         .day-sunday { color: #e74a3b; font-weight: bold; }
         .day-saturday { color: #3b61e7; font-weight: bold; }
         .day-normal { color: #333; }
         .row-category { background: #f7f7f7 !important; color: #111 !important; }
         .btn-small { font-size: .93em; padding: 5px 12px; border-radius: 8px; }
-        .btn-comment {
-            background: #fff7ad;
-            color: #222 !important;
-            border: none;
-            font-weight: bold;
-        }
+        .btn-comment { background: #fff7ad; color: #222 !important; border: none; font-weight: bold; }
         .btn-comment:hover { background: #fffac2; }
-        .btn-text {
-            background: #ffd6ad;
-            color: #222 !important;
-            border: none;
-            font-weight: bold;
-        }
+        .btn-text { background: #ffd6ad; color: #222 !important; border: none; font-weight: bold; }
         .btn-text:hover { background: #ffe2c7; }
-        .btn-join {
-            background: #adf0ff;
-            color: #222 !important;
-            border: none;
-            font-weight: bold;
-        }
+        .btn-join { background: #adf0ff; color: #222 !important; border: none; font-weight: bold; }
         .btn-join:hover { background: #caf7ff; }
         .btn-attend { background: #eef7e7; color: #189c31; border: none; font-weight: bold; }
-        .btn-absent, .btn-absent-cancel {
-            background: #ffeaea;
-            color: #e74a3b;
-            border: none;
-            font-weight: bold;
-        }
+        .btn-absent, .btn-absent-cancel { background: #ffeaea; color: #e74a3b; border: none; font-weight: bold; }
         .btn-absent:hover, .btn-absent-cancel:hover { background: #ffd3d3; }
         .no-lesson { color: #bbb; font-size: .95em; }
         .custom-modal-header-comment { background: #fff7ad; color: #a08700; }
@@ -93,24 +42,8 @@
         .custom-modal-header-join { background: #adf0ff; color: #1987a3; }
         .custom-modal-header-absent { background: #ffeaea; color: #e74a3b; }
         .custom-modal-title { font-weight: 600; font-size: 1.2em; letter-spacing: 1px; }
-        .custom-modal-date {
-            color: #fff;
-            background: #888;
-            border-radius: 7px;
-            padding: 4px 12px;
-            font-size: 1.05em;
-            margin-bottom: 16px;
-            display: inline-block;
-            letter-spacing: 1px;
-        }
-        .custom-modal-comment, .custom-modal-progress {
-            color: #333;
-            font-size: 1.1em;
-            background: #f7f2ee;
-            border-radius: 8px;
-            padding: 18px 18px 14px 18px;
-            text-align: center;
-        }
+        .custom-modal-date { color: #fff; background: #888; border-radius: 7px; padding: 4px 12px; font-size: 1.05em; margin-bottom: 16px; display: inline-block; letter-spacing: 1px; }
+        .custom-modal-comment, .custom-modal-progress { color: #333; font-size: 1.1em; background: #f7f2ee; border-radius: 8px; padding: 18px 18px 14px 18px; text-align: center; }
         .custom-modal-icon { font-size: 2em; margin-bottom: 7px; display: inline-block; }
         .custom-modal-icon-comment { color: #ffe066; }
         .custom-modal-icon-text { color: #ffae64; }
@@ -121,18 +54,15 @@
     </style>
 </head>
 <body class="bg-gradient-danger" id="page-top">
-
 <div id="wrapper">
     <!-- Sidebar -->
     <div th:replace="~{fragments/sidebar-student :: sidebar-student}"></div>
     <!-- End Sidebar -->
-
     <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">
             <!-- Topbar -->
             <div th:replace="~{fragments/topbar-student :: topbar('マイページ')}"></div>
             <!-- End Topbar -->
-
             <div class="container-fluid">
                 <div class="month-nav">
                     <button type="button" class="month-btn" th:attr="data-month=${prevMonth}">
@@ -187,7 +117,7 @@
                                 <span th:if="${row.lesson != null}" th:text="${row.lesson.classType}">クラス種別</span>
                                 <span th:if="${row.lesson == null}" class="no-lesson">-</span>
                             </td>
-                            <!-- コメント ボタン (결석 상태면 안보임) -->
+                            <!-- コメント -->
                             <td>
                                 <button th:if="${row.lesson != null and row.lesson.absent != '1'}"
                                         th:text="'コメント'"
@@ -196,7 +126,7 @@
                                         style="margin:2px"></button>
                                 <span th:if="${row.lesson == null or row.lesson.absent == '1'}" class="no-lesson">-</span>
                             </td>
-                            <!-- テキスト ボタン (결석 상태면 안보임) -->
+                            <!-- テキスト -->
                             <td>
                                 <button th:if="${row.lesson != null and row.lesson.absent != '1'}"
                                         th:text="'テキスト'"
@@ -205,9 +135,8 @@
                                         style="margin:2px"></button>
                                 <span th:if="${row.lesson == null or row.lesson.absent == '1'}" class="no-lesson">-</span>
                             </td>
-                            <!-- 参加ボタン（결석 상태면 안보임) -->
+                            <!-- 参加 -->
                             <td>
-                                <!-- 여기만 조건을 row.lesson.classDate로 변경! -->
                                 <span th:if="${row.lesson != null and row.lesson.absent != '1' and row.lesson.classDate != null and row.lesson.classDate.equals(today)}">
                                     <a th:if="${row.lesson.zoomLink != null and !#strings.isEmpty(row.lesson.zoomLink)}"
                                        href="javascript:void(0);"
@@ -223,12 +152,10 @@
                                           class="no-lesson">リンク無し</span>
                                 </span>
                             </td>
-                            <!-- 出席/欠席/欠席取消 ボタン (결석취소도 빨간색!) -->
+                            <!-- 出席/欠席/欠席取消 -->
                             <td>
                                 <span th:if="${row.lesson != null}">
-                                    <!-- attendance == true -->
                                     <span th:if="${row.lesson.attendance == true}" class="btn btn-small btn-attend" style="pointer-events: none;">出席完了</span>
-                                    <!-- attendance == false, absent == null or absent == '0' -->
                                     <button th:if="${row.lesson.attendance == false and (row.lesson.absent == null or row.lesson.absent == '0')}"
                                             th:attr="data-dayclassnum=${row.lesson.dayClassNum},
                                                      data-date=${row.date != null ? #temporals.format(row.date, 'yyyy/MM/dd') : #temporals.format(row.lesson.classDate, 'yyyy/MM/dd')},
@@ -237,7 +164,6 @@
                                             class="btn btn-small btn-absent btn-absent-modal"
                                             type="button"
                                             style="margin:2px;">欠席</button>
-                                    <!-- attendance == false, absent == '1' (결석취소도 빨간색 btn-absent 적용) -->
                                     <button th:if="${row.lesson.attendance == false and row.lesson.absent == '1'}"
                                             th:attr="data-dayclassnum=${row.lesson.dayClassNum},
                                                      data-date=${row.date != null ? #temporals.format(row.date, 'yyyy/MM/dd') : #temporals.format(row.lesson.classDate, 'yyyy/MM/dd')},
@@ -256,8 +182,6 @@
                 <div style="height: 32px;"></div>
             </div>
         </div>
-
-        <!-- Footer -->
         <footer class="sticky-footer bg-white">
             <div class="container my-auto">
                 <div class="copyright text-center my-auto">
@@ -268,7 +192,7 @@
     </div>
 </div>
 
-<!-- コメント モーダル -->
+<!-- 댓글/텍스트/참가/결석(취소) 모달 생략없이 포함 -->
 <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
@@ -286,7 +210,6 @@
     </div>
   </div>
 </div>
-<!-- テキスト(進度) モーダル -->
 <div class="modal fade" id="textModal" tabindex="-1" role="dialog" aria-labelledby="textModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
@@ -304,7 +227,6 @@
     </div>
   </div>
 </div>
-<!-- 参加 モーダル -->
 <div class="modal fade" id="joinModal" tabindex="-1" role="dialog" aria-labelledby="joinModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
@@ -323,7 +245,6 @@
     </div>
   </div>
 </div>
-<!-- 欠席/欠席取消 モーダル -->
 <div class="modal fade" id="absentModal" tabindex="-1" role="dialog" aria-labelledby="absentModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
@@ -356,7 +277,6 @@
                 if (month) location.href = '?month=' + month;
             });
         });
-        // コメント モーダル
         document.querySelectorAll('.btn-comment').forEach(function(btn) {
             btn.addEventListener('click', function() {
                 var comment = btn.getAttribute('data-comment');
@@ -373,7 +293,6 @@
                 $('#commentModal').modal('show');
             });
         });
-        // テキスト(進度) モーダル
         document.querySelectorAll('.btn-text').forEach(function(btn) {
             btn.addEventListener('click', function() {
                 var progress = btn.getAttribute('data-progress');
@@ -390,7 +309,7 @@
                 $('#textModal').modal('show');
             });
         });
-        // 参加 モーダル + 출석처리(POST)
+        // 참가/출석처리
         const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
         const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
         document.querySelectorAll('.btn-join-modal').forEach(function(btn) {
@@ -408,12 +327,9 @@
                 document.getElementById('joinModalBody').innerHTML = html;
                 var joinLink = document.getElementById('joinModalLink');
                 joinLink.setAttribute('href', zoomlink);
-
-                // 기존 onclick 제거
                 joinLink.onclick = null;
                 joinLink.onclick = function(e) {
                     e.preventDefault();
-                    // 출석 처리 API 호출
                     fetch('/student/mypage/attend', {
                         method: 'POST',
                         headers: {
@@ -433,14 +349,12 @@
                       });
                     return false;
                 };
-
                 $('#joinModal').modal('show');
             });
         });
 
-        // 欠席/欠席取消 モーダル
+        // 결석/결석취소 모달
         let absentTarget = { dayClassNum: null, type: null, date: '', time: '', teacher: '' };
-
         document.querySelectorAll('.btn-absent-modal').forEach(function(btn) {
             btn.addEventListener('click', function() {
                 absentTarget.dayClassNum = btn.getAttribute('data-dayclassnum');
@@ -497,6 +411,11 @@
               .then(result => {
                   if (result === 'OK') {
                       location.reload();
+                  } else if (result === 'ALREADY_USED') {
+                      $('#absentModal').modal('hide');
+                      setTimeout(function(){
+                          alert('該当日の補講ポイントは既に使用されました。');
+                      }, 400);
                   } else {
                       alert('処理に失敗しました.');
                   }
@@ -504,7 +423,6 @@
         };
     });
 </script>
-<!-- fontawesome アイコン CDN -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
 </body>
 </html>

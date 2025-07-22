@@ -144,13 +144,6 @@
                             </button>
                             <button type="submit" class="btn btn-primary btn-block">修正を保存</button>
                         </form>
-
-                        <!-- 講師削除ボタン（別フォーム） -->
-                        <form th:action="@{|/admin/teacher/detail/${teacherNum}/delete|}" method="post" style="display:inline;">
-                            <button type="submit" class="btn btn-danger mt-3"
-                                    onclick="return confirm('本当に削除しますか？');">削除</button>
-                        </form>
-                        <a href="/admin/teacher-list" class="btn btn-secondary mt-3 ml-2">リストへ戻る</a>
                     </div>
                 </div>
             </div>

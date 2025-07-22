@@ -156,8 +156,12 @@ public class StudentMyPageController {
     @PostMapping("/student/mypage/absent-cancel")
     @ResponseBody
     public String cancelAbsent(@RequestParam("dayClassNum") Integer dayClassNum) {
-        studentMyPageService.setAbsent(dayClassNum, false);
-        return "OK";
+        boolean result = studentMyPageService.setAbsent(dayClassNum, false);
+        if (result) {
+            return "OK";
+        } else {
+            return "ALREADY_USED";
+        }
     }
 
     // 출석처리 API (참가버튼용)

@@ -18,7 +18,6 @@ public interface TeacherService {
 	
     TeacherDTO toDTO(TeacherEntity entity, List<TeacherScheduleEntity> schedules);
     void updateTeacher(Integer teacherNum, TeacherDTO teacherDTO);
-    void deleteTeacher(Integer teacherNum);
     
     // 教師照会ページで使用される処理メソッド
 	Page<TeacherDTO> getTeacherPage(Pageable pageable);
