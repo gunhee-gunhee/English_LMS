@@ -7,7 +7,7 @@ $(document).ready(function () {
 	    $('#dataTable').DataTable().destroy();
 	}
 
-    let table = $('#dataTable').DataTable({
+    let table = $('.datatable').DataTable({
         paging: false,                       // ページネーションを有効にする
         searching: false,                    // テーブル内の検索機能を有効にする
         lengthChange: true,                // 表示件数の選択メニューを非表示にする
