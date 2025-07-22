@@ -199,7 +199,8 @@ public class TeacherServiceImpl implements TeacherService {
             LocalTime endTime = LocalTime.of(schedule.getEndHour(), schedule.getEndMinute());
             for (String weekday : schedule.getWeekdays()) {
                 LocalTime time = startTime;
-                while (!time.isAfter(endTime)) {
+                while (time.isBefore(endTime)) {
+         
                     TeacherScheduleEntity scheduleEntity = TeacherScheduleEntity.builder()
                             .teacherNum(teacherNum)
                             .weekDay(weekday)

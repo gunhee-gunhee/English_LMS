@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="utf-8">
+    <title>不定期授業申請</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- SB Admin 2 CSS/JS 리소스 -->
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+    <link th:href="@{/css/custom.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .calendar-box {
+            width: 100%;
+            min-height: 350px;
+            max-height: 480px;
+            background: #f7f7f7;
+            border-radius: 16px;
+            margin-bottom: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2em;
+            color: #bbb;
+        }
+        .flatpickr-calendar.inline {
+            box-shadow: none;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+        }
+        .available-time-label {
+            font-size: 1.18em;
+            font-weight: bold;
+            color: #e74a3b;
+            margin-bottom: 12px;
+            margin-top: 10px;
+        }
+        .time-buttons-wrap {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 13px;
+            margin-bottom: 30px;
+            justify-items: start;
+            min-width: 340px;
+            overflow-x: auto;
+        }
+        .time-btn {
+            padding: 13px 0;
+            border-radius: 7px;
+            border: 1px solid #e74a3b;
+            background: #fff0f0;
+            color: #e74a3b;
+            font-size: 1.12em;
+            cursor: pointer;
+            transition: background .2s, color .2s;
+            margin-bottom: 0;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .time-btn.selected, .time-btn:hover {
+            background: #e74a3b;
+            color: #fff;
+        }
+        .apply-btn {
+            display: block;
+            width: 180px;
+            margin: 0 auto;
+            padding: 15px 0;
+            font-size: 1.15em;
+            border-radius: 7px;
+            background: #e74a3b;
+            color: #fff;
+            border: none;
+            box-shadow: 0 2px 8px rgba(231,74,59,0.1);
+            transition: background .2s;
+        }
+        .apply-btn:hover {
+            background: #c82333;
+        }
+        /* 중앙정렬용 */
+		.content-center {
+		    width: 100%;
+		    max-width: 100%;
+		}
+        /* 안내 div 스타일 */
+        .notice-free-class {
+            margin: 20px auto 0;
+            max-width: 700px;
+            font-size: 1.3em;
+            color: #e74a3b;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="bg-gradient-danger" id="page-top">
+
+<!-- Page Wrapper -->
+<div id="wrapper">
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebar-student :: sidebar-student}"></div>
+    <!-- End Sidebar -->
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <!-- Main Content -->
+        <div id="content">
+
+            <!-- Topbar -->
+			<div th:replace="~{fragments/topbar-student :: topbar('不定期授業申請')}"></div>
+            <!-- End Topbar -->
+
+            <!-- Begin Page Content (한 개의 div만) -->
+            <div class="content-center">
+                <div class="card o-hidden border-0 shadow-lg">
+                    <div class="card-body p-0">
+                        <div class="p-5">
+							<!-- ★★★ 안내 문구 영역 추가 (수정된 부분) ★★★ -->
+							<span th:if="${applyTitle != null}" class="available-time-label" th:text="${applyTitle}"></span>
+							<!-- ★★★ 여기까지 ★★★ -->
+
+                            <!-- フォーム開始 -->
+                            <form id="applyForm" method="post" action="/irregular-class/apply" autocomplete="off">
+                                <!-- カレンダー -->
+                                <div class="calendar-box">
+                                    <div id="calendar"></div>
+                                </div>
+                                <input type="hidden" name="selectedDate" id="selectedDate">
+                                <!-- 申請可能時間 -->
+                                <div class="available-time-label">申請可能時間</div>
+                                <div class="time-buttons-wrap">
+                                    <button type="button" class="time-btn">10:00</button>
+                                    <button type="button" class="time-btn">11:30</button>
+                                    <button type="button" class="time-btn">14:00</button>
+                                    <button type="button" class="time-btn">15:30</button>
+                                    <button type="button" class="time-btn">18:00</button>
+                                    <button type="button" class="time-btn">19:30</button>
+                                    <button type="button" class="time-btn">21:00</button>
+                                </div>
+                                <input type="hidden" name="selectedTime" id="selectedTime">
+                                <button type="button" class="apply-btn" id="applyBtn">申請</button>
+                            </form>
+                            <!-- フォーム終了 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End Page Content -->
+
+        </div>
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+        <footer class="sticky-footer bg-white">
+            <div class="container my-auto">
+                <div class="copyright text-center my-auto">
+                    <span>Copyright &copy; Your Website 2020</span>
+                </div>
+            </div>
+        </footer>
+        <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+</div>
+<!-- End of Page Wrapper -->
+
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<!-- Logout Modal-->
+<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <a class="btn btn-primary" href="login.html">Logout</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Flatpickr JS CDN -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
+<script th:src="@{/js/calendar.js}"></script>
+
+<!-- SB Admin 2 및 공통 JS -->
+<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+<script th:src="@{/js/sb-admin-2.min.js}"></script>
+</body>
+</html>
