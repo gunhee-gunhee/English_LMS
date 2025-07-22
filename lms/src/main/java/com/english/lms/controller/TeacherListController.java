@@ -31,11 +31,6 @@ import lombok.RequiredArgsConstructor;
 			// dir に渡された値が大文字・小文字を区別せず "desc" と一致すれば true！
 			Sort.Direction direction = dir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
 			
-			// Pageable：ページングの条件（ページ数・件数・並び順など）をまとめて扱うインターフェース
-			// PageRequest = Pageable の実装
-			Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sort));
-			
-			
 			Page<TeacherDTO> teacherPage = teacherService.getTeacherPage(PageRequest.of(page, size, Sort.by("nickname").ascending()));
 			
 			System.out.println("teacherPage : " + teacherPage);

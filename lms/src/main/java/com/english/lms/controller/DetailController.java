@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Controller;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.english.lms.dto.AdminDTO;
 import com.english.lms.dto.StudentDTO;
@@ -76,61 +78,72 @@ public class DetailController {
     public String updateStudent(
         @PathVariable("studentNum") Integer studentNum,
         @ModelAttribute("student") StudentDTO dto,
+        RedirectAttributes redirectAttributes,
         Model model) {
-        adminStudentService.updateStudent(studentNum, dto);
+        try {
+            adminStudentService.updateStudent(studentNum, dto);
+            redirectAttributes.addFlashAttribute("studentSuccess", "学生情報が正常に修正されました。");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("studentError", e.getMessage());
+            return "redirect:/admin/student/detail/" + studentNum;
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("studentError", "予期しないエラーが発生しました。");
+            return "redirect:/admin/student/detail/" + studentNum;
+        }
         return "redirect:/admin/student/detail/" + studentNum;
     }
 
-    /**
-     * 学生を削除するPOST
-     */
-    @PostMapping("/student/detail/{studentNum}/delete")
-    public String deleteStudent(
-            @PathVariable("studentNum") Integer studentNum,
-            @ModelAttribute("student") StudentDTO dto,
-            Model model) {
-        adminStudentService.deleteStudent(studentNum);
-        return "redirect:/admin/student-list?deleted";
-    }
     
 
     @GetMapping("/teacher/detail/{teacherNum}")
     public String showTeacherDetail(@PathVariable("teacherNum") Integer teacherNum, Model model) {
-        log.info("강사 상세페이지: {}", teacherNum);
-        
+        log.info("講師詳細オン: {}", teacherNum);
 
         TeacherEntity teacher = teacherRepository.findByTeacher(teacherNum)
                 .orElseThrow(() -> new RuntimeException("講師無し."));
-
 
         List<TeacherScheduleEntity> schedules = teacherScheduleRepository.findAll()
                 .stream().filter(s -> s.getTeacherNum().equals(teacherNum))
                 .collect(Collectors.toList());
 
-
         TeacherDTO teacherDTO = teacherService.toDTO(teacher, schedules);
-        
         if (teacherDTO.getSchedules() == null) {
             teacherDTO.setSchedules(new ArrayList<>());
         }
+        List<String> zoomIdList = zoomAccountService.getAllZoomIds();
 
+        if (teacherDTO.getZoomId() != null) {
+            zoomIdList.remove(teacherDTO.getZoomId()); 
+            zoomIdList.add(0, teacherDTO.getZoomId()); 
+        }
+        
+        log.info("teacherDTO.zoomId = {}", teacherDTO.getZoomId());
+        System.out.println("teacherDTO.zoomId = [" + teacherDTO.getZoomId() + "]");
 
         model.addAttribute("teacherDTO", teacherDTO);
         model.addAttribute("teacherNum", teacherNum);
-		List<String> zoomIdList = zoomAccountService.getAllZoomIds();
-		model.addAttribute("zoomIdList", zoomIdList);
+        model.addAttribute("zoomIdList", zoomIdList);
 
         return "admin/teacher-detail";
     }
     
     @PostMapping("/teacher/detail/{teacherNum}")
     public String updateTeacher(
-            @PathVariable("teacherNum") Integer teacherNum,
-            @ModelAttribute("teacherDTO") TeacherDTO teacherDTO,
-            Model model) {
-        teacherService.updateTeacher(teacherNum, teacherDTO);
-        return "redirect:/admin/teacher/detail/" + teacherNum + "?success";
-    }
+    		@PathVariable("teacherNum") Integer teacherNum,
+    	    @ModelAttribute("teacherDTO") TeacherDTO teacherDTO,
+    	    RedirectAttributes redirectAttributes
+    	) {
+    	    try {
+    	        teacherService.updateTeacher(teacherNum, teacherDTO);
+    	        redirectAttributes.addFlashAttribute("teacherSuccess", "講師情報の修正が完了しました。");
+    	    } catch (IllegalArgumentException e) {
+    	        redirectAttributes.addFlashAttribute("teacherError", e.getMessage()); 
+    	    } catch (Exception e) {
+    	        log.error("[講師更新] 予期しないエラー: {}", e.getMessage());
+    	        redirectAttributes.addFlashAttribute("teacherError", "処理中にエラーが発生しました。");
+    	    }
+    	    return "redirect:/admin/teacher/detail/" + teacherNum;
+    	}
     
     @GetMapping("/admin/detail/{adminNum}")
     public String showAdminDetail(@PathVariable("adminNum") Integer adminNum, Model model) {
