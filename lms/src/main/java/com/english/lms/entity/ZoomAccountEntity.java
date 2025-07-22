@@ -16,23 +16,22 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class ZoomAccountEntity {
-	
-	//zoomAccount番号
-		@Id
-		@GeneratedValue(strategy = GenerationType.IDENTITY)
-		@Column(name = "zoom_num")
-		private Integer zoomNum;
-		
-		//zoomAccountID
-		@Column(name="zoom_id", nullable = false, length = 40)
-		private String zoomId;
 
-		//アカウントの状態
-		@Column(name = "status", nullable = true, length = 10)
-		private String status;
-		
-		//講師との連結
-		@Column(name = "linked", nullable = false)
-		private Boolean linked;
-;
+    // zoomAccount番号
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "zoom_num")
+    private Integer zoomNum;
+
+    // zoomAccountID
+    @Column(name = "zoom_id", nullable = false, length = 40)
+    private String zoomId;
+
+    // アカウントの状態
+    @Column(name = "status", nullable = true, length = 10)
+    private String status;
+
+    // 講師との連結
+    @Column(name = "linked", nullable = false)
+    private Boolean linked;
 }

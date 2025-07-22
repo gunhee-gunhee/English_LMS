@@ -76,23 +76,23 @@
                 <div style="overflow-x:auto;">
                     <table class="table table-calendar">
                         <thead>
-                            <tr>
-                                <th>日付</th>
-                                <th>時間</th>
-                                <th>講師</th>
-                                <th>クラス種別</th>
-                                <th>コメント</th>
-                                <th>テキスト</th>
-                                <th>参加</th>
-                                <th>出席関連</th>
-                            </tr>
+                        <tr>
+                            <th>日付</th>
+                            <th>時間</th>
+                            <th>講師</th>
+                            <th>クラス種別</th>
+                            <th>コメント</th>
+                            <th>テキスト</th>
+                            <th>参加</th>
+                            <th>出席関連</th>
+                        </tr>
                         </thead>
                         <tbody>
                         <tr th:each="row : ${rowList}"
                             th:classappend="|${row.lesson != null 
                                 and (
-                                    row.lesson.attendance == true 
-                                    or (row.lesson.attendance == false and (row.lesson.absent != null and row.lesson.absent != '0'))
+                                    row.lesson.attendance == 1
+                                    or (row.lesson.attendance != 1 and row.lesson.absent != null and row.lesson.absent != 0)
                                     or (row.lesson.zoomLink != null and !#strings.isEmpty(row.lesson.zoomLink))
                                 ) 
                                 ? 'row-category' : ''}|">
@@ -113,31 +113,34 @@
                                 <span th:if="${row.lesson != null}" th:text="${row.lesson.teacherNickname}">講師名</span>
                                 <span th:if="${row.lesson == null}" class="no-lesson">-</span>
                             </td>
-                            <td>
-                                <span th:if="${row.lesson != null}" th:text="${row.lesson.classType}">クラス種別</span>
-                                <span th:if="${row.lesson == null}" class="no-lesson">-</span>
-                            </td>
+							<td>
+							    <span th:if="${row.lesson != null}"
+							          th:text="${row.lesson.classType == 'regular' ? '定期' : (row.lesson.classType == 'free' ? '無料' : (row.lesson.classType == 'additional' ? '補講' : row.lesson.classType))}">
+							        クラス種別
+							    </span>
+							    <span th:if="${row.lesson == null}" class="no-lesson">-</span>
+							</td>
                             <!-- コメント -->
                             <td>
-                                <button th:if="${row.lesson != null and row.lesson.absent != '1'}"
+                                <button th:if="${row.lesson != null and row.lesson.absent != 1}"
                                         th:text="'コメント'"
                                         th:class="'btn btn-small btn-comment'"
                                         th:attr="data-dayclassnum=${row.lesson.dayClassNum},data-comment=${row.lesson.comment != null ? row.lesson.comment : ''},data-date=${row.date != null ? #temporals.format(row.date, 'yyyy/MM/dd') : #temporals.format(row.lesson.classDate, 'yyyy/MM/dd')}"
                                         style="margin:2px"></button>
-                                <span th:if="${row.lesson == null or row.lesson.absent == '1'}" class="no-lesson">-</span>
+                                <span th:if="${row.lesson == null or row.lesson.absent == 1}" class="no-lesson">-</span>
                             </td>
                             <!-- テキスト -->
                             <td>
-                                <button th:if="${row.lesson != null and row.lesson.absent != '1'}"
+                                <button th:if="${row.lesson != null and row.lesson.absent != 1}"
                                         th:text="'テキスト'"
                                         th:class="'btn btn-small btn-text'"
                                         th:attr="data-dayclassnum=${row.lesson.dayClassNum},data-progress=${row.lesson.progress != null ? row.lesson.progress : ''},data-date=${row.date != null ? #temporals.format(row.date, 'yyyy/MM/dd') : #temporals.format(row.lesson.classDate, 'yyyy/MM/dd')}"
                                         style="margin:2px"></button>
-                                <span th:if="${row.lesson == null or row.lesson.absent == '1'}" class="no-lesson">-</span>
+                                <span th:if="${row.lesson == null or row.lesson.absent == 1}" class="no-lesson">-</span>
                             </td>
                             <!-- 参加 -->
                             <td>
-                                <span th:if="${row.lesson != null and row.lesson.absent != '1' and row.lesson.classDate != null and row.lesson.classDate.equals(today)}">
+                                <span th:if="${row.lesson != null and row.lesson.absent != 1 and row.lesson.classDate != null and row.lesson.classDate.equals(today)}">
                                     <a th:if="${row.lesson.zoomLink != null and !#strings.isEmpty(row.lesson.zoomLink)}"
                                        href="javascript:void(0);"
                                        class="btn btn-small btn-join btn-join-modal"
@@ -155,8 +158,8 @@
                             <!-- 出席/欠席/欠席取消 -->
                             <td>
                                 <span th:if="${row.lesson != null}">
-                                    <span th:if="${row.lesson.attendance == true}" class="btn btn-small btn-attend" style="pointer-events: none;">出席完了</span>
-                                    <button th:if="${row.lesson.attendance == false and (row.lesson.absent == null or row.lesson.absent == '0')}"
+                                    <span th:if="${row.lesson.attendance == 1}" class="btn btn-small btn-attend" style="pointer-events: none;">出席完了</span>
+                                    <button th:if="${row.lesson.attendance != 1 and (row.lesson.absent == null or row.lesson.absent == 0)}"
                                             th:attr="data-dayclassnum=${row.lesson.dayClassNum},
                                                      data-date=${row.date != null ? #temporals.format(row.date, 'yyyy/MM/dd') : #temporals.format(row.lesson.classDate, 'yyyy/MM/dd')},
                                                      data-time=${row.lesson.startTime != null && row.lesson.endTime != null ? #temporals.format(row.lesson.startTime, 'HH:mm') + '～' + #temporals.format(row.lesson.endTime, 'HH:mm') : '-'},
@@ -164,7 +167,7 @@
                                             class="btn btn-small btn-absent btn-absent-modal"
                                             type="button"
                                             style="margin:2px;">欠席</button>
-                                    <button th:if="${row.lesson.attendance == false and row.lesson.absent == '1'}"
+                                    <button th:if="${row.lesson.attendance != 1 and row.lesson.absent == 1}"
                                             th:attr="data-dayclassnum=${row.lesson.dayClassNum},
                                                      data-date=${row.date != null ? #temporals.format(row.date, 'yyyy/MM/dd') : #temporals.format(row.lesson.classDate, 'yyyy/MM/dd')},
                                                      data-time=${row.lesson.startTime != null && row.lesson.endTime != null ? #temporals.format(row.lesson.startTime, 'HH:mm') + '～' + #temporals.format(row.lesson.endTime, 'HH:mm') : '-'},
@@ -192,7 +195,7 @@
     </div>
 </div>
 
-<!-- 댓글/텍스트/참가/결석(취소) 모달 생략없이 포함 -->
+<!-- 댓글/텍스트/참가/결석(취소) 모달 전체 포함 -->
 <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
@@ -264,7 +267,7 @@
   </div>
 </div>
 
-<!-- JS -->
+<!-- JS 전부 포함 -->
 <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
 <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>

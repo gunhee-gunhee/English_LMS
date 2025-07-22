@@ -23,7 +23,8 @@ public class StudentMyPageService {
         DayClassEntity entity = dayClassRepository.findById(dayClassNum)
             .orElseThrow(() -> new IllegalArgumentException("授業が存在しません。"));
 
-        entity.setAbsent(absent ? "1" : "0");
+        // 수정: String -> Integer
+        entity.setAbsent(absent ? 1 : 0);
         dayClassRepository.save(entity);
 
         Integer studentNum = entity.getStudentNum();
@@ -67,12 +68,13 @@ public class StudentMyPageService {
         }
     }
 
-    // 출석 처리 (변경 없음)
+    // 출석 처리 (변경: boolean -> Integer)
     @Transactional
     public void setAttendance(Integer dayClassNum, boolean attendance) {
         DayClassEntity entity = dayClassRepository.findById(dayClassNum)
             .orElseThrow(() -> new IllegalArgumentException("授業が存在しません。"));
-        entity.setAttendance(attendance);
+        // 수정: boolean -> Integer
+        entity.setAttendance(attendance ? 1 : 0);
         dayClassRepository.save(entity);
     }
 }

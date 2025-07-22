@@ -59,10 +59,10 @@ public class DayClassEntity {
     private String zoomMeetingId;
 
     @Column(name = "attendance")
-    private Boolean attendance;
+    private Integer attendance;
 
     @Column(name = "absent")
-    private String absent;
+    private Integer absent;
 
     @Column(name = "comment")
     private String comment;
