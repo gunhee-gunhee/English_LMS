@@ -1,5 +1,7 @@
 package com.english.lms.controller;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -9,10 +11,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.english.lms.dto.ClassDTO;
 import com.english.lms.dto.StudentDTO;
 import com.english.lms.dto.TeacherDTO;
+import com.english.lms.entity.TextEntity;
 import com.english.lms.service.AdminStudentService;
 import com.english.lms.service.TeacherService;
+import com.english.lms.service.TextService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,6 +27,7 @@ public class ClassRegisterController {
 	
 	private final AdminStudentService adminStudentService;
 	private final TeacherService teacherService;
+	private final TextService textService;
 
 	//Page移動
 	@GetMapping("/admin/class/register")
@@ -47,12 +53,16 @@ public class ClassRegisterController {
 		Page<StudentDTO> studentList = adminStudentService.getStudentPageWithTeacher(studentPageable);
 		Page<TeacherDTO> teacherList = teacherService.getTeacherPage(PageRequest.of(0, size, Sort.by("nickname").ascending()));
 		
+		List<TextEntity> texts = textService.findAll();
+		
 		model.addAttribute("studentList", studentList);
 		model.addAttribute("teacherList", teacherList);
 		model.addAttribute("studentSort", studentSort);
 		model.addAttribute("studentDir", studentDir);
 		model.addAttribute("teacherSort", teacherSort);
 		model.addAttribute("teacherDir", teacherDir);
+		model.addAttribute("classDTO", new ClassDTO());
+		model.addAttribute("texts", texts);
 		
 		return "admin/class-register";
 	}

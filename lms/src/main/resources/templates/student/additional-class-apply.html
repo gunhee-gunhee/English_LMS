@@ -95,24 +95,24 @@
             width: 100%;
             max-width: 100%;
         }
-		.success-message-simple {
-		    display: flex;
-		    align-items: center;
-		    justify-content: center;
-		    margin: 0 0 24px 0;   /* margin 좌우 0, 아래만 간격 */
-		    padding: 18px 26px;
-		    background: #e6faed;
-		    color: #28a745;
-		    font-size: 1.15em;
-		    font-weight: 600;
-		    border-radius: 12px;
-		    width: 100%;     /* 여기!! */
-		    max-width: none; /* 기존 max-width 제거 */
-		    box-shadow: 0 2px 8px rgba(40,167,69,0.06);
-		    position: relative;
-		    top: 0;
-		    z-index: 3;
-		}
+        .success-message-simple {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 0 24px 0;
+            padding: 18px 26px;
+            background: #e6faed;
+            color: #28a745;
+            font-size: 1.15em;
+            font-weight: 600;
+            border-radius: 12px;
+            width: 100%;
+            max-width: none;
+            box-shadow: 0 2px 8px rgba(40,167,69,0.06);
+            position: relative;
+            top: 0;
+            z-index: 3;
+        }
         .success-message-simple i {
             margin-right: 12px;
             font-size: 1.4em;
@@ -136,7 +136,10 @@
                                 <span th:text="${successMessage}"></span>
                             </div>
                             <!-- フォーム開始 -->
-                            <form id="applyForm" method="post" action="/irregular-class/apply" autocomplete="off">
+                            <form id="applyForm" method="post" action="/student/additional-class/apply" autocomplete="off">
+                                <!-- CSRF 토큰 추가 (여기서부터 추가) -->
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                <!-- (여기까지 추가) -->
                                 <div class="form-group">
                                     <label for="pointSelect">利用するポイント</label>
                                     <select id="pointSelect" name="pointNum" class="form-control">
@@ -152,15 +155,7 @@
                                 </div>
                                 <input type="hidden" name="selectedDate" id="selectedDate">
                                 <div class="available-time-label">申請可能時間</div>
-                                <div class="time-buttons-wrap">
-                                    <button type="button" class="time-btn">10:00</button>
-                                    <button type="button" class="time-btn">11:30</button>
-                                    <button type="button" class="time-btn">14:00</button>
-                                    <button type="button" class="time-btn">15:30</button>
-                                    <button type="button" class="time-btn">18:00</button>
-                                    <button type="button" class="time-btn">19:30</button>
-                                    <button type="button" class="time-btn">21:00</button>
-                                </div>
+                                <div class="time-buttons-wrap" id="timeButtons"></div>
                                 <input type="hidden" name="selectedTime" id="selectedTime">
                                 <button type="button" class="apply-btn" id="applyBtn">申請</button>
                             </form>
@@ -210,8 +205,12 @@
     const startDate = new Date(today.getFullYear(), today.getMonth(), 1);
     const endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
 
+    // [수정된 부분] 날짜 포맷 직접 구현
     function ymd(d) {
-        return d.toISOString().slice(0,10);
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}`;
     }
 
     fetch(`/api/dayoff?start=${ymd(startDate)}&end=${ymd(endDate)}`)
@@ -220,6 +219,27 @@
             dayOffDates = dayoffList.map(e => e.date);
             initFlatpickr();
         });
+
+    function loadAvailableTimes(date) {
+        fetch(`/api/additional-class-available-times?date=${date}`)
+            .then(r => r.json())
+            .then(list => {
+                const wrap = document.getElementById('timeButtons');
+                wrap.innerHTML = '';
+                list.forEach(item => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'time-btn';
+                    btn.innerText = item.timeLabel;
+                    btn.onclick = function() {
+                        document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('selected'));
+                        btn.classList.add('selected');
+                        document.getElementById('selectedTime').value = item.timeLabel;
+                    }
+                    wrap.appendChild(btn);
+                });
+            });
+    }
 
     function initFlatpickr() {
         flatpickr("#calendar", {
@@ -243,20 +263,12 @@
             },
             onChange: function(selectedDates, dateStr) {
                 document.getElementById('selectedDate').value = dateStr;
+                loadAvailableTimes(dateStr);
             }
         });
     }
 
     document.addEventListener("DOMContentLoaded", function() {
-        document.querySelectorAll('.time-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('selected'));
-                this.classList.add('selected');
-                document.getElementById('selectedTime').value = this.innerText;
-            });
-        });
-
-        // 신청 버튼 클릭
         document.getElementById("applyBtn").addEventListener('click', function() {
             if (!document.getElementById('pointSelect').value) {
                 alert("ポイントを選択してください。");
@@ -270,7 +282,6 @@
                 alert("時間を選択してください。");
                 return;
             }
-            // 신청하시겠습니까? 안내창 추가
             if (!confirm("申請しますか？")) {
                 return;
             }

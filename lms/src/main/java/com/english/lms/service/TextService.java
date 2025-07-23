@@ -27,4 +27,5 @@ public class TextService {
     public void deleteText(Integer textNum) {
         textRepository.deleteById(textNum);
     }
-}
+} 
+    
