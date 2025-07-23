@@ -9,10 +9,13 @@ import com.english.lms.dto.StudentDTO;
 
 //// ここにカスタムメソッドを定義
 public interface StudentRepositoryCustom {
-	
-	//学生紹介リスト
-	Page<StudentDTO> findAllStudentsPageWithTeacher(Pageable pageable);
+
 	
 	//学生の授業登録リスト
 	List<StudentDTO> findActiveStuden(String studentSort, String studentDir);
+
+
+	Page<StudentDTO> searchStudentsPageWithTeacher(String keyword, Pageable pageable);
+    Page<StudentDTO> findAllStudentsPageWithTeacher(Pageable pageable);
+
 }

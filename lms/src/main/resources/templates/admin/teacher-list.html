@@ -2,52 +2,40 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta name="description" content="">
 	<meta name="author" content="">
-
 	<title>Instabiz_講師照会</title>
-
-	<!-- Custom fonts for this template -->
 	<link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
-	<link
-		href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-		rel="stylesheet">
-
-	<!-- Custom styles for this template -->
+	<link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
 	<link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
-
 	<style>
-		/* table sytle */
 		#dataTable th.sorting_disabled::after,
 		#dataTable th.sorting_disabled::before {
 			display: none !important;
 		}
-
 		thead th {
 			background-color: #5077ec;
-			/* SB Admin 2 primary blue */
 			color: white;
 			font-weight: bold;
 			text-align: center;
 		}
-
 		table.dataTable thead th {
 			text-align: center !important;
 		}
-
 		table.dataTable tbody td {
 			text-align: center !important;
 		}
-
-
-		/* 検索関連style */
 		.search-box {
 			width: 33%;
 			min-width: 250px;
+		}
+		#dataTable th, #dataTable td {
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
 		}
 	</style>
 </head>
@@ -73,19 +61,16 @@
 					<div class="card shadow mb-4">
 						<div class="card-body">
 
-							<!--検索-->
-							<div class="input-group search-box mb-4">
-								<input type="text" class="form-control search-input" placeholder="Search for..."
-									aria-label="Search">
+							<!-- 검색 form으로 변경 -->
+							<form method="get" th:action="@{/admin/teacher-list}" class="input-group search-box mb-4">
+								<input type="text" class="form-control search-input" name="q" th:value="${q}" placeholder="Search for..." aria-label="Search">
 								<div class="input-group-append">
-									<button class="btn btn-primary " type="button">
+									<button class="btn btn-primary" type="submit">
 										<i class="fas fa-search"></i>
 									</button>
 								</div>
-							</div>
+							</form>
 
-							<!--検索件数-->
-							<!--StudentListController-->
 							<form id="pageSizeForm" class="mb-4" method="get" th:action="@{/admin/teacher-list}">
 								<input type="hidden" name="sort" th:value="${sort}">
 								<input type="hidden" name="dir" th:value="${dir}">
@@ -108,77 +93,59 @@
 									<thead>
 										<tr>
 											<th><input type="checkbox" id="selectAllCheckbox"></th>
+											<th>番号</th>
 											<th>ニックネーム</th>
 											<th>ID</th>
 											<th>zoomアカウント</th>
 											<th>状態</th>
-											<th>会員種類</th>
 											<th>詳細</th>
 										</tr>
 									</thead>
 
 									<tbody>
-										<tr th:each="teacher : ${teacherPage.content}">
-											<td><input type="checkbox" name="selectedIds" th:value="${teacher.id}"
-													class="ListCheckbox"></td>
+										<tr th:each="teacher, stat : ${teacherPage.content}">
+											<td><input type="checkbox" name="selectedIds" th:value="${teacher.id}" class="ListCheckbox"></td>
+											<td th:text="${currentPage * size + stat.index + 1}">1</td>
 											<td th:text="${teacher.nickname}">ニックネーム</td>
 											<td th:text="${teacher.id}">ID</td>
 											<td th:text="${teacher.zoomId}">zoomアカウント</td>
 											<td th:text="${teacher.nullity ? '無効':'有効'}">状態</td>
-											<td th:text="${teacher.role != null ? '講師' : teacher.role}">会員種類</td>
 											<td><a th:href="@{/admin/teacher/detail/{teacherNum}(teacherNum=${teacher.teacherNum})}">詳細</a></td>
 										</tr>
-
 									</tbody>
 								</table>
 
-								<!-- ページネーション -->
-								<!--StudentListController-->
 								<nav aria-label="Page navigation">
 									<div class="d-flex justify-content-center mt-3">
 										<ul class="pagination">
-
-											<!--前へ-->
 											<li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
 												<a class="page-link"
-													th:href="@{/admin/teacher-list(page=${currentPage -1}, size=${size}, sort=${sort}, dir=${dir})}"
+													th:href="@{/admin/teacher-list(page=${currentPage -1}, size=${size}, sort=${sort}, dir=${dir}, q=${q})}"
 													aria-label="Previous">
 													<span aria-hidden="true">&laquo;</span>
 												</a>
 											</li>
-
-											<!--ページの番号-->
 											<li class="page-item" th:each="i : ${#numbers.sequence(0, teacherPage.totalPages -1)}"
 												th:classappend="${i == currentPage} ? 'active'">
 												<a class="page-link"
-													th:href="@{/admin/teacher-list(page=${i}, size=${size}, sort=${sort}, dir=${dir})}"
+													th:href="@{/admin/teacher-list(page=${i}, size=${size}, sort=${sort}, dir=${dir}, q=${q})}"
 													th:text="${i + 1}">1</a>
 											</li>
-
-											<!--次へ-->
-											<li class="page-item"
-												th:classappend="${currentPage + 1 == totalPages} ? 'disabled'">
+											<li class="page-item" th:classappend="${currentPage + 1 == teacherPage.totalPages} ? 'disabled'">
 												<a class="page-link"
-													th:href="@{/admin/teacher-list(page=${currentPage + 1}, size=${size}, sort=${sort}, dir=${dir})}"
+													th:href="@{/admin/teacher-list(page=${currentPage + 1}, size=${size}, sort=${sort}, dir=${dir}, q=${q})}"
 													aria-label="Next">
 													<span aria-hidden="true">&raquo;</span>
 												</a>
 											</li>
-
 										</ul>
 									</div>
 								</nav>
-
 							</div>
 						</div>
 					</div>
 				</div>
-				<!-- /.container-fluid -->
-
 			</div>
-			<!-- End of Main Content -->
-
-			<!-- Footer -->
 			<footer class="sticky-footer bg-white">
 				<div class="container my-auto">
 					<div class="copyright text-center my-auto">
@@ -186,20 +153,11 @@
 					</div>
 				</div>
 			</footer>
-			<!-- End of Footer -->
-
 		</div>
-		<!-- End of Content Wrapper -->
-
 	</div>
-	<!-- End of Page Wrapper -->
-
-	<!-- Scroll to Top Button-->
 	<a class="scroll-to-top rounded" href="#page-top">
 		<i class="fas fa-angle-up"></i>
 	</a>
-
-	<!-- Logout Modal-->
 	<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
 		aria-hidden="true">
 		<div class="modal-dialog" role="document">
@@ -218,28 +176,13 @@
 			</div>
 		</div>
 	</div>
-
-
-
-	<!-- jQuery -->
 	<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
-
 	<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css" />
 	<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
-
-	<!-- Bootstrap core JavaScript-->
-	<!--<script th:src="@{/vendor/jquery/jquery.min.js}"></script>-->
 	<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
-
-	<!-- Core plugin JavaScript-->
 	<script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
-
-	<!-- Custom scripts for all pages-->
 	<script th:src="@{/js/sb-admin-2.min.js}"></script>
-
-	<!--追加JS-->
 	<script th:src="@{/js/customtables.js}"></script>
 	<script th:src="@{/js/table-check-box.js}"></script>
 </body>
-
 </html>
