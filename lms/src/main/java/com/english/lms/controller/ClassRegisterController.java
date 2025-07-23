@@ -9,6 +9,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.english.lms.dto.ClassDTO;
@@ -48,13 +50,16 @@ public class ClassRegisterController {
 		// dir に渡された値が大文字・小文字を区別せず "desc" と一致すれば true！
 		Sort.Direction studentDirection = studentDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
 		
-		Pageable studentPageable = PageRequest.of(0, size, Sort.by(studentDirection, studentSort));
+//		Pageable studentPageable = PageRequest.of(0, size, Sort.by(studentDirection, studentSort));
 		
-		Page<StudentDTO> studentList = adminStudentService.getStudentPageWithTeacher(studentPageable);
+//		Page<StudentDTO> studentList = adminStudentService.getStudentPageWithTeacher(studentPageable);
+		
+		List<StudentDTO> studentList = adminStudentService.getActiveStudents(studentSort, studentDir);
+		
 		Page<TeacherDTO> teacherList = teacherService.getTeacherPage(PageRequest.of(0, size, Sort.by("nickname").ascending()));
 		
 		List<TextEntity> texts = textService.findAll();
-		
+		System.out.println(texts.get(0).getTextNum());
 		model.addAttribute("studentList", studentList);
 		model.addAttribute("teacherList", teacherList);
 		model.addAttribute("studentSort", studentSort);
@@ -65,6 +70,28 @@ public class ClassRegisterController {
 		model.addAttribute("texts", texts);
 		
 		return "admin/class-register";
+	}
+	
+	
+	/** 
+	 * 定期授業を登録するメソッド
+	 * @param　classDTO
+	 * @return 
+	 * */
+	
+	@PostMapping("/admin/regular/register")
+	public String registerRegularClass(@ModelAttribute("classDTO") ClassDTO classDTO) {
+		
+		System.out.println("studentNum" + classDTO.getStudentNum());
+		System.out.println("weekDays" +classDTO.getWeekDays());
+		System.out.println("startHour" + classDTO.getStartHour());
+		System.out.println("startMinute"+ classDTO.getStartMinute());
+		System.out.println("endHour" + classDTO.getEndHour());
+		System.out.println("endMinute" +classDTO.getEndMinute());
+		System.out.println("textNum" +classDTO.getTextNum());
+		System.out.println("teacherNum" +classDTO.getTeacherNum());
+		
+		return "redirect:/admin/class/register";
 	}
 	
 }

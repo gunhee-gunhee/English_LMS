@@ -1,5 +1,7 @@
 package com.english.lms.service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -142,5 +144,12 @@ public class AdminStudentService {
         
 		return studentListRepository.findAllStudentsPageWithTeacher(pageable);
 		
+	}
+	
+	
+	//授業登録ページで学生リスト関連機能
+	public List<StudentDTO> getActiveStudents(String studentSort, String studentDir) {
+		
+		return studentListRepository.findActiveStuden(studentSort, studentDir);
 	}
 }
