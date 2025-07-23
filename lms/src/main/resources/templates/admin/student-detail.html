@@ -71,6 +71,11 @@
 							        <label class="form-label">ニックネーム：</label>
 							        <input type="text" class="form-control" name="nickname" th:value="${student.nickname}">
 							    </div>
+								<!-- ニックネーム -->
+								<div class="mb-3">
+								    <label class="form-label">フリガナ：</label>
+								    <input type="text" class="form-control" name="nicknameJp" th:value="${student.nicknameJp}">
+								</div>
 							    <!-- 年齢選択 -->
 							    <div class="mb-3">
 							        <label class="form-label">年齢：</label>
@@ -96,16 +101,6 @@
 							    <div class="mb-3">
 							        <label class="form-label">担当講師：</label>
 							        <input type="text" class="form-control" th:value="${teacherNickname}" readonly>
-							    </div>
-							    <!-- 会員種類 -->
-							    <div class="mb-3">
-							        <label class="form-label">会員種類：</label>
-							        <select class="form-control" name="role">
-							            <option th:value="student" th:selected="${student.role == 'student'}">学生</option>
-							            <option th:value="teacher" th:selected="${student.role == 'teacher'}">講師</option>
-							            <option th:value="center_admin" th:selected="${student.role == 'center_admin'}">センター管理者</option>
-							            <option th:value="hq_admin" th:selected="${student.role == 'hq_admin'}">本社管理者</option>
-							        </select>
 							    </div>
 							    <!-- 有効/無効 -->
 							    <div class="mb-3 form-check">
