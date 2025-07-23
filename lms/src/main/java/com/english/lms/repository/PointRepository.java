@@ -22,4 +22,10 @@ public interface PointRepository extends JpaRepository<PointEntity, Integer> {
             Integer pointAmount,
             LocalDate expiresAt
     );
+    
+    List<PointEntity> findByStudentNumAndTypeAndPointAmountGreaterThanEqual(
+            Integer studentNum,
+            String type,
+            Integer pointAmount
+    );
 }

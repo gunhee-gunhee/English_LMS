@@ -266,7 +266,7 @@ public class TeacherServiceImpl implements TeacherService {
 		    Pageableは、現在のページ番号や1ページあたりに表示するデータの件数など、ページングに関する情報を持つオブジェクト
 			TeacherEntityは、データベースの1行（レコード）を表すオブジェクト
 		*/
-		return teacherListRepository.findAllStudentsPage(pageable);
+		return teacherListRepository.findAllTeachersPage(pageable);
 	}
 	
 }
