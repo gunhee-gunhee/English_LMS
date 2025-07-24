@@ -27,6 +27,10 @@ public class ClassDTO {
     private String studentNickname;
     private String studentNicknameJp;
     private Integer studentEnglishLevel;
+    private Integer startHour;
+    private Integer startMinute;
+    private Integer endHour;
+    private Integer endMinute;
 
     private String teacherId;
     private String teacherNickname;
