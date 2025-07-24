@@ -6,10 +6,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Controller
@@ -21,7 +25,14 @@ public class ClassApplyController {
 
 
     @GetMapping("/apply")
-    public String showApplyForm() {
+    public String showApplyForm(Model model) {
+    	List<String> hourList = new ArrayList<>();
+    	for (int h = 0; h < 24; h++) {
+    	    hourList.add(String.format("%02d:00〜%02d:00", h, h+1));
+    	}
+    	
+    	model.addAttribute("hourList", hourList);
+    	
         return "student/class-apply";
     }
 

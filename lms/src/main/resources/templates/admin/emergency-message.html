@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <title>Instabiz_クイックメッセージ選択</title>
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+    <style>
+        .card-body label { font-weight: bold; font-size: 1.09em; margin-right: 14px; }
+        .custom-select-width { min-width: 320px; max-width: 520px; }
+    </style>
+</head>
+
+<body id="page-top">
+    <div id="wrapper">
+        <div th:replace="~{fragments/sidebar-admin :: sidebar-admin}"></div>
+
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <div th:replace="~{fragments/topbar :: topbar('A message of emergency cancellation')}"></div>
+                <div class="container-fluid">
+                    <div class="card shadow mb-4" style="max-width:600px; margin:auto;">
+                        <div class="card-body">
+                            <form>
+                                <div class="form-group">
+                                    <label for="messageSelect">Select message</label>
+                                    <select id="messageSelect" name="word" class="form-control custom-select-width">
+                                        <option value="">Select a message for cancellation</option>
+                                        <option th:each="msg : ${messages}" th:value="${msg.word}" th:text="${msg.word}">The class has been cancelled due to emergency.</option>
+                                    </select>
+                                </div>
+                                <!-- 이후 공지 전송 버튼 등은 추가 개발 시 구현 -->
+								<button type="submit" class="btn btn-primary">sending</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; Your Website 2020</span>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <a class="scroll-to-top rounded" href="#page-top"><i class="fas fa-angle-up"></i></a>
+    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/js/sb-admin-2.min.js}"></script>
+</body>
+</html>

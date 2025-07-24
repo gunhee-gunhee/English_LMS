@@ -19,7 +19,7 @@
     <div th:replace="~{fragments/sidebar-teacher :: sidebar-teacher}"></div>
     <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">
-            <div th:replace="~{fragments/topbar :: topbar('Class Detail')}"></div>
+            <div th:replace="~{fragments/topbar-teacher :: topbar('Class Detail')}"></div>
             <div class="container-fluid">
         <!-- 날짜 + 요일 -->
         <h4 class="mb-4" th:text="${#dates.format(detail.classDate, 'yyyy-MM-dd')} + ' (' + ${detail.weekDay} + ') Days'"></h4>
@@ -72,5 +72,9 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script th:src="@{/js/teacher-mypage-schedule.js}"></script>
+<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+<script th:src="@{/js/sb-admin-2.min.js}"></script>
 </body>
 </html>

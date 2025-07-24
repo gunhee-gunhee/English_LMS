@@ -1,5 +1,7 @@
 package com.english.lms.repository;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -13,6 +15,55 @@ public class StudentListRepositoryImpl implements StudentRepositoryCustom {
     @PersistenceContext
     private EntityManager entityManager;
 
+
+
+	//許可されたソートカラムのみを列挙したホワイトリスト（SQLインジェクション対策）
+	private static final List<String> SORT_COLUMNS = Arrays.asList(
+			"id", "nickname", "age", "english_level"
+			);
+	
+	//学生の授業登録リスト
+	/**
+	 * @param String studentSort
+	 * @param String studentDir
+	 * @return List<StudentDTO>
+	 */
+	@Override
+	public List<StudentDTO> findActiveStuden(String studentSort, String studentDir) {
+		
+		//許可されたカラムかどうかをホワイトリストで確認し、違う場合は id を使用する
+		if (!SORT_COLUMNS.contains(studentSort)) studentSort = "id";
+		
+		String dir = "asc".equalsIgnoreCase(studentDir) ? "ASC" : "DESC";
+		
+		String sql = "SELECT student_num, id, nickname, age, english_level, nullity " +
+					 "FROM lms_student WHERE nullity = 0 " +
+				     "ORDER BY " + studentSort+ " " + dir;
+		
+		// ネイティブSQLを実行し、結果を Object[] の List として受け取る
+		List<Object[]> result = entityManager.createNativeQuery(sql).getResultList();
+		
+		List<StudentDTO> dtoList = result.stream().map(row ->
+			
+			StudentDTO.builder()
+				.studentNum(row[0] != null ? ((Number) row[0]).intValue() : null)
+				.id((String) row[1])
+				.nickname((String) row[2])
+				.age((String) row[3])
+				.englishLevel(row[4] !=null ? ((Number) row[4]).intValue() : null)
+				.nullity(row[5] != null ? Boolean.valueOf(row[5].toString()) : null)
+				.build()
+				).toList();
+				
+		
+		return dtoList;
+	}
+
+	//学生紹介のリスト
+	/**
+	 * @param Pageable pageable
+	 * @return Page<StudentDTO>
+	 * */
     @Override
     public Page<StudentDTO> findAllStudentsPageWithTeacher(Pageable pageable) {
         int limit = pageable.getPageSize();
@@ -51,6 +102,7 @@ public class StudentListRepositoryImpl implements StudentRepositoryCustom {
         return new PageImpl<>(dtoList, pageable, total);
     }
 
+    //学生紹介ページの検索メソッド
     @Override
     public Page<StudentDTO> searchStudentsPageWithTeacher(String keyword, Pageable pageable) {
         int limit = pageable.getPageSize();
@@ -114,4 +166,5 @@ public class StudentListRepositoryImpl implements StudentRepositoryCustom {
 
         return new PageImpl<>(dtoList, pageable, total);
     }
+
 }

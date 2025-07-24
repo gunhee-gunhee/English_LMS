@@ -32,10 +32,11 @@
 
 		thead th {
 			background-color: #5077ec;
-			/* SB Admin 2 primary blue */
+		
 			color: white;
 			font-weight: bold;
 			text-align: center;
+		
 		}
 
 		table.dataTable thead th {
@@ -242,7 +243,7 @@
 															</thead>
 
 															<tbody>
-																<tr th:each="student : ${studentList.content}">
+																<tr th:each="student : ${studentList}">
 																	<td><input type="radio"
 																			th:value="${student.studentNum}"
 																			class="ListCheckbox"
@@ -366,7 +367,7 @@
 															id="text" th:field="*{textNum}" required>
 															<option value="">教材を選択する。</option>
 
-															<option th:each="text: ${texts}" th:value="${textNum}"
+															<option th:each="text: ${texts}" th:value="${text.textNum}"
 																th:text="${text.name}">
 															</option>
 														</select>
@@ -472,7 +473,7 @@
 															</thead>
 
 															<tbody>
-																<tr th:each="student : ${studentList.content}">
+																<tr th:each="student : ${studentList}">
 																	<td><input type="radio" th:field="*{studentNum}"
 																			th:value="${student.studentNum}"
 																			class="ListCheckbox"></td>
@@ -665,7 +666,8 @@
 
 
 	<!--追加JS-->
-	<script th:src="@{/js/customtables.js}"></script>
+	<!--<script th:src="@{/js/customtables.js}"></script>-->
+	<script th:src="@{/js/registertables.js}"></script>
 	<script th:src="@{/js/class-endtime.js}"></script>
 
 	<script>
@@ -686,6 +688,8 @@
 		});
 
 	</script>
+	
+
 </body>
 
 </html>
