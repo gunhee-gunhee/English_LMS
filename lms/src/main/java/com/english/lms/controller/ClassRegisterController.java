@@ -1,5 +1,8 @@
 package com.english.lms.controller;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -20,6 +23,7 @@ import com.english.lms.entity.TextEntity;
 import com.english.lms.service.AdminStudentService;
 import com.english.lms.service.TeacherService;
 import com.english.lms.service.TextService;
+import com.english.lms.service.ZoomMeetingService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,6 +34,7 @@ public class ClassRegisterController {
 	private final AdminStudentService adminStudentService;
 	private final TeacherService teacherService;
 	private final TextService textService;
+	private final ZoomMeetingService zoomMeetingService;
 
 	//Page移動
 	@GetMapping("/admin/class/register")
@@ -82,14 +87,15 @@ public class ClassRegisterController {
 	@PostMapping("/admin/regular/register")
 	public String registerRegularClass(@ModelAttribute("classDTO") ClassDTO classDTO) {
 		
-		System.out.println("studentNum " + classDTO.getStudentNum());
-		System.out.println("weekDays " +classDTO.getWeekDays());
-		System.out.println("startHour " + classDTO.getStartHour());
-		System.out.println("startMinute "+ classDTO.getStartMinute());
-		System.out.println("endHour " + classDTO.getEndHour());
-		System.out.println("endMinute " +classDTO.getEndMinute());
-		System.out.println("textNum " +classDTO.getTextNum());
-		System.out.println("teacherNum " +classDTO.getTeacherNum());
+
+		
+		//ZoomMeetingService
+		zoomMeetingService.makeleClass(classDTO);
+		
+		
+	
+		
+		
 		
 		return "redirect:/admin/class/register";
 	}
