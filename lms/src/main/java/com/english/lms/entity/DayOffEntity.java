@@ -28,4 +28,5 @@ public class DayOffEntity {
 
     @Column(name = "name")
     private String name;
+    
 }
