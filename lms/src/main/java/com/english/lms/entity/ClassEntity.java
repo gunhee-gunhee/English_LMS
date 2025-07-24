@@ -11,6 +11,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "lms_class")
@@ -32,4 +34,17 @@ public class ClassEntity {
 
     @Column(name = "text_num")
     private Integer textNum;
+    
+    @Column(name = "start_date")
+    private LocalDate startDate;
+
+    @Column(name = "start_time")
+    private LocalTime startTime;
+
+    @Column(name = "end_time")
+    private LocalTime endTime;
+
+    // 추가된 부분: 월 정보(YYYY-MM)
+    @Column(name = "class_month", length = 10)
+    private String classMonth;
 }

@@ -24,6 +24,10 @@ public class DayClassDTO {
     private String comment;
     private String progress;
     private String teacherNickname;
+    private String studentId;
+    private String studentNickname;
+    private String studentNicknameJp;
+    private String teacherId;
 
     public static DayClassDTO from(DayClassEntity entity, String teacherNickname) {
         DayClassDTO dto = new DayClassDTO();
