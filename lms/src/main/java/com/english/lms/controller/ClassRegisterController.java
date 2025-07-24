@@ -82,16 +82,19 @@ public class ClassRegisterController {
 	@PostMapping("/admin/regular/register")
 	public String registerRegularClass(@ModelAttribute("classDTO") ClassDTO classDTO) {
 		
-		System.out.println("studentNum" + classDTO.getStudentNum());
-		System.out.println("weekDays" +classDTO.getWeekDays());
-		System.out.println("startHour" + classDTO.getStartHour());
-		System.out.println("startMinute"+ classDTO.getStartMinute());
-		System.out.println("endHour" + classDTO.getEndHour());
-		System.out.println("endMinute" +classDTO.getEndMinute());
-		System.out.println("textNum" +classDTO.getTextNum());
-		System.out.println("teacherNum" +classDTO.getTeacherNum());
+		System.out.println("studentNum " + classDTO.getStudentNum());
+		System.out.println("weekDays " +classDTO.getWeekDays());
+		System.out.println("startHour " + classDTO.getStartHour());
+		System.out.println("startMinute "+ classDTO.getStartMinute());
+		System.out.println("endHour " + classDTO.getEndHour());
+		System.out.println("endMinute " +classDTO.getEndMinute());
+		System.out.println("textNum " +classDTO.getTextNum());
+		System.out.println("teacherNum " +classDTO.getTeacherNum());
 		
 		return "redirect:/admin/class/register";
 	}
+	
+
+	
 	
 }
