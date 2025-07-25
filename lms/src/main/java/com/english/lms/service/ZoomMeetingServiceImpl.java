@@ -174,6 +174,7 @@ public class ZoomMeetingServiceImpl implements ZoomMeetingService {
 		// join_url：講義室への参加リンク
 		String joinUrl = root.path("join_url").asText();
 		System.out.println("회의실 입장 링크: " + joinUrl);
+		
 	} catch (JsonMappingException e) {
 		e.printStackTrace();
 	} catch (JsonProcessingException e) {
