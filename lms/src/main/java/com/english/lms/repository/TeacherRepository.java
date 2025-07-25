@@ -19,4 +19,10 @@ public interface TeacherRepository extends JpaRepository<TeacherEntity, Integer>
 			nativeQuery = true
 			)
 	Optional<TeacherEntity> findByTeacher(@Param("teacherNum") Integer teacherNum);
+
+	//zoom num
+    @Query(value = "SELECT zoom_num FROM lms_teacher WHERE teacher_num = :teacherNum", nativeQuery = true)
+	Integer findZoomIdByTeacherNum(@Param("teacherNum") Integer teacherNum);
+	
+	
 }
