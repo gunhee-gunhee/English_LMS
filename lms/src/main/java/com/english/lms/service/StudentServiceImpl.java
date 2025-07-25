@@ -76,7 +76,6 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public boolean existsById(String id) {
-        // StudentRepository에서 studentId로 중복 체크
-        return studentRepository.findByStudentId(id).isPresent();
+        return studentRepository.existsByStudentId(id);
     }
 }
