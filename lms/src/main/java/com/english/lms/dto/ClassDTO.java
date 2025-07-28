@@ -35,9 +35,8 @@ public class ClassDTO {
     private String teacherNickname;
     private String textName;
     private String classMonth;
+    private String studentAge;    
+    private String zoomId;
     private String classType;
-    
-    
-    
     
 }
