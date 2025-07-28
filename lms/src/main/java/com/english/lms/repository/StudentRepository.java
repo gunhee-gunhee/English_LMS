@@ -9,24 +9,23 @@ import org.springframework.data.repository.query.Param;
 
 import com.english.lms.entity.StudentEntity;
 
-public interface StudentRepository extends JpaRepository<StudentEntity, Integer>{
+public interface StudentRepository extends JpaRepository<StudentEntity, Integer> {
 
-	@Query(value=  "select * from lms_student where id = :studentId", nativeQuery = true)
-	Optional<StudentEntity> findByStudentId(@Param("studentId") String studentId); 
-	
-	boolean existsByStudentId(String studentId);
-	
-	// age 중복 없이 모두 추출
-	@Query("SELECT DISTINCT s.age FROM StudentEntity s WHERE s.age IS NOT NULL ORDER BY s.age")
-	List<String> findDistinctAges();
+    // studentId로 학생을 조회
+    Optional<StudentEntity> findByStudentId(String studentId);
 
-	// english_level 중복 없이 모두 추출
-	@Query("SELECT DISTINCT s.englishLevel FROM StudentEntity s WHERE s.englishLevel IS NOT NULL ORDER BY s.englishLevel")
-	List<Integer> findDistinctEnglishLevels();
+    // studentId 존재 여부 확인
+    boolean existsByStudentId(String studentId);
 
-	// company 중복 없이 모두 추출
-	@Query("SELECT DISTINCT s.company FROM StudentEntity s WHERE s.company IS NOT NULL ORDER BY s.company")
-	List<String> findDistinctCompanies();
-	
+    // 중복 없이 나이 목록 조회
+    @Query("SELECT DISTINCT s.age FROM StudentEntity s WHERE s.age IS NOT NULL ORDER BY s.age")
+    List<String> findDistinctAges();
 
+    // 중복 없이 영어 레벨 목록 조회
+    @Query("SELECT DISTINCT s.englishLevel FROM StudentEntity s WHERE s.englishLevel IS NOT NULL ORDER BY s.englishLevel")
+    List<Integer> findDistinctEnglishLevels();
+
+    // 중복 없이 회사 목록 조회
+    @Query("SELECT DISTINCT s.company FROM StudentEntity s WHERE s.company IS NOT NULL ORDER BY s.company")
+    List<String> findDistinctCompanies();
 }

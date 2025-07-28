@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.english.lms.entity.ZoomAccountEntity;
 
@@ -16,4 +17,7 @@ public interface ZoomAccountRepository extends JpaRepository<ZoomAccountEntity, 
 
     // === 추가: zoomNum으로 조회하는 기능 ===
     Optional<ZoomAccountEntity> findByZoomNum(Integer zoomNum);
+
+    @Query(value = "SELECT zoom_id FROM lms_zoom_account WHERE zoom_num = :zoomNum", nativeQuery = true)
+	String findZoomIdByZoomNum(@Param("zoomNum") Integer zoomNum);
 }
