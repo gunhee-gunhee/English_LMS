@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -20,18 +19,18 @@
         .search-box { width: 100%; min-width: 300px; display: flex; gap: 12px; align-items: center; }
         .year-month-select { display: flex; gap: 6px; align-items: center; }
         .year-select, .month-select { 
-            border: 1px solid #bcbfc8; border-radius: 4px; padding: 3px 6px; height: 34px;
-            font-size: 14px; color: #495057; background: #fff; min-width: 70px;
+            border: 1px solid #bcbfc8; border-radius: 4px; padding: 3px 6px; 
+            height: 38px; /* 날짜 인풋과 높이 맞춤 */
+            font-size: 14px; color: #495057; background: #fff;
+            box-sizing: border-box;
         }
-        .year-month-select span { font-size: 14px; color: #495057; }
+        input[type="date"] { /* 혹시 날짜 입력 쓸 때 높이 맞춤 */
+            height: 38px;
+            font-size: 14px;
+        }
         #dataTable th, #dataTable td { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        @media (max-width: 700px) {
-            .search-box { flex-direction: column; gap: 10px; align-items: stretch; }
-            .year-month-select { gap: 3px; }
-        }
     </style>
 </head>
-
 <body id="page-top">
     <div id="wrapper">
         <div th:replace="~{fragments/sidebar-admin :: sidebar-admin}"></div>
@@ -41,34 +40,30 @@
                 <div class="container-fluid">
                     <div class="card shadow mb-4">
                         <div class="card-body">
-                            <!-- 年・月 셀렉터 + 검색 -->
+                            <!-- 검색 + 월/년 셀렉터 -->
                             <form method="get" th:action="@{/admin/regular-class-list}" class="input-group search-box mb-4">
                                 <div class="year-month-select">
-                                    <!-- 年도 -->
-                                    <select name="year" class="year-select" th:value="${selectedYear}">
-                                        <option th:each="y : ${yearList}" th:value="${y}" th:text="${y}" 
-                                            th:selected="${y == selectedYear}">2025</option>
+                                    <select name="year" class="year-select">
+                                        <option th:each="y : ${yearList}" th:value="${y}" th:text="${y}" th:selected="${y == selectedYear}">2025</option>
                                     </select>
-                                    <span>年</span>
-                                    <!-- 月 -->
-                                    <select name="month" class="month-select" th:value="${selectedMonth}">
+                                    <span style="margin: 0 2px;">年</span>
+                                    <select name="month" class="month-select">
                                         <option th:each="m : ${#numbers.sequence(1,12)}"
-                                                th:value="${m}" th:text="${m}" 
+                                                th:value="${m < 10 ? '0' + m : m}" 
+                                                th:text="${m}" 
                                                 th:selected="${m == selectedMonth}">7</option>
                                     </select>
-                                    <span>月</span>
+                                    <span style="margin: 0 2px;">月</span>
                                 </div>
                                 <input type="text" class="form-control search-input" name="q" th:value="${q}" placeholder="Search for..." aria-label="Search" style="max-width:220px;">
                                 <div class="input-group-append">
                                     <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i></button>
                                 </div>
-                                <!-- 페이지, 정렬 hidden -->
                                 <input type="hidden" name="sort" th:value="${sort}">
                                 <input type="hidden" name="dir" th:value="${dir}">
                                 <input type="hidden" name="page" value="0">
                                 <input type="hidden" name="size" th:value="${size}">
                             </form>
-                            <!-- ページサイズ選択 -->
                             <form id="pageSizeForm" class="mb-4" method="get" th:action="@{/admin/regular-class-list}">
                                 <input type="hidden" name="sort" th:value="${sort}">
                                 <input type="hidden" name="dir" th:value="${dir}">
@@ -86,7 +81,6 @@
                                 </select>
                                 <span style="margin-left: 8px;">件</span>
                             </form>
-                            <!-- 메시지/포인트 버튼 없음 -->
                             <div class="table-responsive">
                                 <table class="table table-bordered datatable" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
@@ -109,30 +103,24 @@
                                                 <input type="checkbox" name="selectedIds" th:value="${clazz.classNum}" class="ListCheckbox">
                                             </td>
                                             <td th:text="${currentPage * size + stat.index + 1}">1</td>
-                                            <!-- 学生: 닉네임만 출력 -->
-                                            <td>
-                                                <span th:text="${clazz.studentNickname}">英語ニックネーム</span>
-                                            </td>
-                                            <!-- 講師: 닉네임만 출력 -->
-                                            <td>
-                                                <span th:text="${clazz.teacherNickname}">講師ニックネーム</span>
-                                            </td>
+                                            <td th:text="${clazz.studentNickname}">英語ニック네임</td>
+                                            <td th:text="${clazz.teacherNickname}">講師ニック네임</td>
                                             <td th:text="${clazz.weekDays}">요일</td>
                                             <td>
                                                 <span th:text="${#temporals.format(clazz.startTime, 'HH:mm')}">14:00</span>
-                                                ～
+                                                ～ 
                                                 <span th:text="${#temporals.format(clazz.endTime, 'HH:mm')}">14:50</span>
                                             </td>
                                             <td th:text="${clazz.startDate}">2024-07-24</td>
                                             <td th:text="${clazz.studentEnglishLevel}">2</td>
                                             <td th:text="${clazz.textName}">教材名</td>
                                             <td>
-                                                <a th:href="@{/admin/class/detail/{classNum}(classNum=${clazz.classNum})}">詳細</a>
+                                               <a th:href="@{/admin/regular-class-detail/{classNum}(classNum=${clazz.classNum})}">詳細</a>
                                             </td>
                                         </tr>
                                     </tbody>
                                 </table>
-                                <!-- ページ네이션 -->
+                                <!-- 페이징: 데이터 유무와 관계없이 항상 전체페이지 기준 -->
                                 <nav aria-label="Page navigation">
                                     <div class="d-flex justify-content-center mt-3">
                                         <ul class="pagination">

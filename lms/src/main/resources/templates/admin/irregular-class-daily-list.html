@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>日別定期授業照会</title>
+    <title>日別非定期授業照会</title>
     <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
     <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
@@ -28,13 +28,13 @@
         <div th:replace="~{fragments/sidebar-admin :: sidebar-admin}"></div>
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
-                <div th:replace="~{fragments/topbar :: topbar('日別定期授業照会')}"></div>
+                <div th:replace="~{fragments/topbar :: topbar('日別非定期授業照会')}"></div>
                 <div class="container-fluid">
                     <div class="card shadow mb-4">
                         <div class="card-body">
 
                             <!-- 날짜 범위 + 버튼 + 검색폼 (왼쪽끝정렬) -->
-                            <form method="get" th:action="@{/admin/regular-class-daily-list}" class="mb-4">
+                            <form method="get" th:action="@{/admin/irregular-class-daily-list}" class="mb-4">
                                 <div class="w-100 text-start" style="max-width:700px;">
                                     <!-- 날짜 입력란 -->
                                     <div class="search-row">
@@ -62,7 +62,7 @@
                                 </div>
                             </form>
                             <!-- 페이지 사이즈 선택 -->
-                            <form id="pageSizeForm" class="mb-4" method="get" th:action="@{/admin/regular-class-daily-list}">
+                            <form id="pageSizeForm" class="mb-4" method="get" th:action="@{/admin/irregular-class-daily-list}">
                                 <input type="hidden" name="sort" th:value="${sort}">
                                 <input type="hidden" name="dir" th:value="${dir}">
                                 <input type="hidden" name="startDate" th:value="${startDate}">
@@ -120,18 +120,17 @@
                                                 </span>
                                             </td>
                                             <td>
-                                                <a th:href="@{/admin/day-class-detail/{dayClassNum}(dayClassNum=${clazz.dayClassNum})}">詳細</a>
+                                                <a th:href="@{/admin/day-class/detail/{dayClassNum}(dayClassNum=${clazz.dayClassNum})}">詳細</a>
                                             </td>
                                         </tr>
                                     </tbody>
                                 </table>
-
-                                <!-- 페이지네이션 (여기 부분이 핵심 수정!!) -->
+                                <!-- 페이지네이션 -->
                                 <nav aria-label="Page navigation">
                                     <div class="d-flex justify-content-center mt-3">
                                         <ul class="pagination">
                                             <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-                                                <a class="page-link" th:href="@{/admin/regular-class-daily-list(page=${currentPage -1}, size=${size}, sort=${sort}, dir=${dir}, startDate=${startDate}, endDate=${endDate}, q=${q})}" aria-label="前へ">
+                                                <a class="page-link" th:href="@{/admin/irregular-class-daily-list(page=${currentPage -1}, size=${size}, sort=${sort}, dir=${dir}, startDate=${startDate}, endDate=${endDate}, q=${q})}" aria-label="前へ">
                                                     <span aria-hidden="true">&laquo;</span>
                                                 </a>
                                             </li>
@@ -139,11 +138,11 @@
                                                 th:each="i : ${#numbers.sequence(0, classPage.totalPages - 1)}"
                                                 th:classappend="${i == currentPage} ? 'active'">
                                                 <a class="page-link"
-                                                   th:href="@{/admin/regular-class-daily-list(page=${i}, size=${size}, sort=${sort}, dir=${dir}, startDate=${startDate}, endDate=${endDate}, q=${q})}"
+                                                   th:href="@{/admin/irregular-class-daily-list(page=${i}, size=${size}, sort=${sort}, dir=${dir}, startDate=${startDate}, endDate=${endDate}, q=${q})}"
                                                    th:text="${i + 1}">1</a>
                                             </li>
                                             <li class="page-item" th:classappend="${currentPage + 1 == classPage.totalPages} ? 'disabled'">
-                                                <a class="page-link" th:href="@{/admin/regular-class-daily-list(page=${currentPage + 1}, size=${size}, sort=${sort}, dir=${dir}, startDate=${startDate}, endDate=${endDate}, q=${q})}" aria-label="次へ">
+                                                <a class="page-link" th:href="@{/admin/irregular-class-daily-list(page=${currentPage + 1}, size=${size}, sort=${sort}, dir=${dir}, startDate=${startDate}, endDate=${endDate}, q=${q})}" aria-label="次へ">
                                                     <span aria-hidden="true">&raquo;</span>
                                                 </a>
                                             </li>
