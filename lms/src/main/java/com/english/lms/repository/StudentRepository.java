@@ -28,4 +28,8 @@ public interface StudentRepository extends JpaRepository<StudentEntity, Integer>
     // 중복 없이 회사 목록 조회
     @Query("SELECT DISTINCT s.company FROM StudentEntity s WHERE s.company IS NOT NULL ORDER BY s.company")
     List<String> findDistinctCompanies();
+
+    //find studentNickNAme
+    @Query(value = "SELECT nickname FROM lms_student WHERE student_num = :studentNum", nativeQuery = true)
+	String findBystudentNum(@Param("studentNum") int studentNum);
 }

@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.english.lms.dto.StudentDTO;
 import com.english.lms.dto.TeacherDTO;
 import com.english.lms.entity.TeacherEntity;
 import com.english.lms.entity.TeacherScheduleEntity;

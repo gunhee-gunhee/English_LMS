@@ -19,7 +19,6 @@ public class StudentUserDetailsService implements UserDetailsService {
 	
 	@Override
 	public UserDetails loadUserByUsername(String studentId) throws UsernameNotFoundException {
-		System.out.println("입력받은 아이디 : " + studentId);
 		
 		StudentEntity student = studentRepository.findByStudentId(studentId)
 				
