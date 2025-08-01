@@ -46,9 +46,6 @@ public class ClassRegisterController {
 	// Page移動
 	@GetMapping("/admin/class/register")
 	public String showPage(
-			// リストのサイズ
-			@RequestParam(name = "size", defaultValue = "10") int size,
-
 			// 学生リスト
 			@RequestParam(name = "studentSort", defaultValue = "studentId") String studentSort,
 			@RequestParam(name = "studentDir", defaultValue = "asc") String studentDir,

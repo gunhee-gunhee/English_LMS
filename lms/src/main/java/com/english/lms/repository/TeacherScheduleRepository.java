@@ -68,5 +68,16 @@ public interface TeacherScheduleRepository extends JpaRepository<TeacherSchedule
 			""", nativeQuery = true)
 	List<Object[]> findAllAvailableTeacher( @Param("dayTimeTeacherNums") List<Integer> dayTimeTeacherNums);
 
+	//定期授業を登録する時、該当授業のis_availableを'0'にする。
+	@Modifying
+	@Query(value = """
+			UPDATE lms_teacher_schedule
+			SET is_available = 0
+			WHERE teacher_num = :teacherNum
+			  AND week_day = :weekDay
+			  AND time_slot = :slot
+			""", nativeQuery=true)
+	void updateAvailable(@Param("teacherNum") Integer teacherNum, @Param("weekDay") String weekDay, @Param("slot")LocalTime slot);
+
 
 }

@@ -1,12 +1,11 @@
 $(document).ready(function() {
 
 	console.log('customtables.js loaded!');
-
-	// 既存の講師リストを一度破棄してから再初期化する。
-	if ($.fn.DataTable.isDataTable('#teacherTable')) {
-		$('#teacherTable').DataTable().destroy();
+	//定期授業： 既存の講師リストを一度破棄してから再初期化する。
+	if ($.fn.DataTable.isDataTable('#teacherTableRegular')) {
+		$('#teacherTableRegular').DataTable().destroy();
 	}
-	let teacherTable = $('#teacherTable').DataTable({
+	let teacherTableRegular = $('#teacherTableRegular').DataTable({
 		paging: false,                       // ページネーションを有効にする
 		searching: false,                    // テーブル内の検索機能を有効にする
 		lengthChange: true,                // 表示件数の選択メニューを非表示にする
@@ -23,11 +22,13 @@ $(document).ready(function() {
 			{ orderable: false, targets: 0 } // 0番目の列（チェックボックス）は並び替えを無効にする
 		]
 	});
-	// 既存の学生リストを一度破棄してから再初期化する。
-	if ($.fn.DataTable.isDataTable('#studentTable')) {
-		$('#studentTable').DataTable().destroy();
+	
+	
+	//  非定期授業： 既存の講師リストを一度破棄してから再初期化する。
+	if ($.fn.DataTable.isDataTable('#teacherTableIrregular')) {
+		$('#teacherTableIrregular').DataTable().destroy();
 	}
-	let studentTable = $('#studentTable').DataTable({
+	let teacherTableIrregular = $('#teacherTableIrregular').DataTable({
 		paging: false,                       // ページネーションを有効にする
 		searching: false,                    // テーブル内の検索機能を有効にする
 		lengthChange: true,                // 表示件数の選択メニューを非表示にする
@@ -44,36 +45,101 @@ $(document).ready(function() {
 			{ orderable: false, targets: 0 } // 0番目の列（チェックボックス）は並び替えを無効にする
 		]
 	});
+	// 定期授業：　既存の学生リストを一度破棄してから再初期化する。
+	if ($.fn.DataTable.isDataTable('#studentTableRegular')) {
+		$('#studentTableRegular').DataTable().destroy();
+	}
+	let studentTableRegular = $('#studentTableRegular').DataTable({
+		paging: false,                       // ページネーションを有効にする
+		searching: false,                    // テーブル内の検索機能を有効にする
+		lengthChange: true,                // 表示件数の選択メニューを非表示にする
+		info: false,                        // "Showing 1 to X..."などの情報を非表示にする  
+		scrollY: "320px",
+		scrollCollapse: true,
+		language: {
+			paginate: {
+				previous: "<",              // 「前へ」ボタン
+				next: ">"                   // 「次へ」ボタン
+			}
+		},
+		columnDefs: [
+			{ orderable: false, targets: 0 } // 0番目の列（チェックボックス）は並び替えを無効にする
+		]
+	});
+	
+	// 非定期授業：　既存の学生リストを一度破棄してから再初期化する。
+		if ($.fn.DataTable.isDataTable('#studentTableIrregular')) {
+			$('#studentTableIrregular').DataTable().destroy();
+		}
+		let studentTableIrregular = $('#studentTableIrregular').DataTable({
+			paging: false,                       // ページネーションを有効にする
+			searching: false,                    // テーブル内の検索機能を有効にする
+			lengthChange: true,                // 表示件数の選択メニューを非表示にする
+			info: false,                        // "Showing 1 to X..."などの情報を非表示にする  
+			scrollY: "320px",
+			scrollCollapse: true,
+			language: {
+				paginate: {
+					previous: "<",              // 「前へ」ボタン
+					next: ">"                   // 「次へ」ボタン
+				}
+			},
+			columnDefs: [
+				{ orderable: false, targets: 0 } // 0番目の列（チェックボックス）は並び替えを無効にする
+			]
+		});
 
 	$('#regularClass, #irregularClass').on('shown.bs.collapse', function() {
-		teacherTable.columns.adjust();
-		studentTable.columns.adjust();
+		teacherTableRegular.columns.adjust();
+		teacherTableIrregular.columns.adjust();
+		studentTableRegular.columns.adjust();
+		studentTableIrregular.columns.adjust();
 	});
 
 
 	setTimeout(function() {
-		$('#teacherTable, #studentTable').css('visibility', 'visible');
+		$('#teacherTableRegular,#teacherTableIrregular, #studentTableIrregular, #studentTableRegular').css('visibility', 'visible');
 	}, 50);
 
-	teacherTable.order([1, 'asc']).draw();
-	studentTable.order([1, 'asc']).draw();
+	teacherTableRegular.order([1, 'asc']).draw();
+	teacherTableIrregular.order([1, 'asc']).draw();
+	studentTableRegular.order([1, 'asc']).draw();
+	studentTableIrregular.order([1, 'asc']).draw();
 
-	teacherTable.on('draw', function() {
-		$('#teacherTable th:first-child')
+	teacherTableRegular.on('draw', function() {
+		$('#teacherTableRegular th:first-child')
 			.removeClass('sorting sorting_asc sorting_desc')
 			.addClass('sorting_disabled')
 			.removeAttr('aria-label')
 			.removeAttr('aria-sort');
-		console.log('draw! teacherTable current order:', teacherTable.order());
+		console.log('draw! teacherTableRegular current order:', teacherTableRegular.order());
 	});
 
-	studentTable.on('draw', function() {
-		$('#studentTable th:first-child')
+	teacherTableIrregular.on('draw', function() {
+		$('#teacherTableIrregular th:first-child')
 			.removeClass('sorting sorting_asc sorting_desc')
 			.addClass('sorting_disabled')
 			.removeAttr('aria-label')
 			.removeAttr('aria-sort');
-		console.log('draw! studentTable current order:', studentTable.order());
+		console.log('draw! teacherTableIrregular current order:', teacherTableIrregular.order());
+	});
+	
+	studentTableRegular.on('draw', function() {
+		$('#studentTableRegular th:first-child')
+			.removeClass('sorting sorting_asc sorting_desc')
+			.addClass('sorting_disabled')
+			.removeAttr('aria-label')
+			.removeAttr('aria-sort');
+		console.log('draw! studentTableRegular current order:', studentTableRegular.order());
+	});
+	
+	studentTableIrregular.on('draw', function() {
+		$('#studentTableIrregular th:first-child')
+			.removeClass('sorting sorting_asc sorting_desc')
+			.addClass('sorting_disabled')
+			.removeAttr('aria-label')
+			.removeAttr('aria-sort');
+		console.log('draw! studentTableIrregular current order:', studentTableIrregular.order());
 	});
 });
 

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import com.english.lms.dto.TeacherDTO;
 import com.english.lms.repository.TeacherScheduleRepository;
+import com.english.lms.util.TimeSlotUtils;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,20 +24,6 @@ import lombok.RequiredArgsConstructor;
 public class TeacherScheduleServiceImpl implements TeacherScheduleService {
 
 	private final TeacherScheduleRepository teacherScheduleRepository;
-
-	// スロット生成用ユーティリティ（10分単位）
-	private List<LocalTime> getTimeSlots(LocalTime startTime, LocalTime end) {
-
-		List<LocalTime> slots = new ArrayList<>();
-
-		LocalTime t = startTime;
-		while (t.isBefore(end)) {
-			slots.add(t);
-			t = t.plusMinutes(10);
-		}
-
-		return slots;
-	}
 
 	@Override
 	public List<LocalDate> getAvailableDates(int year, int month, List<DayOfWeek> days, LocalDate startDate) {
@@ -76,7 +63,7 @@ System.out.println("수업가능한 일자 리스트 : " + dates);
 			String teacherDir
 			) {
 		// 10分単位のスロットに分割（例：10:00、10:10）
-		List<LocalTime> slots = getTimeSlots(startTime, endTime);
+		List<LocalTime> slots = TimeSlotUtils.getTimeSlots(startTime, endTime);
 System.out.println("time slot : " + slots);
 		
 		// 指定された日付とスロットに既に授業がある講師番号を取得
