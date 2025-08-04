@@ -391,13 +391,12 @@
 													<div class="card-body">
 														<h6 class="mb-2">講師</h6>
 
-														<!--更新リストのボタン-->
-														<button type="button" class="btn btn-primary mb-2"
-															id="fetch-teachers-btn">
+														<!--講師リストのボタン-->
+														<button type="button" class="btn btn-primary mb-2 fetch-teachers-btn">
 															利用可能な講師リストを表示
 														</button>
 
-														<table id="teacherTableRegular" class="table table-bordered datatable"
+														<table id="teacherTableRegular" class="table table-bordered datatable available-teacherlist"
 															width="100%" cellspacing="0">
 															<thead>
 																<tr>
@@ -409,7 +408,7 @@
 																</tr>
 															</thead>
 
-															<tbody id="teacher-table-body">
+															<tbody>
 																<!-- JSでレンダリング -->
 															</tbody>
 														</table>
@@ -519,17 +518,9 @@
 														</div>
 														<input type="hidden" name="selectedDate" id="selectedDate">
 
-														<input type="hidden" name="selectedDate" id="selectedDate">
 														<!-- 申請可能時間 -->
 														<div class="available-time-label">申請可能時間</div>
-														<div class="time-buttons-wrap">
-															<button type="button" class="time-btn">10:00</button>
-															<button type="button" class="time-btn">11:30</button>
-															<button type="button" class="time-btn">14:00</button>
-															<button type="button" class="time-btn">15:30</button>
-															<button type="button" class="time-btn">18:00</button>
-															<button type="button" class="time-btn">19:30</button>
-															<button type="button" class="time-btn">21:00</button>
+														<div class="time-buttons-wrap" id="timeButtons">
 														</div>
 														<input type="hidden" name="selectedTime" id="selectedTime">
 
@@ -542,13 +533,12 @@
 													<div class="card-body">
 														<h6 class="mb-2">講師</h6>
 
-														<!--更新リストのボタン-->
-														<button type="button" class="btn btn-primary mb-2"
-															id="fetch-teachers-btn">
+														<!--講師リストのボタン-->
+														<button type="button" class="btn btn-primary mb-2 fetch-teachers-btn">
 															利用可能な講師リストを表示
 														</button>
 
-														<table id="teacherTableIrregular" class="table table-bordered datatable"
+														<table id="teacherTableIrregular" class="table table-bordered datatable available-teacherlist"
 															width="100%" cellspacing="0">
 															<thead>
 																<tr>
@@ -560,7 +550,7 @@
 																</tr>
 															</thead>
 
-															<tbody id="teacher-table-body">
+															<tbody>
 																<!-- JSでレンダリング -->
 															</tbody>
 														</table>
@@ -658,6 +648,97 @@
 	<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 	<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
 	<script src="/js/calendar.js"></script>
+	<script>
+	    let dayOffDates = [];
+	    const today = new Date();
+	    const startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+	    const endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+	    // [수정된 부분] 날짜 포맷 직접 구현
+	    function ymd(d) {
+	        const yyyy = d.getFullYear();
+	        const mm = String(d.getMonth() + 1).padStart(2, '0');
+	        const dd = String(d.getDate()).padStart(2, '0');
+	        return `${yyyy}-${mm}-${dd}`;
+	    }
+
+	    fetch(`/api/dayoff?start=${ymd(startDate)}&end=${ymd(endDate)}`)
+	        .then(r => r.json())
+	        .then(dayoffList => {
+	            dayOffDates = dayoffList.map(e => e.date);
+	            initFlatpickr();
+	        });
+
+	    function loadAvailableTimes(date) {
+	        fetch(`/api/additional-class-available-times?date=${date}`)
+	            .then(r => r.json())
+	            .then(list => {
+	                const wrap = document.getElementById('timeButtons');
+	                wrap.innerHTML = '';
+	                list.forEach(item => {
+	                    const btn = document.createElement('button');
+	                    btn.type = 'button';
+	                    btn.className = 'time-btn';
+	                    btn.innerText = item.timeLabel;
+	                    btn.onclick = function() {
+	                        document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('selected'));
+	                        btn.classList.add('selected');
+	                        document.getElementById('selectedTime').value = item.timeLabel;
+	                    }
+	                    wrap.appendChild(btn);
+	                });
+	            });
+	    }
+
+	    function initFlatpickr() {
+	        flatpickr("#calendar", {
+	            locale: "ja",
+	            dateFormat: "Y-m-d",
+	            inline: true,
+	            disable: [
+	                function(date) {
+	                    return (date.getDay() === 0 || date.getDay() === 6 || dayOffDates.includes(ymd(date)));
+	                }
+	            ],
+	            onDayCreate: function(dObj, dStr, fp, dayElem) {
+	                const date = dayElem.dateObj;
+	                if (date.getDay() === 0 || date.getDay() === 6) {
+	                    dayElem.classList.add("weekend");
+	                }
+	                if (dayOffDates.includes(ymd(date))) {
+	                    dayElem.classList.add("dayoff");
+	                    dayElem.title = "공휴일";
+	                }
+	            },
+	            onChange: function(selectedDates, dateStr) {
+	                document.getElementById('selectedDate').value = dateStr;
+	                loadAvailableTimes(dateStr);
+	            }
+	        });
+	    }
+
+	    document.addEventListener("DOMContentLoaded", function() {
+	        document.getElementById("applyBtn").addEventListener('click', function() {
+	            if (!document.getElementById('pointSelect').value) {
+	                alert("ポイントを選択してください。");
+	                return;
+	            }
+	            if (!document.getElementById('selectedDate').value) {
+	                alert("日付を選択してください。");
+	                return;
+	            }
+	            if (!document.getElementById('selectedTime').value) {
+	                alert("時間を選択してください。");
+	                return;
+	            }
+	            if (!confirm("申請しますか？")) {
+	                return;
+	            }
+	            document.getElementById('applyForm').submit();
+	        });
+	    });
+	</script>
+
 
 
 	<!--追加JS-->

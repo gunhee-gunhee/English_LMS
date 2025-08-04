@@ -1,3 +1,6 @@
+window.teacherTableRegular = null;
+window.teacherTableIrregular = null;
+
 $(document).ready(function() {
 
 	console.log('customtables.js loaded!');
@@ -5,7 +8,7 @@ $(document).ready(function() {
 	if ($.fn.DataTable.isDataTable('#teacherTableRegular')) {
 		$('#teacherTableRegular').DataTable().destroy();
 	}
-	let teacherTableRegular = $('#teacherTableRegular').DataTable({
+	window.teacherTableRegular = $('#teacherTableRegular').DataTable({
 		paging: false,                       // ページネーションを有効にする
 		searching: false,                    // テーブル内の検索機能を有効にする
 		lengthChange: true,                // 表示件数の選択メニューを非表示にする
@@ -20,7 +23,16 @@ $(document).ready(function() {
 		},
 		columnDefs: [
 			{ orderable: false, targets: 0 } // 0番目の列（チェックボックス）は並び替えを無効にする
-		]
+		],
+		drawCallback: function(settings) {
+				        // 가짜 테이블에 id 추가!
+				        // 기존 id가 있다면 중복 방지로 삭제 먼저
+				        $('#teacherTableRegularClone').removeAttr('id');
+				        $('#teacherTableRegular').closest('.dataTables_wrapper')
+						.find('table.dataTable')
+						    .not('#teacherTableRegular') // 진짜 테이블 제외
+						    .attr('id', 'teacherTableRegularClone');
+				    }
 	});
 	
 	
@@ -28,7 +40,7 @@ $(document).ready(function() {
 	if ($.fn.DataTable.isDataTable('#teacherTableIrregular')) {
 		$('#teacherTableIrregular').DataTable().destroy();
 	}
-	let teacherTableIrregular = $('#teacherTableIrregular').DataTable({
+	window.teacherTableIrregular = $('#teacherTableIrregular').DataTable({
 		paging: false,                       // ページネーションを有効にする
 		searching: false,                    // テーブル内の検索機能を有効にする
 		lengthChange: true,                // 表示件数の選択メニューを非表示にする
@@ -43,7 +55,16 @@ $(document).ready(function() {
 		},
 		columnDefs: [
 			{ orderable: false, targets: 0 } // 0番目の列（チェックボックス）は並び替えを無効にする
-		]
+		],
+		drawCallback: function(settings) {
+		        // 가짜 테이블에 id 추가!
+		        // 기존 id가 있다면 중복 방지로 삭제 먼저
+		        $('#teacherTableIrregularClone').removeAttr('id');
+		        $('#teacherTableIrregular').closest('.dataTables_wrapper')
+				.find('table.dataTable')
+				    .not('#teacherTableIrregular') // 진짜 테이블 제외
+				    .attr('id', 'teacherTableIrregularClone');
+		    }
 	});
 	// 定期授業：　既存の学生リストを一度破棄してから再初期化する。
 	if ($.fn.DataTable.isDataTable('#studentTableRegular')) {

@@ -33,7 +33,8 @@ public class StudentIrregularApplyService {
 
     // ==================== 수정된 부분: 20분 slot이 겹치는 예약 있으면 제외 ====================
     public List<IrregularAvailableTimeDTO> getAvailableTimes(LocalDate classDate) {
-        String weekDay = getWeekDayStringJapanese(classDate);
+       
+    	String weekDay = getWeekDayStringJapanese(classDate);
 
         List<TeacherScheduleEntity> slots = teacherScheduleRepository.findByWeekDayAndIsAvailable(weekDay);
         List<DayClassEntity> reserved = dayClassRepository.findByClassDate(classDate);
