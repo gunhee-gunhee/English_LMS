@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>日別臨時授業詳細</title>
+
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+    <link th:href="@{/vendor/datatables/dataTables.bootstrap4.min.css}" rel="stylesheet">
+
+    <style>
+        .detail-card { max-width: 1200px; margin: 2rem auto; }
+        .detail-table th, .detail-table td {
+            white-space: nowrap !important;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .detail-table th { width: 180px; background: #f1f4fa; }
+        .detail-table td, .detail-table th { vertical-align: middle !important; }
+        .btn-edit { background: #378cff; color: #fff; border-radius: 6px; padding: 8px 28px; margin-right: 16px; }
+        .btn-delete { background: #ff3b3b; color: #fff; border-radius: 6px; padding: 8px 28px; }
+        .inline-input { width: 90%; min-width: 120px; }
+    </style>
+</head>
+<body id="page-top">
+<div id="wrapper">
+    <!-- サイドバー -->
+    <div th:replace="~{fragments/sidebar-admin :: sidebar-admin}"></div>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <!-- トップバー -->
+            <div th:replace="~{fragments/topbar :: topbar('日別臨時授業詳細')}"></div>
+            <div class="container-fluid">
+                <div class="card shadow mb-4 detail-card">
+                    <div class="card-body" style="overflow-x:auto;">
+                        <form id="editForm" th:action="@{/admin/irregular-class-daily-edit}" method="post">
+                            <input type="hidden" name="dayClassNum" th:value="${classDetail.dayClassNum}" />
+                            <table class="table detail-table" style="min-width:1100px;">
+                                <tbody>
+                                    <tr>
+                                        <th>学生ID</th>
+                                        <td th:text="${classDetail.studentId}"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>学生ニックネーム</th>
+                                        <td th:text="${classDetail.studentNickname}"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>学生ニックネーム(日本語)</th>
+                                        <td th:text="${classDetail.studentNicknameJp}"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>講師</th>
+                                        <td>
+                                            <select class="form-control inline-input" name="teacherNum" required>
+                                                <option th:each="t : ${teacherList}"
+                                                        th:value="${t.teacherNum}"
+                                                        th:text="|${t.nickname} (${t.teacherId})|"
+                                                        th:selected="${t.teacherNum} == ${classDetail.teacherNum}"></option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>授業タイトル</th>
+                                        <td>
+                                            <input class="form-control inline-input" name="className" type="text"
+                                                   th:value="${classDetail.className}" required />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>授業日</th>
+                                        <td>
+                                            <input class="form-control inline-input" name="classDate" type="date"
+                                                   th:value="${#temporals.format(classDetail.classDate, 'yyyy-MM-dd')}" required />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>授業時間</th>
+                                        <td>
+                                            <input class="form-control inline-input" name="startTime" type="time"
+                                                   th:value="${#temporals.format(classDetail.startTime, 'HH:mm')}"
+                                                   style="width:120px;display:inline-block;" required />
+                                            <span style="display:inline-block;">～</span>
+                                            <input class="form-control inline-input" name="endTime" type="time"
+                                                   th:value="${#temporals.format(classDetail.endTime, 'HH:mm')}"
+                                                   style="width:120px;display:inline-block;" required />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>英語レベル</th>
+                                        <td th:text="${classDetail.studentEnglishLevel}"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>年齢</th>
+                                        <td th:text="${classDetail.studentAge}"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Zoomリンク</th>
+                                        <td>
+                                            <input class="form-control inline-input" name="zoomLink" type="text"
+                                                   th:value="${classDetail.zoomLink}" required />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Zoomアカウント</th>
+                                        <td th:text="${classDetail.zoomMeetingId}"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="d-flex justify-content-end mt-4">
+                                <button type="submit" class="btn btn-primary">保存</button>
+                                <a th:href="@{/admin/irregular-class-daily-detail/{dayClassNum}(dayClassNum=${classDetail.dayClassNum})}" class="btn btn-secondary ml-2">キャンセル</a>
+                            </div>
+                        </form>
+                        <!-- ★ 삭제 액션 부분 수정됨! -->
+                        <form th:action="@{/admin/irregular-day-class-delete}" method="post" style="display:inline;margin-left:10px;" onsubmit="return confirm('本当に削除しますか？');">
+                            <input type="hidden" name="dayClassNum" th:value="${classDetail.dayClassNum}" />
+                            <button type="submit" class="btn btn-delete">削除</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- フッター -->
+        <footer class="sticky-footer bg-white">
+            <div class="container my-auto">
+                <div class="copyright text-center my-auto">
+                    <span>Copyright &copy; Your Website 2020</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+<!-- ログアウトモーダル -->
+<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">ログアウトしますか？</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">現在のセッションを終了する場合は「Logout」を選択してください。</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">キャンセル</button>
+                <a class="btn btn-primary" href="login.html">Logout</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+<script th:src="@{/js/sb-admin-2.min.js}"></script>
+</body>
+</html>

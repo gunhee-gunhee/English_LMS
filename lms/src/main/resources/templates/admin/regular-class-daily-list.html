@@ -120,7 +120,7 @@
                                                 </span>
                                             </td>
                                             <td>
-                                                <a th:href="@{/admin/day-class-detail/{dayClassNum}(dayClassNum=${clazz.dayClassNum})}">詳細</a>
+                                                <a th:href="@{/admin/regular-class-daily-detail/{dayClassNum}(dayClassNum=${clazz.dayClassNum})}">詳細</a>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -192,30 +192,36 @@
     <script th:src="@{/js/sb-admin-2.min.js}"></script>
     <script th:src="@{/js/customtables.js}"></script>
     <script th:src="@{/js/table-check-box.js}"></script>
-    <script>
-        // 날짜 범위 빠른선택 버튼
-        function setRange(type) {
-            const today = new Date();
-            let start, end;
-            if (type === 'today') {
-                start = end = today;
-            } else if (type === 'week') {
-                const dayOfWeek = today.getDay();
-                const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-                start = new Date(today);
-                start.setDate(today.getDate() + diffToMonday);
-                end = new Date(start);
-                end.setDate(start.getDate() + 6);
-            } else if (type === 'month') {
-                start = new Date(today.getFullYear(), today.getMonth(), 1);
-                end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-            } else if (type === 'year') {
-                start = new Date(today.getFullYear(), 0, 1);
-                end = new Date(today.getFullYear(), 11, 31);
-            }
-            document.querySelector('input[name="startDate"]').value = start.toISOString().slice(0, 10);
-            document.querySelector('input[name="endDate"]').value = end.toISOString().slice(0, 10);
-        }
-    </script>
+	<script>
+	    function toDateInputValue(date) {
+	        // yyyy-MM-dd 포맷을 항상 로컬 기준으로 반환
+	        const offset = date.getTimezoneOffset();
+	        const localDate = new Date(date.getTime() - (offset * 60 * 1000));
+	        return localDate.toISOString().slice(0, 10);
+	    }
+
+	    function setRange(type) {
+	        const today = new Date();
+	        let start, end;
+	        if (type === 'today') {
+	            start = end = today;
+	        } else if (type === 'week') {
+	            const dayOfWeek = today.getDay();
+	            const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+	            start = new Date(today);
+	            start.setDate(today.getDate() + diffToMonday);
+	            end = new Date(start);
+	            end.setDate(start.getDate() + 6);
+	        } else if (type === 'month') {
+	            start = new Date(today.getFullYear(), today.getMonth(), 1);
+	            end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+	        } else if (type === 'year') {
+	            start = new Date(today.getFullYear(), 0, 1);
+	            end = new Date(today.getFullYear(), 11, 31);
+	        }
+	        document.querySelector('input[name="startDate"]').value = toDateInputValue(start);
+	        document.querySelector('input[name="endDate"]').value = toDateInputValue(end);
+	    }
+	</script>
 </body>
 </html>
