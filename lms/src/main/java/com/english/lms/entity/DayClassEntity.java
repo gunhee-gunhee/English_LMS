@@ -54,6 +54,9 @@ public class DayClassEntity {
 
     @Column(name = "zoom_link")
     private String zoomLink;
+    
+    @Column(name = "teacher_link")
+    private String teacherLink;
 
     @Column(name = "zoom_meeting_id")
     private String zoomMeetingId;
