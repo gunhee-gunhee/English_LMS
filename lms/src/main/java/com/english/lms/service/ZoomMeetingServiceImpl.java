@@ -19,12 +19,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
-import com.english.lms.advice.TeacherAdvice;
 import com.english.lms.dto.ClassDTO;
 import com.english.lms.entity.ClassEntity;
 import com.english.lms.entity.DayClassEntity;
 import com.english.lms.repository.ClassRepository;
 import com.english.lms.repository.DayClassRepository;
+import com.english.lms.repository.PointRepository;
 import com.english.lms.repository.StudentRepository;
 import com.english.lms.repository.TeacherRepository;
 import com.english.lms.repository.TeacherScheduleRepository;
@@ -53,17 +53,13 @@ public class ZoomMeetingServiceImpl implements ZoomMeetingService {
 	private final TeacherScheduleService teacherScheduleService;
 	private final TeacherScheduleRepository teacherScheduleRepository;
 
+	private final PointRepository pointRepository;
+	/**
+	 * 定期授業のZoomlink生成、データをDBに保存する。
+	 * */
 	@Override
 	@Transactional
-	public void makeleClass(ClassDTO classDTO) {
-//	System.out.println("studentNum " + classDTO.getStudentNum());
-//	System.out.println("weekDays " +classDTO.getWeekDays());
-//	System.out.println("startHour " + classDTO.getStartHour());
-//	System.out.println("startMinute "+ classDTO.getStartMinute());
-//	System.out.println("endHour " + classDTO.getEndHour());
-//	System.out.println("endMinute " +classDTO.getEndMinute());
-//	System.out.println("textNum " +classDTO.getTextNum());
-//	System.out.println("teacherNum " +classDTO.getTeacherNum());
+	public void makeleRegisterClass(ClassDTO classDTO) {
 
 		int startHour = classDTO.getStartHour();
 		int startMinute = classDTO.getStartMinute();
@@ -177,7 +173,7 @@ public class ZoomMeetingServiceImpl implements ZoomMeetingService {
 		RestTemplate restTemplate = new RestTemplate();
 
 		// zoomNum
-		Integer teacherNum = classDTO.getTeacherNum(); // 나중에 teacherNum으로 변경
+		Integer teacherNum = classDTO.getTeacherNum(); 
 		Integer zoomNum = teacherRepository.findZoomIdByTeacherNum(teacherNum);
 		if (zoomNum == null)
 			throw new IllegalArgumentException("講師に紐づく Zoom アカウントが存在しません");
@@ -311,6 +307,177 @@ public class ZoomMeetingServiceImpl implements ZoomMeetingService {
 						);
 			}
 		}
+	}
+
+	/**
+	 * 非定期授業のZoomlink生成、データをDBに保存する。
+	 * */
+	@Override
+	@Transactional
+	public void makeleIrregularClass(ClassDTO classDTO) {
+		
+		//ClassDTOで必要な要素
+		String classDate = classDTO.getSelectedDate();
+		String classTime = classDTO.getSelectedTime();
+		String classType = classDTO.getClassType();
+		Integer studentNum = classDTO.getStudentNum();
+		Integer teacherNum = classDTO.getTeacherNum();
+		String studentNickName = studentRepository.findBystudentNum(studentNum);
+		String className = studentNickName + "/" + classDate +"/"+ classTime+ "/"+ classType;
+		
+	System.out.println("classDate : "+ classDate + " / classTime : " + classTime);
+		
+		//授業日
+		LocalDate date = LocalDate.parse(classDate);
+		
+		//授業開始の時間
+		String[] timeRange = classTime.split("~");
+		LocalTime startTime = LocalTime.parse(timeRange[0].trim());
+		LocalTime endTime = LocalTime.parse(timeRange[1].trim());
+		// タイムゾーンを明確に指定
+		ZonedDateTime zonedStart = ZonedDateTime.of(date, startTime, ZoneId.of("Asia/Tokyo"));
+
+		// フォーマット
+		String formatted = zonedStart.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+System.out.println("zoom授業開始の日時 : " + formatted);
+		
+		//duration : 授業が行われる時間 
+		List<LocalTime> timeslots = TimeSlotUtils.getTimeSlots(startTime, endTime);
+System.out.println(timeslots.size());
+	    int duration = timeslots.size() * 10;
+	    
+		//requestBody (type = 2, `単発`)
+	    Map<String, Object> requestBody = new HashMap<>();
+	    requestBody.put("topic", className);
+	    requestBody.put("type", 2);  // 単発授業
+	    requestBody.put("start_time", formatted);
+	    requestBody.put("duration", duration);
+	    requestBody.put("timezone", "Asia/Tokyo");
+	    
+	    Map<String,Object> settings = new HashMap<>();
+	    settings.put("host_video", true); // 授業開始時にホストのカメラを自動ON/OFF - ON
+		settings.put("participant_video", true); // 授業開始時に参加者のカメラを自動ON/OFF - ON
+		settings.put("join_before_host", true); // ホストより先に参加者の入室を許可
+		settings.put("waiting_room", false); // 待機室を使用する
+		settings.put("approval_type", 2); // 自動承認
+	    
+	   requestBody.put("settings", settings);
+	   
+		/**
+		 * HTTP POST リクエストを送信する
+		 */
+
+		// HTTP header(AccessToken, cotent-Type)
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		// アクセストークンを取得する
+		String accessToken = zoomTokenService.getAccessToken();
+		headers.setBearerAuth(accessToken); // AccessToken
+
+		// HttpEntity(body+header)
+		HttpEntity<Map<String, Object>> httpEntity = new HttpEntity<>(requestBody, headers);
+
+		// RestTemplate を使って POST リクエストを送信
+		RestTemplate restTemplate = new RestTemplate();
+
+		// zoomNum
+		Integer zoomNum = teacherRepository.findZoomIdByTeacherNum(teacherNum);
+		if (zoomNum == null)
+			throw new IllegalArgumentException("講師に紐づく Zoom アカウントが存在しません");
+
+		// zoomId
+		String zoomId = zoomAccountRepository.findZoomIdByZoomNum(zoomNum);
+		if (zoomId == null)
+			throw new IllegalArgumentException("Zoom アカウントが存在しません.");
+
+		String url = "https://api.zoom.us/v2/users/" + zoomId + "/meetings";
+
+		ResponseEntity<String> response = restTemplate.postForEntity(url, httpEntity, String.class);
+
+		// responseBody = API から受け取った文字列 (JSON)
+		String responseBody = response.getBody();
+
+		// Zoom API のレスポンス（String responseBody）から join_url を抽出
+		// ObjectMapper：Jackson の JSON パーサーオブジェクトを生成
+		ObjectMapper objectMapper = new ObjectMapper();
+
+		String joinUrl = null;
+		String meetingId = null;
+		String teacherUrl = null;
+
+		try {
+			// responseBody（String 型）に含まれる JSON 文字列をパースして、
+			// root（JsonNode 型）という「ツリー構造の JSON オブジェクト」を作成する
+			JsonNode root = objectMapper.readTree(responseBody);
+
+			// root から "join_url" というキーの値を取り出し、String 型で取得する
+			// join_url：参加者用リンク
+			joinUrl = root.path("join_url").asText();
+			// meetingId：会議室の固有ID
+			meetingId = root.path("id").asText();
+			// start_url：ホスト(講師）専用の入場リンク
+			teacherUrl = root.path("start_url").asText();
+
+			System.out.println("회의실 입장 링크: " + joinUrl);
+			System.out.println("회의실 ID(meetingId): " + meetingId);
+			System.out.println("호스트 입장 링크(start_url): " + teacherUrl);
+
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		
+		/**
+		 * lms_day_class table 保存
+		 * 
+		 * class_num, class_type(:classType), class_name, class_date,
+		 * start_time(:classStartTime), end_time(:classEndTime), zoom_link(:joinUrl),
+		 * teacher_link(:teacherUrl),
+		 * 
+		 * zoom_meeting_id(:meetingId), student_num, teacher_num
+		 * 
+		 */
+		DayClassEntity dayClassEntity = DayClassEntity.builder()
+				.classType(classType)
+				.className(className)
+				.classDate(date)
+				.startTime(startTime)
+				.endTime(endTime)
+				.zoomLink(joinUrl)
+				.teacherLink(teacherUrl)
+				.zoomMeetingId(meetingId)
+				.studentNum(studentNum)
+				.teacherNum(teacherNum)
+				.attendance(0)
+				.build();
+
+		dayClassRepository.save(dayClassEntity);
+		
+		/**
+		 * point table 更新
+		 * 
+		 * 登録した授業タイプのポイント-1
+		 */
+		
+		//削除するポイントを探す。
+		Integer deletePoint = pointRepository.findPointNumForDelete(studentNum, classType);
+		if (deletePoint == null) throw new RuntimeException("ポイントなし!");
+		
+		//point 削除
+		pointRepository.deleteById(deletePoint);
+		
+			
+			
+	
+	
+
+		
+		
+
+		
+		
 	}
 
 }

@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.english.lms.dto.TeacherDTO;
 import com.english.lms.entity.TeacherScheduleEntity;
 
 public interface TeacherScheduleRepository extends JpaRepository<TeacherScheduleEntity, Integer> {
@@ -62,9 +61,9 @@ public interface TeacherScheduleRepository extends JpaRepository<TeacherSchedule
 			JOIN lms_teacher_schedule ts ON t.teacher_num = ts.teacher_num
 			INNER JOIN lms_zoom_account z ON t.zoom_num = z.zoom_num
 			WHERE ts.is_available = 1
-			 AND t.nullity = 0
-			 AND t.teacher_num IN (:dayTimeTeacherNums)
-			GROUP BY t.teacher_num
+			  AND t.nullity = 0
+			  AND t.teacher_num IN (:dayTimeTeacherNums)
+			GROUP BY t.teacher_num, t.id, t.nickname, z.zoom_id
 			""", nativeQuery = true)
 	List<Object[]> findAllAvailableTeacher( @Param("dayTimeTeacherNums") List<Integer> dayTimeTeacherNums);
 

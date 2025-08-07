@@ -4,22 +4,22 @@ document.querySelectorAll('.fetch-teachers-btn').forEach(function(btn) {
 
 		const parentForm = btn.closest('form');
 		console.log('[debug] parentForm:', parentForm);
-
-		//型判定
+		//　定期/非定期
 		let type;
-
 		if (parentForm.id === 'regularClassForm') {
 			type = 'regular';
 		} else if (parentForm.id === 'irregularClassForm') {
 			type = 'irregular';
 		}
 
+
 		let params = new URLSearchParams();
 
-		//型ごとにパラメータを構成し、fetchで送信
+		// タイプごとにパラメータを設定
 		if (type === 'regular') {
+			// ---- 定期授業用のパラメータ ----
 
-			//定期授業のパラメータ
+
 			// 曜日チェックボックスの値を取得
 			// 1. チェックされた曜日チェックボックス（NodeList）をすべて取得
 			const checkedWeekDayNodes = parentForm.querySelectorAll('input[name="weekDays"]:checked');
@@ -55,27 +55,17 @@ document.querySelectorAll('.fetch-teachers-btn').forEach(function(btn) {
 			params.append('endTime', endTime);
 			params.append('startDate', startDate);
 
-		} else if (type === 'irregular'){
-			
-			//非定期授業のパラメータ
+		} else if (type === 'irregular') {
 			const selectedDate = parentForm.querySelector('#selectedDate').value;
 			const selectedTime = parentForm.querySelector('#selectedTime').value;
-			
 			params.append('date', selectedDate);
 			params.append('time', selectedTime);
 		}
-		
-		// データの型に応じてfetchするURLを変更する
-		let fetchUrl = '';
-		if(type === 'regular'){
-			fetchUrl = '/admin/available-teacher-list?' + params.toString();
-		} else if (type === 'irregular'){
-			fetchUrl = '/admin/available-teacher-list-irregular?' + params.toString();
-		}
 
-
+		// 共通のfetch URLにリクエスト送信！
 		// params をクエリ文字列に変換してサーバーに GET リクエストを送信
-		fetch(fetchUrl)
+		console.log('[debug] params string:', params.toString());
+		fetch('/admin/available-teacher-list?' + params.toString())
 			// レスポンスデータを JSON に変換
 			.then(response => response.json())
 			// 取得したデータでテーブルを更新
@@ -103,10 +93,7 @@ document.querySelectorAll('.fetch-teachers-btn').forEach(function(btn) {
 					return;
 				}
 
-
 				dt.clear();  // 既存のテーブル内容をクリア
-
-
 
 				// データが存在しない場合、メッセージを表示して終了
 				if (data.length === 0) {

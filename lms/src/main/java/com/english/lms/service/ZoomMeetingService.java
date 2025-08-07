@@ -4,6 +4,8 @@ import com.english.lms.dto.ClassDTO;
 
 public interface ZoomMeetingService {
 
-	void makeleClass(ClassDTO classDTO);
+	void makeleRegisterClass(ClassDTO classDTO);
+
+	void makeleIrregularClass(ClassDTO classDTO);
 
 }

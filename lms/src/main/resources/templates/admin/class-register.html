@@ -469,11 +469,15 @@
 																	<th>ニックネーム</th>
 																	<th>年齢</th>
 																	<th>英語レベル</th>
+																	<th>補講</th>
+																	<th>無料体験</th>
 																</tr>
 															</thead>
 
 															<tbody>
-																<tr th:each="student : ${studentList}">
+																<tr th:each="student : ${studentList}"
+																	th:data-additional="${student.additionalPoint}"
+																    th:data-free="${student.freePoint}">
 																	<td><input type="radio" th:field="*{studentNum}"
 																			th:value="${student.studentNum}"
 																			class="ListCheckbox"></td>
@@ -481,6 +485,10 @@
 																	<td th:text="${student.nickname}">ニックネーム</td>
 																	<td th:text="${student.age}">年齢</td>
 																	<td th:text="${student.englishLevel}">英語レベル</td>
+																	<td th:text="${student.additionalPoint}"
+																		th:data-additional="${student.additionalPoint}">補講</td>
+																	<td th:text="${student.freePoint}"
+																		th:data-free="${student.freePoint}">無料体験</td>
 																</tr>
 															</tbody>
 														</table>
@@ -497,7 +505,7 @@
 
 															<label>
 																<input type="radio" th:field="*{classType}"
-																	value="optional">
+																	value="additional">
 																補講
 															</label>
 															<label>
@@ -746,7 +754,7 @@
 	<script th:src="@{/js/registertables.js}"></script>
 	<script th:src="@{/js/class-endtime.js}"></script>
 	<script th:src="@{/js/class-register-teacher-list.js}"></script>
-
+	<script th:src="@{/js/check-point.js}"></script>
 	<script>
 		//listのradio関連js
 		// ラジオボタンを直接押さなくても、カラムの要素をクリックすれば選択されるようにする。

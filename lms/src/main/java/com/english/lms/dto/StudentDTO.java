@@ -23,6 +23,9 @@ public class StudentDTO {
     private Integer point;
     private String role;
     private String company;
+    private Integer additionalPoint;
+    private Integer freePoint;
+
 
     
     private String teacherNickname;

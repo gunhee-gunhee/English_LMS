@@ -2,6 +2,10 @@ package com.english.lms.repository;
 
 import com.english.lms.entity.PointEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -28,4 +32,25 @@ public interface PointRepository extends JpaRepository<PointEntity, Integer> {
             String type,
             Integer pointAmount
     );
+
+
+    @Query(
+    	    value = """
+    	        SELECT point_num
+    	        FROM lms_point
+    	        WHERE student_num = :studentNum
+    	          AND type = :classType
+    	          AND point_amount > 0
+    	          AND (expires_at IS NULL OR expires_at > NOW())
+    	        ORDER BY created_at DESC
+    	        LIMIT 1
+    	        """,
+    	    nativeQuery = true
+    	)
+	Integer findPointNumForDelete(@Param("studentNum") Integer studentNum, @Param("classType") String classType);
+
+
+    
+    
+
 }

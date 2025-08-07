@@ -27,6 +27,7 @@ public class ClassDTO {
     private String studentNickname;
     private String studentNicknameJp;
     private Integer studentEnglishLevel;
+    private Integer studentPoint;
     private Integer startHour;
     private Integer startMinute;
     private Integer endHour;
@@ -38,5 +39,9 @@ public class ClassDTO {
     private String studentAge;    
     private String zoomId;
     private String classType;
+    
+    //非定期授業
+    private String selectedDate;
+    private String selectedTime;
     
 }
