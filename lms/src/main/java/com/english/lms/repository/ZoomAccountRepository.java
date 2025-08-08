@@ -20,4 +20,8 @@ public interface ZoomAccountRepository extends JpaRepository<ZoomAccountEntity, 
 
     @Query(value = "SELECT zoom_id FROM lms_zoom_account WHERE zoom_num = :zoomNum", nativeQuery = true)
 	String findZoomIdByZoomNum(@Param("zoomNum") Integer zoomNum);
+
+    //lms_zoom_accountの全てのzoomIdを取得
+    @Query(value = "SELECT zoom_id FROM lms_zoom_account WHERE status = '正常'", nativeQuery = true)
+	List<String> findAllZoomIds();
 }
