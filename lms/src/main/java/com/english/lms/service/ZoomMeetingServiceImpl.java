@@ -7,6 +7,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -142,7 +144,7 @@ public class ZoomMeetingServiceImpl implements ZoomMeetingService {
 		String timeRange = classStartTime + "~" + classEndTime;
 
 		// classType
-		String classType = "定期";
+		String classType = "regular";
 
 		String className = studentNickName + "/" + timeRange + "/" + weeklyDays + "/" + classType;
 		System.out.println("className : " + className);
@@ -467,17 +469,30 @@ System.out.println(timeslots.size());
 		
 		//point 削除
 		pointRepository.deleteById(deletePoint);
-		
-			
-			
-	
-	
 
-		
-		
-
-		
-		
 	}
+	
+
+	/**
+	 * 
+	 * Zoomアカウントに対応するzoomLinkを照会
+	 * 
+	 * return : 
+	 * 				 {
+					  "hostA@example.com": [회의1, 회의2, 회의3],
+					  "hostB@example.com": [],
+					  "hostC@example.com": [회의4, 회의5]
+					}
+	 * 
+	 * */
+//	@Override
+//	public Map<String, List<Map<String, Object>>> getMeetingsByZoomAccount() {
+//		 
+//		
+//	
+//		
+//		
+//		
+//	}
 
 }
