@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>定期授業申請照会</title>
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+    <style>
+        #dataTable th.sorting_disabled::after,
+        #dataTable th.sorting_disabled::before { display: none !important; }
+        thead th { background-color: #5077ec; color: white; font-weight: bold; text-align: center; }
+        table.dataTable thead th { text-align: center !important; }
+        table.dataTable tbody td { text-align: center !important; }
+        .search-box { width: 100%; min-width: 300px; display: flex; gap: 12px; align-items: center; }
+        .year-month-select { display: flex; gap: 6px; align-items: center; }
+        .year-select, .month-select {
+            border: 1px solid #bcbfc8; border-radius: 4px; padding: 3px 6px;
+            height: 38px; font-size: 14px; color: #495057; background: #fff;
+            box-sizing: border-box;
+        }
+        input[type="date"] { height: 38px; font-size: 14px; }
+        #dataTable th, #dataTable td { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    </style>
+</head>
+<body id="page-top">
+<div id="wrapper">
+    <!-- 관리자 사이드바 조각 -->
+    <div th:replace="~{fragments/sidebar-admin :: sidebar-admin}"></div>
+
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <!-- 상단바 제목: 정기수업신청리스트 -->
+            <div th:replace="~{fragments/topbar :: topbar('定期授業申請照会')}"></div>
+
+            <div class="container-fluid">
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+
+                        <!-- 검색 + 연/월 선택 -->
+                        <form method="get" th:action="@{/admin/regular-class-apply-list}" class="input-group search-box mb-4">
+                            <div class="year-month-select">
+                                <select name="year" class="year-select">
+                                    <option th:each="y : ${yearList}"
+                                            th:value="${y}"
+                                            th:text="${y}"
+                                            th:selected="${y == selectedYear}">2025</option>
+                                </select>
+                                <span style="margin: 0 2px;">年</span>
+                                <select name="month" class="month-select">
+                                    <option th:each="m : ${#numbers.sequence(1,12)}"
+                                            th:value="${m < 10 ? '0' + m : m}"
+                                            th:text="${m}"
+                                            th:selected="${m == selectedMonth}">7</option>
+                                </select>
+                                <span style="margin: 0 2px;">月</span>
+                            </div>
+
+                            <input type="text" class="form-control search-input" name="q" th:value="${q}"
+                                   placeholder="学生名/ID/コースなど" aria-label="Search" style="max-width:220px;">
+
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i></button>
+                            </div>
+
+                            <!-- 정렬/페이지 숨김 파라미터 -->
+                            <input type="hidden" name="sort" th:value="${sort}">
+                            <input type="hidden" name="dir" th:value="${dir}">
+                            <input type="hidden" name="page" value="0">
+                            <input type="hidden" name="size" th:value="${size}">
+                        </form>
+
+                        <!-- 페이지 사이즈 선택 -->
+                        <form id="pageSizeForm" class="mb-4" method="get" th:action="@{/admin/regular-class-apply-list}">
+                            <input type="hidden" name="sort" th:value="${sort}">
+                            <input type="hidden" name="dir" th:value="${dir}">
+                            <input type="hidden" name="page" value="0">
+                            <input type="hidden" name="year" th:value="${selectedYear}">
+                            <input type="hidden" name="month" th:value="${selectedMonth}">
+                            <input type="hidden" name="q" th:value="${q}">
+                            <select name="size" class="form-select form-select-sm rounded"
+                                    onchange="document.getElementById('pageSizeForm').submit()"
+                                    style="width: auto; border-color: #bcbfc8; color: #6d6e77;">
+                                <option th:value="10" th:selected="${size == 10}">10</option>
+                                <option th:value="25" th:selected="${size == 25}">25</option>
+                                <option th:value="50" th:selected="${size == 50}">50</option>
+                                <option th:value="100" th:selected="${size == 100}">100</option>
+                            </select>
+                            <span style="margin-left: 8px;">件</span>
+                        </form>
+
+                        <!-- 테이블 -->
+                        <div class="table-responsive">
+                            <table class="table table-bordered datatable" id="dataTable" width="100%" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="selectAllCheckbox"></th>
+                                    <th>番号</th>
+                                    <th>学生ニックネーム</th>
+                                    <th>学生ID</th>
+                                    <th>開始日</th>
+                                    <th>コース</th>
+                                    <th>第1希望</th>
+                                    <th>第2希望</th>
+                                    <th>第3希望</th>
+                                    <th>提出日</th>
+                                    <th>詳細</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="row, stat : ${applyPage.content}">
+                                    <td><input type="checkbox" name="selectedIds" th:value="${row.applyNum}" class="ListCheckbox"></td>
+                                    <td th:text="${currentPage * size + stat.index + 1}">1</td>
+                                    <td th:text="${row.studentNickname}">닉네임</td>
+                                    <td th:text="${row.studentId}">sample@example.com</td>
+                                    <td th:text="${row.startDate}">2025-08-13</td>
+                                    <td th:text="${row.course}">mon-wed-fri</td>
+                                    <td th:text="${row.firstChoice}">15:00～16:00</td>
+                                    <td th:text="${row.secondChoice}">10:00～11:00</td>
+                                    <td th:text="${row.thirdChoice}">14:00～15:00</td>
+                                    <td>
+                                        <span th:text="${#temporals.format(row.applyDate, 'yyyy-MM-dd')}">2025-08-08</span>
+                                    </td>
+                                    <td>
+                                        <a th:href="@{/admin/regular-class-apply-detail/{applyNum}(applyNum=${row.applyNum})}">詳細</a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+
+                            <!-- 페이징 -->
+                            <nav aria-label="Page navigation">
+                                <div class="d-flex justify-content-center mt-3">
+                                    <ul class="pagination">
+                                        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                                            <a class="page-link"
+                                               th:href="@{/admin/regular-class-apply-list(page=${currentPage - 1}, size=${size}, sort=${sort}, dir=${dir}, year=${selectedYear}, month=${selectedMonth}, q=${q})}"
+                                               aria-label="Previous">
+                                                <span aria-hidden="true">&laquo;</span>
+                                            </a>
+                                        </li>
+                                        <li class="page-item"
+                                            th:each="i : ${#numbers.sequence(0, applyPage.totalPages - 1)}"
+                                            th:classappend="${i == currentPage} ? 'active'">
+                                            <a class="page-link"
+                                               th:href="@{/admin/regular-class-apply-list(page=${i}, size=${size}, sort=${sort}, dir=${dir}, year=${selectedYear}, month=${selectedMonth}, q=${q})}"
+                                               th:text="${i + 1}">1</a>
+                                        </li>
+                                        <li class="page-item" th:classappend="${currentPage + 1 == applyPage.totalPages} ? 'disabled'">
+                                            <a class="page-link"
+                                               th:href="@{/admin/regular-class-apply-list(page=${currentPage + 1}, size=${size}, sort=${sort}, dir=${dir}, year=${selectedYear}, month=${selectedMonth}, q=${q})}"
+                                               aria-label="Next">
+                                                <span aria-hidden="true">&raquo;</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </nav>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="sticky-footer bg-white">
+            <div class="container my-auto">
+                <div class="copyright text-center my-auto">
+                    <span>Copyright &copy; Your Website 2020</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<!-- 공통 스크립트 -->
+<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css" />
+<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+<script th:src="@{/js/sb-admin-2.min.js}"></script>
+<script th:src="@{/js/customtables.js}"></script>
+<script th:src="@{/js/table-check-box.js}"></script>
+</body>
+</html>

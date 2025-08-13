@@ -82,6 +82,11 @@ public class StudentIrregularApplyService {
                     .teacherNums(timeToTeachers.get(timeLabel))
                     .build());
         }
+        
+        result.sort(Comparator.comparing(dto ->
+        LocalTime.parse(dto.getTimeLabel().split("~")[0] + ":00")
+        ));
+        
         return result;
     }
     // ==================== 수정 끝 ====================

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>定期授業申請詳細</title>
+
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+
+    <style>
+        .detail-label { font-weight: bold; color: #5077ec; }
+        .delete-btn { background: #ff3b3b; color: #fff; border: none; border-radius: 6px; padding: 8px 28px; }
+        .detail-card { max-width: 1400px; margin: 2rem auto; }
+        .detail-table th, .detail-table td {
+            white-space: nowrap !important;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: none !important;
+        }
+        .detail-table th { width: 180px; background: #f1f4fa; }
+        .detail-table td, .detail-table th { vertical-align: middle !important; }
+    </style>
+</head>
+
+<body id="page-top">
+<div id="wrapper">
+    <!-- サイドバー -->
+    <div th:replace="~{fragments/sidebar-admin :: sidebar-admin}"></div>
+
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <!-- トップバー -->
+            <div th:replace="~{fragments/topbar :: topbar('定期授業申請詳細')}"></div>
+
+            <div class="container-fluid">
+                <div class="card shadow mb-4 detail-card">
+                    <div class="card-body" style="overflow-x:auto;">
+                        <table class="table detail-table" style="min-width:1200px;">
+                            <tbody>
+                                <tr>
+                                    <th>申請番号</th>
+                                    <td th:text="${applyDetail.applyNum}"></td>
+                                </tr>
+                                <tr>
+                                    <th>学生ID</th>
+                                    <td th:text="${applyDetail.studentId}"></td>
+                                </tr>
+                                <tr>
+                                    <th>学生ニックネーム</th>
+                                    <td th:text="${applyDetail.studentNickname}"></td>
+                                </tr>
+                                <tr>
+                                    <th>コース</th>
+                                    <td th:text="${applyDetail.course}"></td>
+                                </tr>
+                                <tr>
+                                    <th>開始日</th>
+                                    <td th:text="${#temporals.format(applyDetail.startDate, 'yyyy-MM-dd')}"></td>
+                                </tr>
+                                <tr>
+                                    <th>第1希望</th>
+                                    <td th:text="${applyDetail.firstChoice}"></td>
+                                </tr>
+                                <tr>
+                                    <th>第2希望</th>
+                                    <td th:text="${applyDetail.secondChoice}"></td>
+                                </tr>
+                                <tr>
+                                    <th>第3希望</th>
+                                    <td th:text="${applyDetail.thirdChoice}"></td>
+                                </tr>
+                                <tr>
+                                    <th>提出日</th>
+                                    <td th:text="${#temporals.format(applyDetail.applyDate, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <form th:action="@{/admin/regular-class-apply-detail/delete}" method="post" class="mt-4">
+                            <input type="hidden" name="applyNum" th:value="${applyDetail.applyNum}" />
+                            <button type="submit" class="btn delete-btn" onclick="return confirm('本当に削除しますか？');">この申請を削除</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- フッター -->
+        <footer class="sticky-footer bg-white">
+            <div class="container my-auto">
+                <div class="copyright text-center my-auto">
+                    <span>Copyright &copy; Your Website 2020</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script th:src="@{/js/sb-admin-2.min.js}"></script>
+</body>
+</html>

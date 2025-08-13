@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>講師リクエスト一覧</title>
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+    <style>
+        #dataTable th.sorting_disabled::after,
+        #dataTable th.sorting_disabled::before { display: none !important; }
+        thead th { background-color: #5077ec; color: white; font-weight: bold; text-align: center; }
+        table.dataTable thead th { text-align: center !important; }
+        table.dataTable tbody td { text-align: center !important; }
+        .search-box { width: 33%; min-width: 250px; }
+        #dataTable th, #dataTable td { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .search-row { width:100%; max-width:520px; margin-bottom:8px; display: flex; align-items: center; justify-content: flex-start; }
+    </style>
+</head>
+
+<body id="page-top">
+<div id="wrapper">
+    <div th:replace="~{fragments/sidebar-admin :: sidebar-admin}"></div>
+
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <div th:replace="~{fragments/topbar :: topbar('講師リクエスト一覧')}"></div>
+
+            <div class="container-fluid">
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+
+                        <!-- 날짜 범위 + 버튼 + 검색폼 (왼쪽끝정렬) -->
+                        <form method="get" th:action="@{/admin/teacher-request-list}" class="mb-4">
+                            <div class="w-100 text-start" style="max-width:700px;">
+                                <!-- 날짜 입력란 -->
+                                <div class="search-row">
+                                    <input type="date" class="form-control" name="startDate"
+                                           th:value="${startDate != null} ? ${startDate} : ${todayString}"
+                                           style="max-width:180px; min-width:100px; margin-right:10px; font-size:1.15rem;">
+                                    <span style="font-size:1.4em; margin:0 8px;">~</span>
+                                    <input type="date" class="form-control" name="endDate"
+                                           th:value="${endDate != null} ? ${endDate} : ${todayString}"
+                                           style="max-width:180px; min-width:100px; margin-left:10px; font-size:1.15rem;">
+                                </div>
+
+                                <!-- 날짜 버튼 -->
+                                <div class="search-row" style="margin-bottom: 8px;">
+                                    <button type="button" class="btn btn-outline-primary btn-sm mx-1" onclick="setRange('today')">今日</button>
+                                    <button type="button" class="btn btn-outline-primary btn-sm mx-1" onclick="setRange('week')">今週</button>
+                                    <button type="button" class="btn btn-outline-primary btn-sm mx-1" onclick="setRange('month')">今月</button>
+                                    <button type="button" class="btn btn-outline-primary btn-sm mx-1" onclick="setRange('year')">今年</button>
+                                </div>
+
+                                <!-- 검색창+버튼 -->
+                                <div class="search-row" style="gap:8px; margin-bottom:0;">
+                                    <input type="text" class="form-control" name="q" th:value="${q}" placeholder="Search for..." aria-label="検索"
+                                           style="max-width:300px;">
+                                    <button class="btn btn-primary" type="submit" style="min-width:80px;">検索</button>
+                                </div>
+                            </div>
+                        </form>
+
+                        <!-- 페이지 사이즈 선택 -->
+                        <form id="pageSizeForm" class="mb-4" method="get" th:action="@{/admin/teacher-request-list}">
+                            <input type="hidden" name="sort" th:value="${sort}">
+                            <input type="hidden" name="dir" th:value="${dir}">
+                            <input type="hidden" name="startDate" th:value="${startDate}">
+                            <input type="hidden" name="endDate" th:value="${endDate}">
+                            <input type="hidden" name="q" th:value="${q}">
+                            <input type="hidden" name="page" value="0">
+                            <select name="size" class="form-select form-select-sm rounded"
+                                    onchange="document.getElementById('pageSizeForm').submit()"
+                                    style="width: auto; border-color: #bcbfc8; color: #6d6e77;">
+                                <option th:value="10" th:selected="${size == 10}">10</option>
+                                <option th:value="25" th:selected="${size == 25}">25</option>
+                                <option th:value="50" th:selected="${size == 50}">50</option>
+                                <option th:value="100" th:selected="${size == 100}">100</option>
+                            </select>
+                            <span style="margin-left: 8px;">件</span>
+                        </form>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered datatable" id="dataTable" width="100%" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th>番号</th>
+                                    <th>学生ニックネーム</th>
+                                    <th>授業時間</th>
+                                    <th>申請日</th>
+                                    <th>状態</th>
+                                    <th>詳細</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <!-- req: TeacherRequestDTO 1건 -->
+                                <tr th:each="req, stat : ${requestPage.content}">
+                                    <!-- 번호 (연속 번호) -->
+                                    <td th:text="${currentPage * size + stat.index + 1}">1</td>
+
+                                    <!-- 학생 닉네임: DTO에 studentNickname 이 있다고 가정 / 없으면 studentNum 표시 -->
+                                    <td>
+                                        <span th:text="${req.studentNickname != null ? req.studentNickname : req.studentNum}">ニックネーム</span>
+                                    </td>
+
+                                    <!-- 수업시간: LocalTime 또는 시/분 조합 대응 -->
+                                    <td>
+                                        <span th:if="${req.startTime != null}" th:text="${#temporals.format(req.startTime, 'HH:mm')}">09:00</span>
+                                        <span th:unless="${req.startTime != null}"
+                                              th:text="${#numbers.formatInteger(req.startHour,2)} + ':' + ${#numbers.formatInteger(req.startMinute,2)}">09:00</span>
+                                        ～
+                                        <span th:if="${req.endTime != null}" th:text="${#temporals.format(req.endTime, 'HH:mm')}">09:50</span>
+                                        <span th:unless="${req.endTime != null}"
+                                              th:text="${#numbers.formatInteger(req.endHour,2)} + ':' + ${#numbers.formatInteger(req.endMinute,2)}">09:50</span>
+                                    </td>
+
+                                    <!-- 신청일: requestDate -->
+                                    <td>
+                                        <span th:if="${req.requestDate != null}"
+                                              th:text="${#temporals.format(req.requestDate, 'yyyy-MM-dd HH:mm')}">2025-08-12 10:30</span>
+                                        <span th:unless="${req.requestDate != null}" class="text-muted">-</span>
+                                    </td>
+
+                                    <!-- 상태: req.status 가 있으면 매핑, 없으면 保留 -->
+                                    <td>
+                                        <span th:if="${req.status != null}" th:text="${req.status}">保留</span>
+                                        <span th:unless="${req.status != null}">保留</span>
+                                    </td>
+
+                                    <!-- 상세 링크: request_num 기준 -->
+                                    <td>
+                                        <a th:href="@{/admin/teacher-request-detail/{requestNum}(requestNum=${req.requestNum})}">詳細</a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+
+                            <!-- 페이지네이션 -->
+                            <nav aria-label="Page navigation">
+                                <div class="d-flex justify-content-center mt-3">
+                                    <ul class="pagination">
+                                        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                                            <a class="page-link"
+                                               th:href="@{/admin/teacher-request-list(page=${currentPage -1}, size=${size}, sort=${sort}, dir=${dir}, startDate=${startDate}, endDate=${endDate}, q=${q})}"
+                                               aria-label="前へ">
+                                                <span aria-hidden="true">&laquo;</span>
+                                            </a>
+                                        </li>
+                                        <li class="page-item"
+                                            th:each="i : ${#numbers.sequence(0, requestPage.totalPages - 1)}"
+                                            th:classappend="${i == currentPage} ? 'active'">
+                                            <a class="page-link"
+                                               th:href="@{/admin/teacher-request-list(page=${i}, size=${size}, sort=${sort}, dir=${dir}, startDate=${startDate}, endDate=${endDate}, q=${q})}"
+                                               th:text="${i + 1}">1</a>
+                                        </li>
+                                        <li class="page-item" th:classappend="${currentPage + 1 == requestPage.totalPages} ? 'disabled'">
+                                            <a class="page-link"
+                                               th:href="@{/admin/teacher-request-list(page=${currentPage + 1}, size=${size}, sort=${sort}, dir=${dir}, startDate=${startDate}, endDate=${endDate}, q=${q})}"
+                                               aria-label="次へ">
+                                                <span aria-hidden="true">&raquo;</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </nav>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="sticky-footer bg-white">
+            <div class="container my-auto">
+                <div class="copyright text-center my-auto">
+                    <span>Copyright &copy; Your Website 2020</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<!-- Logout Modal -->
+<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">ログアウトしますか？</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">現在のセッションを終了する場合は「Logout」を選択してください。</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">キャンセル</button>
+                <a class="btn btn-primary" href="login.html">Logout</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css" />
+<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+<script th:src="@{/js/sb-admin-2.min.js}"></script>
+<script th:src="@{/js/customtables.js}"></script>
+<script th:src="@{/js/table-check-box.js}"></script>
+<script>
+    function toDateInputValue(date) {
+        const offset = date.getTimezoneOffset();
+        const localDate = new Date(date.getTime() - (offset * 60 * 1000));
+        return localDate.toISOString().slice(0, 10);
+    }
+    function setRange(type) {
+        const today = new Date();
+        let start, end;
+        if (type === 'today') {
+            start = end = today;
+        } else if (type === 'week') {
+            const dayOfWeek = today.getDay();
+            const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+            start = new Date(today);
+            start.setDate(today.getDate() + diffToMonday);
+            end = new Date(start);
+            end.setDate(start.getDate() + 6);
+        } else if (type === 'month') {
+            start = new Date(today.getFullYear(), today.getMonth(), 1);
+            end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+        } else if (type === 'year') {
+            start = new Date(today.getFullYear(), 0, 1);
+            end = new Date(today.getFullYear(), 11, 31);
+        }
+        document.querySelector('input[name="startDate"]').value = toDateInputValue(start);
+        document.querySelector('input[name="endDate"]').value = toDateInputValue(end);
+    }
+</script>
+</body>
+</html>
